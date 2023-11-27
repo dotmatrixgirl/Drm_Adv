@@ -1,88 +1,82 @@
 #main loop. Other scripts seprate to allow
 #compiling while game is running
-script, mainLoop, begin
-	variable(tick, state)
-	state := state:resume
+script, mainLoop, state,  begin
+	variable(tick)
 	while (true) do (
 		update(tick, state)
 		wait()
 		tick += 1
 	)
+	subscript, update, tick, state, begin
+		animate(state, tick)
+		keypresses(state, tick)
+	end
 end
 
-script, update, tick, state, begin
+script, keypresses, state, tick, begin
 	switch (state) do (
-		case (state:suspend) do (
-			animate(tick)
-		)
-		case (state:resume) do (
-			animate(tick)
-			movement(tick)
-		)
-		case(state:setkey) do (
-			animate(tick)
-			updateSetKeyMenu()
+		case(state:resume) do (
+			moveResume()
 		)
 	)
+	subscript, moveResume, begin
+		if (heroIsWalking(me) == false) then (
+			if (pressedkey(b:b)) then (
+				setHeroSpeed (me, 3)
+			) else (
+				setHeroSpeed (me, 2)
+			)
+			if (pressedkey(b:u) && pressedkey(b:d)) then (exitScript())
+			if (pressedkey(b:l) && pressedkey(b:r)) then (exitScript())
+			if (pressedkey(b:u)) then (
+				walkHero(me, up, 1), exitScript()
+			)
+			if (pressedkey(b:d)) then (
+				walkHero(me, down, 1), exitScript()
+			)
+			if (pressedkey(b:l)) then (
+				walkHero(me, left, 1), exitScript()
+			)
+			if (pressedkey(b:r)) then (
+				walkHero(me, right, 1), exitScript()
+			)
+			if (presskey(b:a)) then(
+				if (npcAtSpot (forwardX(), forwardY())) then(
+					useNpc (npcAtSpot (forwardX, forwardY))
+					exitScript()
+				)
+			)
+		)
+	end
 end
 
-script, updateSetKeyMenu, begin
-end
-
-script, movement, tick, begin
-	if (pressedkey(b:b) || tick,mod,2==1) then (
-		if (pressedkey(b:u) && pressedkey(b:d)) then (exitScript())
-		if (pressedkey(b:l) && pressedkey(b:r)) then (exitScript())
-		if (pressedkey(b:u) && pressedkey(b:r)) then (
-			move(player, -1, -1), exitScript()
-		)
-		if (pressedkey(b:u) && pressedkey(b:r)) then (
-			move(player, 1, -1), exitScript()
-		)
-		if (pressedkey(b:d) && pressedkey(b:l)) then (
-			move(player, -1, 1), exitScript()
-		)
-		if (pressedkey(b:d) && pressedkey(b:r)) then (
-			move(player, 1, 1), exitScript()
-		)
-		if (pressedkey(b:u)) then (
-			move(player, 0, -1), exitScript()
-		)
-		if (pressedkey(b:d)) then (
-			move(player, 0, 1), exitScript()
-		)
-		if (pressedkey(b:l)) then (
-			move(player, 1, 0), exitScript()
-		)
-		if (pressedkey(b:r)) then (
-			move(player, -1, 0), exitScript()
-		)
-	)
-	if (presskey(b:a)) then(
-		use(sliceX(player), sliceY(player))
-	)
-end
-
-script, move, sli, x, y, begin
-	moveSliceWithWallchecking (sli, x, y, 20)
-end
-
-script, player, begin
-	return (lookupslice(sli:player))
-end
-
-script, use, x,y, begin
+script, animate, state, tick, begin
 	variable(sli)
-	if (sliceAtPixel(x, y)) then (
-		sli := sliceAtPixel(x, y)
-		if (getSliceLookup(sli)==sli:usable) then (
-			event(getExtra(sli, 0))
+	switch (state) do (
+		case(state:resume) do (
+			aniResume()
 		)
 	)
-end
-
-script, event, which, begin
-end
-
-script, animate, tick, begin
+	subscript, aniResume, begin
+		variable (dir, frame, i)
+		
+		for(i, 0, 4) do (	
+			if (heroByRank(i) <>-1) then (
+				dir := heroDirection(i)
+				sli := lastChild(getHeroSlice(i))
+				frame := getSpriteFrame(sli)
+				frame := dir*4 + frame,mod,4
+				if (tick,mod,8 == 0) then (
+					if (frame,mod,4 == 3) then (
+						frame := dir*4
+					) else (
+						frame := getSpriteFrame(sli) + 1
+					)
+				)
+				setSpriteFrame(sli, frame)
+			)
+			sli := lookupNextSlice (sli:walkabout, sli, lookupSlice(sl:heroLayer))
+			if (sli==false) then (break)
+		)
+	end
 end

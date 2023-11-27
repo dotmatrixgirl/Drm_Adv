@@ -9,7 +9,7 @@ defineConstant, begin
 
 	#slice lookups
 	200, sli:usable
-	201, sli:player
+	201, sli:walkabout
 
 	#buttons
 	0,	b:u
@@ -38,8 +38,6 @@ globalVariable, begin
 	9,	p:b
 	10,	p:x
 	11,	p:y
-
-	12, game:state
 end
 
 #default scripts
@@ -50,25 +48,30 @@ plotscript, onKey, begin
 end
 
 plotscript, newGame, begin
+	variable(state)
+
 	init()
-	mainLoop()
+	mainLoop(state)
 
 	subscript, init, begin
 		variable (sli)
 		suspendPlayer
 		resetKeys()
 		sli := loadBorderSprite(1)
-		setSliceLookup (sli, sli:player)
-		cameraFollowsSlice(sli)
-		game:state := state:resume
+		set parent(sli, getheroSlice(me))
+		setSliceLookup(sli, sli:walkabout)
+		setSliceVisible(getheroSprite(me), false)
+		state := state:resume
 	end
 end
 
 plotscript, loadGame, begin
+	variable(state)
+
 	init()
-	mainLoop()
+	mainLoop(state)
 
 	subscript, init, begin
-		game:state := state:resume
+		state := state:resume
 	end
 end
