@@ -1,0 +1,74 @@
+include, inc/update.hsi
+include, inc/util.hsi
+
+defineConstant, begin
+	#game states
+	0,	state:suspend
+	1,	state:resume
+	2,	state:setkey
+
+	#slice lookups
+	200, sli:usable
+	201, sli:player
+
+	#buttons
+	0,	b:u
+	1,	b:d
+	2,	b:l
+	3,	b:r
+	4,	b:a
+	5,	b:b
+	6,	b:x
+	7,	b:y
+end
+
+globalVariable, begin
+	#keyboard variables
+	0,	k:u
+	1,	k:d
+	2,	k:l
+	3,	k:r
+	4,	k:a
+	5,	k:b
+	6,	k:x
+	7,	k:y
+
+	#gamepad variables
+	8,	p:a
+	9,	p:b
+	10,	p:x
+	11,	p:y
+
+	12, game:state
+end
+
+#default scripts
+plotscript, onKey, begin
+	if (keyIsPressed(key:r)&&keyIsPressed(key:shift)) then(
+		resetGame()
+	)
+end
+
+plotscript, newGame, begin
+	init()
+	mainLoop()
+
+	subscript, init, begin
+		variable (sli)
+		suspendPlayer
+		resetKeys()
+		sli := loadBorderSprite(1)
+		setSliceLookup (sli, sli:player)
+		cameraFollowsSlice(sli)
+		game:state := state:resume
+	end
+end
+
+plotscript, loadGame, begin
+	init()
+	mainLoop()
+
+	subscript, init, begin
+		game:state := state:resume
+	end
+end

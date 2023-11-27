@@ -1,0 +1,88 @@
+#main loop. Other scripts seprate to allow
+#compiling while game is running
+script, mainLoop, begin
+	variable(tick, state)
+	state := state:resume
+	while (true) do (
+		update(tick, state)
+		wait()
+		tick += 1
+	)
+end
+
+script, update, tick, state, begin
+	switch (state) do (
+		case (state:suspend) do (
+			animate(tick)
+		)
+		case (state:resume) do (
+			animate(tick)
+			movement(tick)
+		)
+		case(state:setkey) do (
+			animate(tick)
+			updateSetKeyMenu()
+		)
+	)
+end
+
+script, updateSetKeyMenu, begin
+end
+
+script, movement, tick, begin
+	if (pressedkey(b:b) || tick,mod,2==1) then (
+		if (pressedkey(b:u) && pressedkey(b:d)) then (exitScript())
+		if (pressedkey(b:l) && pressedkey(b:r)) then (exitScript())
+		if (pressedkey(b:u) && pressedkey(b:r)) then (
+			move(player, -1, -1), exitScript()
+		)
+		if (pressedkey(b:u) && pressedkey(b:r)) then (
+			move(player, 1, -1), exitScript()
+		)
+		if (pressedkey(b:d) && pressedkey(b:l)) then (
+			move(player, -1, 1), exitScript()
+		)
+		if (pressedkey(b:d) && pressedkey(b:r)) then (
+			move(player, 1, 1), exitScript()
+		)
+		if (pressedkey(b:u)) then (
+			move(player, 0, -1), exitScript()
+		)
+		if (pressedkey(b:d)) then (
+			move(player, 0, 1), exitScript()
+		)
+		if (pressedkey(b:l)) then (
+			move(player, 1, 0), exitScript()
+		)
+		if (pressedkey(b:r)) then (
+			move(player, -1, 0), exitScript()
+		)
+	)
+	if (presskey(b:a)) then(
+		use(sliceX(player), sliceY(player))
+	)
+end
+
+script, move, sli, x, y, begin
+	moveSliceWithWallchecking (sli, x, y, 20)
+end
+
+script, player, begin
+	return (lookupslice(sli:player))
+end
+
+script, use, x,y, begin
+	variable(sli)
+	if (sliceAtPixel(x, y)) then (
+		sli := sliceAtPixel(x, y)
+		if (getSliceLookup(sli)==sli:usable) then (
+			event(getExtra(sli, 0))
+		)
+	)
+end
+
+script, event, which, begin
+end
+
+script, animate, tick, begin
+end

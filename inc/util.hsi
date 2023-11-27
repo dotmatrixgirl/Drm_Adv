@@ -1,0 +1,107 @@
+script, resetKeys, begin
+	k:u := key:up
+	k:d := key:down
+	k:l := key:left
+	k:r := key:right
+	k:a := key:space
+	k:b := key:z
+	k:x := key:esc
+	k:y := key:shift
+	p:a := joy:b
+	p:b := joy:a
+	p:x := joy:y
+	p:y := joy:x
+end
+
+script, returnKeypress, begin
+	if(keyIsPressed(anykey)) then (
+		return(waitforkey(anykey))
+	)
+end
+
+script, pressedkey, button, begin
+	switch (button) do (
+		case(b:u) do (
+			if (keyIsPressed(k:u) || keyIsPressed(joy:up)) then (return(true))
+		)
+		case(b:d) do (
+			if (keyIsPressed(k:d) || keyIsPressed(joy:down)) then (return(true))
+		)
+		case(b:l) do (
+			if (keyIsPressed(k:l) || keyIsPressed(joy:left)) then (return(true))
+		)
+		case(b:r) do (
+			if (keyIsPressed(k:r) || keyIsPressed(joy:right)) then (return(true))
+		)
+		case(b:a) do (
+			if (keyIsPressed(k:a) || keyIsPressed(p:a)) then (return(true))
+		)
+		case(b:b) do (
+			if (keyIsPressed(k:b) || keyIsPressed(p:b)) then (return(true))
+		)
+		case(b:x) do (
+			if (keyIsPressed(k:x) || keyIsPressed(p:x)) then (return(true))
+		)
+		case(b:y) do (
+			if (keyIsPressed(k:y) || keyIsPressed(p:y)) then (return(true))
+		)
+	)
+end
+
+script, presskey, button, begin
+	switch (button) do (
+		case(b:u) do (
+			if (keypress(k:u) || keypress(joy:up)) then (return(true))
+		)
+		case(b:d) do (
+			if (keypress(k:d) || keypress(joy:down)) then (return(true))
+		)
+		case(b:l) do (
+			if (keypress(k:l) || keypress(joy:left)) then (return(true))
+		)
+		case(b:r) do (
+			if (keypress(k:r) || keypress(joy:right)) then (return(true))
+		)
+		case(b:a) do (
+			if (keypress(k:a) || keypress(p:a)) then (return(true))
+		)
+		case(b:b) do (
+			if (keypress(k:b) || keypress(p:b)) then (return(true))
+		)
+		case(b:x) do (
+			if (keypress(k:x) || keypress(p:x)) then (return(true))
+		)
+		case(b:y) do (
+			if (keypress(k:y) || keypress(p:y)) then (return(true))
+		)
+	)
+end
+
+script, newpresskey, button, begin
+	switch (button) do (
+		case(b:u) do (
+			if (newKeypress(k:u) || newKeypress(joy:up)) then (return(true))
+		)
+		case(b:d) do (
+			if (newKeypress(k:d) || newKeypress(joy:down)) then (return(true))
+		)
+		case(b:l) do (
+			if (newKeypress(k:l) || newKeypress(joy:left)) then (return(true))
+		)
+		case(b:r) do (
+			if (newKeypress(k:r) || newKeypress(joy:right)) then (return(true))
+		)
+		case(b:a) do (
+			if (newKeypress(k:a) || newKeypress(p:a)) then (return(true))
+		)
+		case(b:b) do (
+			if (newKeypress(k:b) || newKeypress(p:b)) then (return(true))
+		)
+		case(b:x) do (
+			if (newKeypress(k:x) || newKeypress(p:x)) then (return(true))
+		)
+		case(b:y) do (
+			if (newKeypress(k:y) || newKeypress(p:y)) then (return(true))
+		)
+	)
+end
