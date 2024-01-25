@@ -1,0 +1,82 @@
+script, initencounter, who, begin
+	variable (sli)
+	sli := createRect(screenWidth, screenHeight)
+	return (sli)
+end
+
+script, encounterupdate, tick, sli, begin
+
+end
+
+
+script, dialogue, parent, begin
+	variable (rand, sli)
+	rand := random (0, 1)
+	switch (rand) do (
+		case (0) do (
+			$10="tell me, what do you want from life?"
+			dialogueLine()
+
+			$10="I need nothing."
+			dialogueLine()
+			setExtra(sli,type:logic,	liked)
+			setExtra(sli,type:anger,	none)
+			setExtra(sli,type:slut,		none)
+			setExtra(sli,type:selfish,	none)
+			setExtra(sli,type:caring,	liked)
+			setExtra(sli,type:scared,	none)
+			setExtra(sli,type:sad,		liked)
+
+			$10="I want to be loved."
+			dialogueLine()
+			setExtra(sli,type:logic,	none)
+			setExtra(sli,type:anger,	disliked)
+			setExtra(sli,type:slut,		none)
+			setExtra(sli,type:selfish,	disliked)
+			setExtra(sli,type:caring,	liked)
+			setExtra(sli,type:scared,	none)
+			setExtra(sli,type:sad,		none)
+
+			$10="I want you to be happy."
+			dialogueLine()
+			setExtra(sli,type:logic,	none)
+			setExtra(sli,type:anger,	disliked)
+			setExtra(sli,type:slut,		liked)
+			setExtra(sli,type:selfish,	liked)
+			setExtra(sli,type:caring,	liked)
+			setExtra(sli,type:scared,	none)
+			setExtra(sli,type:sad,		none)
+		)
+		case (1) do (
+			$10="do you hate me?"
+			dialogueLine()
+
+			$10="No."
+			dialogueLine()
+			setExtra(sli,type:logic,	none)
+			setExtra(sli,type:anger,	disliked)
+			setExtra(sli,type:slut,		liked)
+			setExtra(sli,type:selfish,	none)
+			setExtra(sli,type:caring,	none)
+			setExtra(sli,type:scared,	liked)
+			setExtra(sli,type:sad,		liked)
+
+			$10="Yes."
+			dialogueLine()
+			setExtra(sli,type:logic,	none)
+			setExtra(sli,type:anger,	liked)
+			setExtra(sli,type:slut,		none)
+			setExtra(sli,type:selfish,	disliked)
+			setExtra(sli,type:caring,	none)
+			setExtra(sli,type:scared,	disliked)
+			setExtra(sli,type:sad,		disliked)
+		)
+	)
+
+	subscript, dialogueLine, y, begin
+		sli := createText()
+		putSlice (sli, 10, y*10)
+		setExtraLength(sli, 32)
+		setParent (sli, parent)
+	end
+end

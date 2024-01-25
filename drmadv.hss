@@ -20,6 +20,18 @@ defineConstant, begin
 	5,	b:b
 	6,	b:x
 	7,	b:y
+
+	0,	type:null
+	1,	type:logic
+	2,	type:anger
+	3,	type:slut
+	4,	type:selfish
+	5,	type:caring
+	6,	type:scared
+	7,	type:sad
+	
+	1,	liked
+	2,	disliked
 end
 
 globalVariable, begin

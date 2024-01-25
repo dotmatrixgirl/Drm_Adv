@@ -1,2 +1,6 @@
 plotscript, event, which, begin
+	switch (which) do (
+		case (0) do ()
+		else ()
+	)
 end

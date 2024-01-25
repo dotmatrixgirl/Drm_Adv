@@ -8,8 +8,8 @@ script, mainLoop, state,  begin
 		tick += 1
 	)
 	subscript, update, tick, state, begin
-		animate(state, tick)
 		keypresses(state, tick)
+		animate(state, tick)
 	end
 end
 
@@ -22,12 +22,51 @@ script, keypresses, state, tick, begin
 	subscript, moveResume, begin
 		if (heroIsWalking(me) == false) then (
 			if (pressedkey(b:b)) then (
-				setHeroSpeed (me, 3)
+				setHeroSpeed (me, 5)
 			) else (
-				setHeroSpeed (me, 2)
+				setHeroSpeed (me, 3)
 			)
+
 			if (pressedkey(b:u) && pressedkey(b:d)) then (exitScript())
 			if (pressedkey(b:l) && pressedkey(b:r)) then (exitScript())
+			if(pressedkey(b:u) && pressedkey(b:r)) then (
+				if (read wall bit (heroX+1, heroY--1, southWall)==false) then (
+						if(read wall bit (heroX+1, heroY--1, westWall)==false
+					) then (
+						setHeroSpeed(me,getHeroSpeed()--1)
+						walk hero (me, up, 1), walk hero (me, right, 1)
+						exit script
+					)
+				)
+			)
+			if(pressedkey(b:u) && pressedkey(b:l)) then (
+				if (read wall bit (heroX--1, heroY--1, southWall)==false) then (
+						if(read wall bit (heroX--1, heroY--1, eastWall)==false
+					) then (
+						setHeroSpeed(me,getHeroSpeed()--1)
+						walk hero (me, up, 1), walk hero (me, left, 1)
+						exit script
+					)
+				)
+			)			if(pressedkey(b:d) && pressedkey(b:r)) then (
+				if (read wall bit (heroX+1, heroY+1, northWall)==false) then (
+						if(read wall bit (heroX+1, heroY+1, westWall)==false
+					) then (
+						setHeroSpeed(me,getHeroSpeed()--1)
+						walk hero (me, down, 1), walk hero (me, right, 1)
+						exit script
+					)
+				)
+			)			if(pressedkey(b:d) && pressedkey(b:l)) then (
+				if (read wall bit (heroX--1, heroY+1, northWall)==false) then (
+						if(read wall bit (heroX--1, heroY+1, eastWall)==false
+					) then (
+						setHeroSpeed(me,getHeroSpeed()--1)
+						walk hero (me, down, 1), walk hero (me, left, 1)
+						exit script
+					)	
+				)
+			)
 			if (pressedkey(b:u)) then (
 				walkHero(me, up, 1), exitScript()
 			)
@@ -66,7 +105,7 @@ script, animate, state, tick, begin
 				sli := lastChild(getHeroSlice(i))
 				frame := getSpriteFrame(sli)
 				frame := dir*4 + frame,mod,4
-				if (tick,mod,8 == 0) then (
+				if (tick,mod,6 == 0) then (
 					if (frame,mod,4 == 3) then (
 						frame := dir*4
 					) else (
