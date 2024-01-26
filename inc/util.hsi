@@ -1,3 +1,14 @@
+script, textLine, parent, y=0, begin
+	variable (sli)
+	sli := createText()
+	setParent (sli, parent)
+	setTextColor(sli, 2)
+	putSlice (sli, 0, y*10)
+	resizeExtra(sli, 32)
+	setSliceText(sli, 10)
+	return (sli)
+end
+
 script, resetKeys, begin
 	k:u := key:up
 	k:d := key:down

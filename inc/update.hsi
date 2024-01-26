@@ -17,6 +17,7 @@ script, keypresses, state, tick, begin
 	switch (state) do (
 		case(state:resume) do (
 			moveResume()
+			if (keyispressed(key:shift)&&keyispressed(key:b)) then (encounter (1, tick))
 		)
 	)
 	subscript, moveResume, begin

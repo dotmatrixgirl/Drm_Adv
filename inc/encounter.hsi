@@ -1,24 +1,114 @@
-script, initencounter, who, begin
-	variable (sli)
-	sli := createRect(screenWidth, screenHeight)
-	return (sli)
+script, encounter, who, tick, begin
+	variable (parent, textSli, condition, state)
+	initEncounter()
+	while (true) do (
+		updateEncounter()
+		if (
+			condition==encounter:won || condition==encounter:lost || condition==encounter:ran
+		) then (break)
+		tick += 1
+		wait
+	)
+	endEncounter()
+	return(tick)	
+
+	subscript, updateEncounter, begin
+		showValue(state)
+		switch (state) do (
+			case (encounter:choose) do (
+				if (newpresskey(b:l)) then (
+					changeState(encounter:talk)
+				) else if (newpresskey(b:r)) then (
+					changeState(encounter:fight)
+				)else if (newpresskey(b:u)) then (
+					changeState(encounter:item)
+				)else if (newpresskey(b:d)) then (
+					changeState(encounter:skill)
+				)else if (newpresskey(b:b)) then (
+					changeState(encounter:run)
+				)
+			)
+			case (encounter:talk) do (
+				if (newpresskey(b:b)) then (
+					changeState(encounter:choose)
+				)
+			)
+			case (encounter:run) do (
+				if (newpresskey(b:a)) then (
+					condition := encounter:ran
+				)else if (newpresskey(b:b)) then (
+					changeState(encounter:choose)
+				)
+			)
+			else (
+				if (newpresskey(b:b)) then (
+					changeState(encounter:choose)
+				)
+			)
+		)
+	end
+
+	subscript, changeState, which, begin
+		
+		freeSliceChildren (TextSli)
+		switch (which) do (
+			case (encounter:choose) do (
+				$10="What will you do?"
+				textLine(textSli, 0)
+
+				$10="Press [left] to talk"
+				textLine(textSli, 2)
+				$10="Press [right] to fight"
+				textLine(textSli, 3)
+				$10="Press [up] for items"
+				textLine(textSli, 5)
+				$10="Press [down] for skills"
+				textLine(textSli, 4)
+
+				$10="Press [z] or [south] to run"
+				textLine(textSli, 7)
+			)
+			case (encounter:run) do (
+				$10="What will you do?"
+				textLine(textSli, 0)
+
+				$10="Press [z] or [south] to cancel"
+				$10="Press [space] or [east] to run"
+				textLine(textSli, 2)
+			)
+			case (encounter:talk) do (
+				initDialogue(textSli)
+			)
+		)
+		state := which
+	end
+
+	subscript, initEncounter, begin
+		condition := encounter:peaceful
+		parent := createRect(getScreenWidth, getScreenHeight)
+		
+		textSli := createRect(getScreenWidth, 200)
+		setParent(textSli, parent)
+		setPadding(textSli, 10)
+
+		changeState(encounter:choose)
+	end
+
+	subscript, endEncounter, begin
+		freeSlice (parent)
+	end
 end
 
-script, encounterupdate, tick, sli, begin
-
-end
-
-
-script, dialogue, parent, begin
+script, initDialogue, parent, begin
 	variable (rand, sli)
 	rand := random (0, 1)
 	switch (rand) do (
 		case (0) do (
 			$10="tell me, what do you want from life?"
-			dialogueLine()
+			textLine(parent, 0)
 
 			$10="I need nothing."
-			dialogueLine()
+			sli := textLine(parent, 2)
 			setExtra(sli,type:logic,	liked)
 			setExtra(sli,type:anger,	none)
 			setExtra(sli,type:slut,		none)
@@ -28,7 +118,7 @@ script, dialogue, parent, begin
 			setExtra(sli,type:sad,		liked)
 
 			$10="I want to be loved."
-			dialogueLine()
+			sli := textLine(parent, 3)
 			setExtra(sli,type:logic,	none)
 			setExtra(sli,type:anger,	disliked)
 			setExtra(sli,type:slut,		none)
@@ -38,7 +128,7 @@ script, dialogue, parent, begin
 			setExtra(sli,type:sad,		none)
 
 			$10="I want you to be happy."
-			dialogueLine()
+			sli := textLine(parent, 4)
 			setExtra(sli,type:logic,	none)
 			setExtra(sli,type:anger,	disliked)
 			setExtra(sli,type:slut,		liked)
@@ -49,10 +139,10 @@ script, dialogue, parent, begin
 		)
 		case (1) do (
 			$10="do you hate me?"
-			dialogueLine()
+			textLine(parent, 0)
 
 			$10="No."
-			dialogueLine()
+			sli := textLine(parent, 2)
 			setExtra(sli,type:logic,	none)
 			setExtra(sli,type:anger,	disliked)
 			setExtra(sli,type:slut,		liked)
@@ -62,7 +152,7 @@ script, dialogue, parent, begin
 			setExtra(sli,type:sad,		liked)
 
 			$10="Yes."
-			dialogueLine()
+			sli := textLine(parent, 3)
 			setExtra(sli,type:logic,	none)
 			setExtra(sli,type:anger,	liked)
 			setExtra(sli,type:slut,		none)
@@ -72,11 +162,4 @@ script, dialogue, parent, begin
 			setExtra(sli,type:sad,		disliked)
 		)
 	)
-
-	subscript, dialogueLine, y, begin
-		sli := createText()
-		putSlice (sli, 10, y*10)
-		setExtraLength(sli, 32)
-		setParent (sli, parent)
-	end
 end

@@ -1,5 +1,7 @@
 include, inc/update.hsi
 include, inc/util.hsi
+include, inc/event.hsi
+include, inc/encounter.hsi
 
 defineConstant, begin
 	#game states
@@ -32,6 +34,20 @@ defineConstant, begin
 	
 	1,	liked
 	2,	disliked
+
+	0,	encounter:won
+	1,	encounter:lost
+	2,	encounter:enraged
+	3,	encounter:peaceful
+	4,	encounter:ran
+
+	0,	encounter:null
+	1,	encounter:choose
+	2,	encounter:talk
+	3,	encounter:fight
+	4,	encounter:item
+	5,	encounter:skill
+	7,	encounter:run
 end
 
 globalVariable, begin
