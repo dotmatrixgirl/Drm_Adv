@@ -1,0 +1,67 @@
+script, initChar, who, begin
+	variable (sli)
+	sli := createContainer()
+	setSliceClipping(sli)
+	resizeExtra(sli, 16)
+
+	switch (who) do (
+		case (hero:rose) do (
+			setExtra(sli, stat:life, 20)
+			setExtra(sli, stat:psi, 5)
+			setExtra(sli, stat:mind, 3)
+			setExtra(sli, stat:speed, 6)
+			setExtra(sli, stat:empathy, 5)
+			setExtra(sli, stat:personality, 0)
+
+			setParent(initpin(pin:heart), sli)
+
+			setparent(loadBorderSprite(1), sli)
+		)
+		case (hero:kat) do (
+			setExtra(sli, stat:life, 30)
+			setExtra(sli, stat:psi, 3)
+			setExtra(sli, stat:mind, 5)
+			setExtra(sli, stat:speed, 4)
+			setExtra(sli, stat:empathy, 7)
+			setExtra(sli, stat:personality, 0)
+
+			setParent(initpin(pin:flame), sli)
+
+			setparent(loadBorderSprite(1), sli)
+		)
+	)
+	setParent(sli, lookupslice(sli:chars))
+end
+
+script, initEnemy, who, begin
+	variable (sli)
+	sli := createContainer()
+	resizeExtra(sli, 16)
+
+	switch (who) do (
+		case (enemy:dummy) do (
+			setExtra(sli, stat:life, 1)
+			setExtra(sli, stat:psi, 1)
+			setExtra(sli, stat:mind, 1)
+			setExtra(sli, stat:speed, 1)
+			setExtra(sli, stat:empathy, 1)
+			setExtra(sli, stat:personality, type:logic)
+
+			setParent(initpin(pin:flame, 1), sli)
+			setParent(initpin(pin:flame, 1), sli)
+
+			setparent(loadBorderSprite(2), sli)
+		)
+	)
+	return (sli)
+end
+
+script, initpin, which, level=1, begin
+	variable(sli)
+	sli := createContainer()
+
+	setExtra(sli, pin:ID, which)
+	setExtra(sli, pin:level, level)
+
+	return(sli)
+end

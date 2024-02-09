@@ -1,6 +1,7 @@
 include, inc/update.hsi
 include, inc/util.hsi
 include, inc/event.hsi
+include, inc/stats.hsi
 include, inc/encounter.hsi
 
 defineConstant, begin
@@ -10,8 +11,9 @@ defineConstant, begin
 	2,	state:setkey
 
 	#slice lookups
-	200, sli:usable
-	201, sli:walkabout
+	200,	sli:usable
+	201,	sli:walkabout
+	202,	sli:chars
 
 	#buttons
 	0,	b:u
@@ -48,6 +50,37 @@ defineConstant, begin
 	4,	encounter:item
 	5,	encounter:skill
 	7,	encounter:run
+
+	0,	enemy:dummy
+
+	0,	pin:dummy
+	1,	pin:heart
+	2,	pin:calm
+	3,	pin:read
+	6,	pin:flame
+	7,	pin:water
+	8,	pin:thunder
+	9,	pin:earth
+	10,	pin:life
+	11,	pin:mind
+	12,	pin:psi
+	13,	pin:speed
+	14,	pin:empathy
+
+	0,	stat:life
+	1,	stat:psi
+	2,	stat:mind
+	3,	stat:speed
+	4,	stat:empathy
+	5,	stat:personality
+
+	0,	slot:atk1
+	1,	slot:atk2
+	2,	slot:stat1
+	3,	slot:stat2
+
+	0,	pin:ID
+	1,	pin:level
 end
 
 globalVariable, begin
@@ -83,12 +116,14 @@ plotscript, newGame, begin
 
 	subscript, init, begin
 		variable (sli)
-		suspendPlayer
+		suspendPlayer()
 		resetKeys()
-		sli := loadBorderSprite(1)
-		set parent(sli, getheroSlice(me))
-		setSliceLookup(sli, sli:walkabout)
-		setSliceVisible(getheroSprite(me), false)
+		sli := createContainer ()
+		setSliceLookup(sli, sli:chars)
+
+		initChar(hero:rose)
+		initChar(hero:kat)
+
 		state := state:resume
 	end
 end
@@ -102,4 +137,13 @@ plotscript, loadGame, begin
 	subscript, init, begin
 		state := state:resume
 	end
+end
+
+plotscript, autorun, begin
+	variable(sli)
+	sli := loadBorderSprite(1)
+	setSpriteFrame(sli,9)
+	set parent(sli, getheroSlice(me))
+	setSliceLookup(sli, sli:walkabout)
+	setSliceVisible(getheroSprite(me), false)
 end

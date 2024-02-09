@@ -1,18 +1,8 @@
 # HamsterSpeak constant definitions for drmadv.rpg
 
 define constant, begin
-0,stat:HP
-1,stat:MP
-2,stat:Atk
-3,stat:Aim
-4,stat:Def
-5,stat:Dodge
-6,stat:Magic
-7,stat:Will
-8,stat:Speed
-9,stat:Ctr
-10,stat:MP~
-11,stat:Hits
+0,hero:Rose
+1,hero:Kat
 0,element:Fire
 1,element:Ice
 2,element:Lit
