@@ -103,6 +103,14 @@ script, encounter, who, tick, begin
 	end
 end
 
+script, addExp, who, which, amount, begin
+	setStat(who, which, getStat(who, which)+amount)
+end
+
+script, getStatLevel, who, which, begin
+	return(getStat(who, which)^2)
+end
+
 script, initDialogue, parent, begin
 	variable (rand, sli)
 	rand := random (0, 1)

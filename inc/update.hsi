@@ -3,8 +3,8 @@
 script, mainLoop, state,  begin
 	variable(tick)
 	while (true) do (
-		update(tick, state)
 		wait()
+		update(tick, state)
 		tick += 1
 	)
 	subscript, update, tick, state, begin
@@ -18,6 +18,7 @@ script, keypresses, state, tick, begin
 		case(state:resume) do (
 			moveResume()
 			if (keyispressed(key:shift)&&keyispressed(key:b)) then (encounter (1, tick))
+			if (newpresskey(b:x)) then (menuStats())
 		)
 	)
 	subscript, moveResume, begin

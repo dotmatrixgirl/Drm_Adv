@@ -1,0 +1,19 @@
+script, menuStats, begin
+	variable (parent, sli)
+
+	init()
+	while (true) do (
+		wait
+		if (update) then (break)
+	)
+	freeSlice(parent)
+
+	subscript, init, begin
+		parent := loadSliceCollection(0)
+		sli := firstChild(firstChild(parent))
+	end
+
+	subscript, update, begin
+		if (newpresskey(b:b) || newpresskey(b:x)) then (return (true), exitScript)
+	end
+end

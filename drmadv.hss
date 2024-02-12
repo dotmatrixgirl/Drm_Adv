@@ -3,6 +3,7 @@ include, inc/util.hsi
 include, inc/event.hsi
 include, inc/stats.hsi
 include, inc/encounter.hsi
+include, inc/menu.hsi
 
 defineConstant, begin
 	#game states
@@ -73,6 +74,12 @@ defineConstant, begin
 	3,	stat:speed
 	4,	stat:empathy
 	5,	stat:personality
+
+	6,	exp:life
+	7,	exp:psi
+	8,	exp:mind
+	9,	exp:speed
+	10,	exp:empathy
 
 	0,	slot:atk1
 	1,	slot:atk2

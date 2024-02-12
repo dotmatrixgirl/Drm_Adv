@@ -1,36 +1,74 @@
 script, initChar, who, begin
-	variable (sli)
+	variable (sli, i)
 	sli := createContainer()
+	setParent(sli, lookupslice(sli:chars))
 	setSliceClipping(sli)
 	resizeExtra(sli, 16)
 
 	switch (who) do (
 		case (hero:rose) do (
-			setExtra(sli, stat:life, 20)
-			setExtra(sli, stat:psi, 5)
-			setExtra(sli, stat:mind, 3)
-			setExtra(sli, stat:speed, 6)
+			setExtra(sli, stat:personality, 50)
+
+			setExtra(sli, exp:life, 20^2)
+			setExtra(sli, exp:psi, 5^2)
+			setExtra(sli, exp:mind, 3^2)
+			setExtra(sli, exp:speed, 6^2)
 			setExtra(sli, stat:empathy, 5)
-			setExtra(sli, stat:personality, 0)
 
 			setParent(initpin(pin:heart), sli)
 
 			setparent(loadBorderSprite(1), sli)
 		)
 		case (hero:kat) do (
-			setExtra(sli, stat:life, 30)
-			setExtra(sli, stat:psi, 3)
-			setExtra(sli, stat:mind, 5)
-			setExtra(sli, stat:speed, 4)
-			setExtra(sli, stat:empathy, 7)
-			setExtra(sli, stat:personality, 0)
+			setExtra(sli, stat:personality, 50)
 
+			setExtra(sli, exp:life, 30^2)
+			setExtra(sli, exp:psi, 3^2)
+			setExtra(sli, exp:mind, 5^2)
+			setExtra(sli, exp:speed, 4^2)
+			setExtra(sli, stat:empathy, 7)
+	
 			setParent(initpin(pin:flame), sli)
 
 			setparent(loadBorderSprite(1), sli)
 		)
 	)
-	setParent(sli, lookupslice(sli:chars))
+
+	for (i, stat:life, stat:empathy) do (
+		setLvl(who, i)
+	)
+end
+
+script, getStat, who, which, begin
+	variable (sli)
+	sli := lookupslice(sli:chars)
+	sli := sliceChild(sli, who)
+	return (getExtra(sli, which))
+end
+
+script, setStat, who, which, value, begin
+	variable(sli)
+	sli := lookupslice(sli:chars)
+	sli := sliceChild(sli, who)
+	return (setExtra(sli, which, value))
+end
+
+script, setLvl, who, which, begin
+	variable(exp, lvl, origLvl)
+
+	origLvl := getStat(who, which)
+	exp := getStat(who, which+6)
+	lvl := sqrt (exp)
+
+	setStat(who, which, lvl)
+end
+
+script, getStatValue, which, lvl, begin
+	if (which == stat:life) then (
+		return((lvl*3)^3)
+	)else (
+		return((lvl*2)^2)
+	)
 end
 
 script, initEnemy, who, begin
@@ -56,12 +94,12 @@ script, initEnemy, who, begin
 	return (sli)
 end
 
-script, initpin, which, level=1, begin
+script, initpin, which, lvl=1, begin
 	variable(sli)
 	sli := createContainer()
 
 	setExtra(sli, pin:ID, which)
-	setExtra(sli, pin:level, level)
+	setExtra(sli, pin:level, lvl)
 
 	return(sli)
 end
