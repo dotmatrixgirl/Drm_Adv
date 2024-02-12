@@ -17,7 +17,7 @@ script, initChar, who, begin
 
 			setParent(initpin(pin:heart), sli)
 
-			setparent(loadBorderSprite(1), sli)
+			setparent(loadBorderSprite(2), sli)
 		)
 		case (hero:kat) do (
 			setExtra(sli, stat:personality, 50)
@@ -30,7 +30,7 @@ script, initChar, who, begin
 	
 			setParent(initpin(pin:flame), sli)
 
-			setparent(loadBorderSprite(1), sli)
+			setparent(loadBorderSprite(2), sli)
 		)
 	)
 

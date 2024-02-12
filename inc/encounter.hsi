@@ -49,9 +49,10 @@ script, encounter, who, tick, begin
 	end
 
 	subscript, changeState, which, begin
-		freeSliceChildren (TextSli)
 		switch (which) do (
 			case (encounter:choose) do (
+				freeSliceChildren (TextSli)
+
 				$10="What will you do?"
 				textLine(textSli, 0)
 
@@ -76,7 +77,11 @@ script, encounter, who, tick, begin
 				textLine(textSli, 2)
 			)
 			case (encounter:talk) do (
+				freeSliceChildren (TextSli)
 				initDialogue(textSli)
+			)
+			else (
+				freeSliceChildren (TextSli)
 			)
 		)
 		state := which

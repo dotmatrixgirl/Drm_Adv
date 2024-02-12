@@ -129,7 +129,7 @@ plotscript, newGame, begin
 		setSliceLookup(sli, sli:chars)
 
 		initChar(hero:rose)
-		initChar(hero:kat)
+		#initChar(hero:kat)
 
 		state := state:resume
 	end
@@ -148,7 +148,7 @@ end
 
 plotscript, autorun, begin
 	variable(sli)
-	sli := loadBorderSprite(1)
+	sli := loadBorderSprite(2)
 	setSpriteFrame(sli,9)
 	set parent(sli, getheroSlice(me))
 	setSliceLookup(sli, sli:walkabout)
