@@ -4,6 +4,7 @@ include, inc/event.hsi
 include, inc/stats.hsi
 include, inc/encounter.hsi
 include, inc/menu.hsi
+include, inc/map.hsi
 
 defineConstant, begin
 	#game states
@@ -153,4 +154,8 @@ plotscript, autorun, begin
 	set parent(sli, getheroSlice(me))
 	setSliceLookup(sli, sli:walkabout)
 	setSliceVisible(getheroSprite(me), false)
+	switch (current map) do (
+		case (0) do (loadTrees(3))
+		else ()
+	)
 end
