@@ -15,9 +15,10 @@ script, initChar, who, begin
 			setExtra(sli, exp:speed, 6^2)
 			setExtra(sli, stat:empathy, 5)
 
-			setParent(initpin(pin:heart), sli)
-
 			setparent(loadBorderSprite(2), sli)
+
+			setParent(initpin(pin:heart), sli)
+			setParent(initpin(pin:dummy), sli)
 		)
 		case (hero:kat) do (
 			setExtra(sli, stat:personality, 50)
@@ -27,10 +28,11 @@ script, initChar, who, begin
 			setExtra(sli, exp:mind, 5^2)
 			setExtra(sli, exp:speed, 4^2)
 			setExtra(sli, stat:empathy, 7)
-	
-			setParent(initpin(pin:flame), sli)
 
 			setparent(loadBorderSprite(2), sli)
+
+			setParent(initpin(pin:flame), sli)
+			setParent(initpin(pin:dummy), sli)
 		)
 	)
 
@@ -102,4 +104,33 @@ script, initpin, which, lvl=1, begin
 	setExtra(sli, pin:level, lvl)
 
 	return(sli)
+end
+
+script, getPinId, who, slot, begin
+	variable (sli)
+	sli :=	sliceChild(sliceChild (lookupslice(sli:chars), who), slot+1)
+	return (getExtra(sli, pin:ID))
+end
+
+script, getPinLvl, who, slot, begin
+	variable (sli)
+	sli :=	sliceChild(sliceChild (lookupslice(sli:chars), who), slot+1)
+	return (getExtra(sli, pin:level))
+end
+
+script, getPinName, which, begin
+	switch (which) do (
+		case (pin:heart) do ($11="Heart")
+		case (pin:calm) do ($11="Calm")
+		case (pin:read) do ($11="Read")
+		case (pin:flame) do ($11="Flame")
+		case (pin:water) do ($11="Water")
+		case (pin:shock) do ($11="Shock")
+		case (pin:earth) do ($11="Earth")
+		case (pin:life) do ($11="Life+")
+		case (pin:mind) do ($11="Mind+")
+		case (pin:psi) do ($11="Psi+")
+		case (pin:speed) do ($11="Speed+")
+		case (pin:empathy) do ($11="Empathy+")
+	)
 end

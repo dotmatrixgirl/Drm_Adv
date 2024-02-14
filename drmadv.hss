@@ -53,6 +53,10 @@ defineConstant, begin
 	5,	encounter:skill
 	7,	encounter:run
 
+	0,	turn:rose
+	1,	turn:kat
+	2,	turn:enemy
+
 	0,	enemy:dummy
 
 	0,	pin:dummy
@@ -61,7 +65,7 @@ defineConstant, begin
 	3,	pin:read
 	6,	pin:flame
 	7,	pin:water
-	8,	pin:thunder
+	8,	pin:shock
 	9,	pin:earth
 	10,	pin:life
 	11,	pin:mind

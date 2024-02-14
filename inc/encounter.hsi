@@ -1,5 +1,5 @@
 script, encounter, who, tick, begin
-	variable (parent, textSli, condition, state, enemySli)
+	variable (parent, textSli, condition, state, enemySli, turn, i)
 	initEncounter()
 	while (true) do (
 		updateEncounter()
@@ -13,17 +13,14 @@ script, encounter, who, tick, begin
 	return(tick)	
 
 	subscript, updateEncounter, begin
-		showValue(state)
 		switch (state) do (
 			case (encounter:choose) do (
-				if (newpresskey(b:l)) then (
+				if (newpresskey(b:u)) then (
 					changeState(encounter:talk)
-				) else if (newpresskey(b:r)) then (
+				) else if (newpresskey(b:a)) then (
 					changeState(encounter:fight)
-				)else if (newpresskey(b:u)) then (
-					changeState(encounter:item)
 				)else if (newpresskey(b:d)) then (
-					changeState(encounter:skill)
+					changeState(encounter:item)
 				)else if (newpresskey(b:b)) then (
 					changeState(encounter:run)
 				)
@@ -53,47 +50,85 @@ script, encounter, who, tick, begin
 			case (encounter:choose) do (
 				freeSliceChildren (TextSli)
 
-				$10="What will you do?"
+				$10="Choose Action"
 				textLine(textSli, 0)
 
-				$10="Press [left] to talk"
+				$10="Up: talk"
 				textLine(textSli, 2)
-				$10="Press [right] to fight"
+				$10="A: pins"
 				textLine(textSli, 3)
-				$10="Press [up] for items"
-				textLine(textSli, 5)
-				$10="Press [down] for skills"
+				$10="Down: items"
 				textLine(textSli, 4)
-
-				$10="Press [z] or [south] to run"
-				textLine(textSli, 7)
+				$10="B: run"
+				textLine(textSli, 5)
 			)
 			case (encounter:run) do (
-				$10="What will you do?"
+				freeSliceChildren(TextSli)
+				$10="Confirm"
 				textLine(textSli, 0)
-
-				$10="Press [z] or [south] to cancel"
-				$10="Press [space] or [east] to run"
+				$10="A: run"
 				textLine(textSli, 2)
+				$10="B: cancel"
+				textLine(textSli, 3)
 			)
 			case (encounter:talk) do (
-				freeSliceChildren (TextSli)
+				freeSliceChildren (textSli)
 				initDialogue(textSli)
 			)
+			case (encounter:fight) do (
+				freeSliceChildren (textSli)
+				initFight()
+			)
 			else (
-				freeSliceChildren (TextSli)
+				freeSliceChildren (textSli)
 			)
 		)
 		state := which
 	end
 
+	subscript, initFight, begin
+		$10="Choose Pin"
+		textLine(textSli, 0)
+		
+		if (getPinId(turn, 0)==pin:dummy && getPinId(turn, 1)==pin:dummy) then (
+			$10="No equipped pins"
+			textLine(textSli, 2)
+		) else (
+			if (getPinId(turn, 0)==pin:dummy) then (
+				$10="Empty"
+			) else (
+				getPinName(getPinId(turn, 0))
+				$10="Up: ${S11} lvl "
+				expandString(10)
+				appendNumber(10, getPinLvl(turn, 0))
+			)
+			textLine(textSli, 2)
+
+			if (getPinId(turn, 1)==pin:dummy) then (
+				$10="Empty"
+			) else (
+				getPinName(getPinId(turn, 1))
+				$10="Down: ${S11} lvl "
+				expandString(10)
+				appendNumber(10, getPinLvl(turn, 1))
+			)
+			textLine(textSli, 3)
+		)
+	end
+
 	subscript, initEncounter, begin
 		condition := encounter:peaceful
-		parent := createRect(getScreenWidth, getScreenHeight)
+		turn := turn:rose
+		parent := createRect()
+		setSliceSize(parent, getScreenWidth--40, getScreenHeight--40)
+		center slice (parent)
+		setRectStyle(parent, 0)
 		
-		textSli := createRect(getScreenWidth, 200)
+		textSli := createRect(sliceWidth(parent), 80)
 		setParent(textSli, parent)
+		realignSlice(textSli, edge:center, edge:bottom, edge:center, edge:bottom)
 		setPadding(textSli, 10)
+		setRectStyle(textSli, 0)
 
 		enemySli := createContainer()
 		setSliceClipping(enemySli)
@@ -121,7 +156,7 @@ script, initDialogue, parent, begin
 	rand := random (0, 1)
 	switch (rand) do (
 		case (0) do (
-			$10="tell me, what do you want from life?"
+			$10="What do you want from life?"
 			textLine(parent, 0)
 
 			$10="I need nothing."
@@ -155,7 +190,7 @@ script, initDialogue, parent, begin
 			setExtra(sli,type:sad,		none)
 		)
 		case (1) do (
-			$10="do you hate me?"
+			$10="Do you hate me?"
 			textLine(parent, 0)
 
 			$10="No."
