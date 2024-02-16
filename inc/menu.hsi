@@ -1,5 +1,5 @@
-script, menuStats, begin
-	variable (parent, sli)
+script, menuStats, who=0, begin
+	variable (parent, sli, i, textSli)
 
 	init()
 	while (true) do (
@@ -11,6 +11,18 @@ script, menuStats, begin
 	subscript, init, begin
 		parent := loadSliceCollection(0)
 		sli := firstChild(firstChild(parent))
+		sli := sliceChild (sli, 1)
+		sli := sliceChild (sli, 1)
+		setAllStatLvl (who)
+		for (i, stat:life, stat:alignment) do (
+			$10=""
+			appendNumber(10, statValue(who, i))
+			textSli := createText
+			setParent(textSli, sli)
+			setSliceText(textSli, 10)
+			set outline(textSli)
+			realignSlice(textSli, edge:left, edge:center, edge:left, edge:center)
+		)
 	end
 
 	subscript, update, begin

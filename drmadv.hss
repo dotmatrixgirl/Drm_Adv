@@ -5,6 +5,7 @@ include, inc/stats.hsi
 include, inc/encounter.hsi
 include, inc/menu.hsi
 include, inc/map.hsi
+include, inc/pins.hsi
 
 defineConstant, begin
 	#game states
@@ -16,6 +17,7 @@ defineConstant, begin
 	200,	sli:usable
 	201,	sli:walkabout
 	202,	sli:chars
+	203,	sli:pinBag
 
 	#buttons
 	0,	b:u
@@ -35,9 +37,12 @@ defineConstant, begin
 	5,	type:caring
 	6,	type:scared
 	7,	type:sad
-	
+
 	1,	liked
 	2,	disliked
+
+	1,	weak
+	2,	strong
 
 	0,	encounter:won
 	1,	encounter:lost
@@ -57,6 +62,10 @@ defineConstant, begin
 	1,	turn:kat
 	2,	turn:enemy
 
+	0,	char:rose
+	1,	char:kat
+	2,	char:enemy
+
 	0,	enemy:dummy
 
 	0,	pin:dummy
@@ -68,16 +77,29 @@ defineConstant, begin
 	8,	pin:shock
 	9,	pin:earth
 	10,	pin:life
-	11,	pin:mind
-	12,	pin:psi
+	11,	pin:psi
+	12,	pin:mind
 	13,	pin:speed
 	14,	pin:empathy
+	15,	pin:flameAtr
+	16,	pin:waterAtr
+	17,	pin:shockAtr
+	18,	pin:earthAtr
+
+	0,	lvl:life
+	1,	lvl:psi
+	2,	lvl:mind
+	3,	lvl:speed
+	4,	lvl:empathy
+	4,	lvl:will
 
 	0,	stat:life
 	1,	stat:psi
 	2,	stat:mind
 	3,	stat:speed
 	4,	stat:empathy
+	4,	stat:will
+	5,	stat:alignment
 	5,	stat:personality
 
 	6,	exp:life
@@ -90,6 +112,7 @@ defineConstant, begin
 	1,	slot:atk2
 	2,	slot:stat1
 	3,	slot:stat2
+	4,	slot:atr
 
 	0,	pin:ID
 	1,	pin:level
@@ -130,11 +153,17 @@ plotscript, newGame, begin
 		variable (sli)
 		suspendPlayer()
 		resetKeys()
+
+		sli := createContainer()
+		setSliceLookup (sli, sli:pinBag)
+
 		sli := createContainer ()
 		setSliceLookup(sli, sli:chars)
 
 		initChar(hero:rose)
 		#initChar(hero:kat)
+
+		
 
 		state := state:resume
 	end

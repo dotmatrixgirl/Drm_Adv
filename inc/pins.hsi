@@ -1,0 +1,96 @@
+script, addPinToBag, id, lvl=1, begin
+	variable (sli)
+	sli := initPin(id, lvl)
+	setParent(sli, lookupSlice(sli:pinbag))
+end
+
+script, addEquipPin, who, slot, id, lvl=1, begin
+	variable (sli, sliSlot)
+	
+	sliSlot := sliceChild(sliceChild(lookupSlice(sli:chars), who), slot)
+	sli := firstChild (sliSlot)
+	if (sli) then (
+		setParent(sli, lookupSlice(sli:pinbag))
+	)
+	sli := initPin(id, lvl)
+	setParent(sli, sliSlot)
+end
+
+script, equipPin, who, bagSlot, slot, begin
+	variable(sli, sliSlot)
+	sli := sliceChild(lookupSlice(sli:pinbag), bagSlot)
+	sliSlot := sliceChild(sliceChild(sli:chars, who), slot)
+	if (sli) then (
+		setParent(firstchild (sliSlot), lookupSlice(sli:pinbag))
+		setParent(sli, sliSlot)
+	) else (return (1))
+end
+
+script, initpin,  id, lvl, begin
+	variable(sli)
+	sli := createContainer()
+
+	setExtra(sli, pin:ID, id)
+	setExtra(sli, pin:level, lvl)
+
+	return(sli)
+end
+
+script, getPinId, who, slot, begin
+	variable (sli)
+	sli :=	firstChild(sliceChild(sliceChild (lookupslice(sli:chars), who), slot))
+	return (getExtra(sli, pin:ID))
+end
+
+script, getPinLvl, who, slot, begin
+	variable (sli)
+	sli :=	firstChild(sliceChild(sliceChild (lookupslice(sli:chars), who), slot))
+	return (getExtra(sli, pin:level))
+end
+
+script, getPinName, which, begin
+	switch (which) do (
+		case (pin:heart) do ($11="Heart")
+		case (pin:calm) do ($11="Calm")
+		case (pin:read) do ($11="Read")
+		case (pin:flame) do ($11="Flame")
+		case (pin:water) do ($11="Water")
+		case (pin:shock) do ($11="Shock")
+		case (pin:earth) do ($11="Earth")
+
+		case (pin:life) do ($11="Life+")
+		case (pin:mind) do ($11="Mind+")
+		case (pin:psi) do ($11="Psi+")
+		case (pin:speed) do ($11="Speed+")
+		case (pin:empathy) do ($11="Empathy+")
+
+		case (pin:flameAtr) do ($11="Flame Atr")
+		case (pin:waterAtr) do ($11="Water Atr")
+		case (pin:shockAtr) do ($11="Shock Atr")
+		case (pin:earthAtr) do ($11="Earth Atr")
+	)
+end
+
+script, getPinEffect, id, lvl, mod1, mod2=1, begin
+	variable (value)
+	switch (id) do (
+		#mod1 is psi, mod2 is target hp
+		case (pin:heart) do (
+			value := lvl * (mod1 --    mod2/2)
+		)
+		#mod1 is empathy, mod2 is will
+		case (pin:calm, pin:read) do (
+			value := lvl * (mod1 + mod1*random(1, 8)/10) / (mod2)
+		)
+		#mod1 is psi, mod2 is mind
+		case (pin:flame, pin:water, pin:shock, pin:earth) do (
+			value := lvl * mod1 / 4 / mod2
+		)
+		#mod1 is original stat value
+		case (pin:life, pin:mind, pin:psi, pin:speed, pin:empathy) do (
+			value := lvl * mod1 / 4
+			value := value * value / 100
+		)
+	)
+	return (value)
+end

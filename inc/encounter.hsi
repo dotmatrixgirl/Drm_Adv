@@ -143,12 +143,50 @@ script, encounter, who, tick, begin
 	end
 end
 
-script, addExp, who, which, amount, begin
-	setStat(who, which, getStat(who, which)+amount)
+#caculate attack damage using attacker, attack, and target
+# *brian explodes*
+script, attackDamage, attacker, pin, target, begin
+	variable (atr, psi, mind, sli, damage)
+	psi := statValue(attacker, stat:psi)
+	mind := statValue(target, stat:mind)
+
+	damage := getPinEffect(pin, psi, mind)
+
+	#*1.5 if attacking with atribute of pin
+	atr := getPinId(attacker, slot:atr)
+	if (atr -- 9 == pin) then (damage := damage + damage/2)
+
+
+	#if weak, damage*1.5 ; if strong, damage/2
+	if (elementCheck(pin, target) == weak) then (
+		damage := (damage + damage/2)
+	) else if (elementCheck(pin, target) == strong) then (
+		damage := (damage/2)
+	)
 end
 
-script, getStatLevel, who, which, begin
-	return(getStat(who, which)^2)
+#math go brr
+script, elementCheck, pin, target, begin
+	variable (modded, atr)
+
+	atr := getPinId(target, slot:atr)
+
+	if (atr == pin:dummy) then (exitScript)
+
+	pin := pin -- 5
+	atr := atr -- 14
+
+	#make it 4 into a 0 for math reasons.
+	modded := pin, mod, 4
+	if (modded  -- atr == -1) then (
+		return (weak)
+	)
+
+	#make it 4 into a 0 for math reasons.
+	modded := atr, mod, 4
+	if (pin -- modded == 1) then (
+		return (strong)
+	)
 end
 
 script, initDialogue, parent, begin
