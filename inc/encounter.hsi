@@ -1,5 +1,5 @@
 script, encounter, who, tick, begin
-	variable (parent, textSli, condition, state, enemySli, turn, i)
+	variable (parent, textSli, hpSli, condition, state, turn, i)
 	initEncounter()
 	while (true) do (
 		updateEncounter()
@@ -10,40 +10,89 @@ script, encounter, who, tick, begin
 		wait
 	)
 	endEncounter()
-	return(tick)	
+	return(tick)
 
 	subscript, updateEncounter, begin
-		switch (state) do (
-			case (encounter:choose) do (
-				if (newpresskey(b:u)) then (
-					changeState(encounter:talk)
-				) else if (newpresskey(b:a)) then (
-					changeState(encounter:fight)
-				)else if (newpresskey(b:d)) then (
-					changeState(encounter:item)
-				)else if (newpresskey(b:b)) then (
-					changeState(encounter:run)
+		if (turn == turn:enemy) then (
+			enemyTurn
+			nextTurn
+		) else (
+			switch (state) do (
+				case (encounter:choose) do (
+					if (newpresskey(b:u)) then (
+						changeState(encounter:talk)
+					) else if (newpresskey(b:a)) then (
+						changeState(encounter:skill)
+					)else if (newpresskey(b:d)) then (
+						changeState(encounter:item)
+					)else if (newpresskey(b:b)) then (
+						changeState(encounter:run)
+					)
 				)
-			)
-			case (encounter:talk) do (
-				if (newpresskey(b:b)) then (
-					changeState(encounter:choose)
+				case (encounter:talk) do (
+					if (newpresskey(b:b)) then (
+						changeState(encounter:choose)
+					)
 				)
-			)
-			case (encounter:run) do (
-				if (newpresskey(b:a)) then (
-					condition := encounter:ran
-				)else if (newpresskey(b:b)) then (
-					changeState(encounter:choose)
+				case (encounter:run) do (
+					if (newpresskey(b:a)) then (
+						condition := encounter:ran
+					)else if (newpresskey(b:b)) then (
+						changeState(encounter:choose)
+					)
 				)
-			)
-			else (
-				if (newpresskey(b:b)) then (
-					changeState(encounter:choose)
+				case (encounter:skill) do (
+					if (newpresskey(b:b)) then (
+						changeState(encounter:choose)
+					) else if (newpresskey(b:u)) then (
+						if (getPinId(turn, slot:atk1) == pin:heart) then (
+							usePin(turn,((turn + 1),mod,2), slot:atk1)
+						) else(
+							usePin(turn, char:enemy, slot:atk1)
+						)
+						
+						(nextTurn)
+					) else if (newpresskey(b:d)) then (
+						if (getPinId(turn, slot:atk2) == pin:heart) then (
+							usePin(turn, ((turn + 1),mod,2), slot:atk2)
+						) else(
+							usePin(turn, char:enemy, slot:atk2)
+						)
+						(nextTurn)
+					)
+				)
+				else (
+					if (newpresskey(b:b)) then (
+						changeState(encounter:choose)
+					)
 				)
 			)
 		)
 	end
+
+	subscript, nextTurn, begin
+		updateHP()
+		turn += 1
+		if (turn > char:enemy) then (turn := char:rose)
+		if (turn <> char:Rose) then (changeState(encounter:choose))
+	end
+
+	subscript, enemyTurn, begin
+		variable (slot)
+		slot := random (1, 100)
+		if (slot > 75) then (
+			slot := slot:atk1
+		) else (
+			slot := slot:atk2
+		)
+
+		if (getPinId(turn, slot) == pin:Life) then (
+			usePin(turn, turn, slot)
+		) else (
+			usePin(turn, random (char:Rose, char:Kat), slot)
+		)
+	end
+
 
 	subscript, changeState, which, begin
 		switch (which) do (
@@ -75,9 +124,9 @@ script, encounter, who, tick, begin
 				freeSliceChildren (textSli)
 				initDialogue(textSli)
 			)
-			case (encounter:fight) do (
+			case (encounter:skill) do (
 				freeSliceChildren (textSli)
-				initFight()
+				initSkill()
 			)
 			else (
 				freeSliceChildren (textSli)
@@ -86,7 +135,19 @@ script, encounter, who, tick, begin
 		state := which
 	end
 
-	subscript, initFight, begin
+	subscript, updateHP, begin
+
+		for (i, 0, 2) do (
+			$10=""
+			appendNumber (10, statLvl(i, stat:currentlife))
+			setSliceText(sliceChild(hpSli, i), 10)
+			if (i==char:enemy&&statLvl(i, stat:currentlife) == 0) then (
+				condition := encounter:won
+			)
+		)
+	end
+
+	subscript, initSkill, begin
 		$10="Choose Pin"
 		textLine(textSli, 0)
 		
@@ -97,20 +158,20 @@ script, encounter, who, tick, begin
 			if (getPinId(turn, 0)==pin:dummy) then (
 				$10="Empty"
 			) else (
-				getPinName(getPinId(turn, 0))
+				getPinName(getPinId(turn, slot:atk1))
 				$10="Up: ${S11} lvl "
 				expandString(10)
-				appendNumber(10, getPinLvl(turn, 0))
+				appendNumber(10, getPinLvl(turn, slot:atk1))
 			)
 			textLine(textSli, 2)
 
 			if (getPinId(turn, 1)==pin:dummy) then (
 				$10="Empty"
 			) else (
-				getPinName(getPinId(turn, 1))
+				getPinName(getPinId(turn, slot:atk2))
 				$10="Down: ${S11} lvl "
 				expandString(10)
-				appendNumber(10, getPinLvl(turn, 1))
+				appendNumber(10, getPinLvl(turn, slot:atk2))
 			)
 			textLine(textSli, 3)
 		)
@@ -119,50 +180,28 @@ script, encounter, who, tick, begin
 	subscript, initEncounter, begin
 		condition := encounter:peaceful
 		turn := turn:rose
-		parent := createRect()
-		setSliceSize(parent, getScreenWidth--40, getScreenHeight--40)
-		center slice (parent)
-		setRectStyle(parent, 0)
-		
-		textSli := createRect(sliceWidth(parent), 80)
-		setParent(textSli, parent)
-		realignSlice(textSli, edge:center, edge:bottom, edge:center, edge:bottom)
-		setPadding(textSli, 10)
-		setRectStyle(textSli, 0)
+		parent := loadSliceCollection (1)
 
-		enemySli := createContainer()
-		setSliceClipping(enemySli)
+		textSli := sliceChild(firstChild(parent), 1)
 
-		setParent(initEnemy(who), enemySli)
+		hpSli :=  sliceChild(firstChild(parent), 3)
+
+		who := enemy:dummy
+
+		initEnemy(who)
+
+		for (i, char:Rose, char:Enemy) do (
+			setLvl(i, stat:currentlife, statValue(i, stat:life))
+		)
+		updateHP()
 
 		changeState(encounter:choose)
 	end
 
 	subscript, endEncounter, begin
+		wait (50)
 		freeSlice (parent)
 	end
-end
-
-#caculate attack damage using attacker, attack, and target
-# *brian explodes*
-script, attackDamage, attacker, pin, target, begin
-	variable (atr, psi, mind, sli, damage)
-	psi := statValue(attacker, stat:psi)
-	mind := statValue(target, stat:mind)
-
-	damage := getPinEffect(pin, psi, mind)
-
-	#*1.5 if attacking with atribute of pin
-	atr := getPinId(attacker, slot:atr)
-	if (atr -- 9 == pin) then (damage := damage + damage/2)
-
-
-	#if weak, damage*1.5 ; if strong, damage/2
-	if (elementCheck(pin, target) == weak) then (
-		damage := (damage + damage/2)
-	) else if (elementCheck(pin, target) == strong) then (
-		damage := (damage/2)
-	)
 end
 
 #math go brr
@@ -178,13 +217,13 @@ script, elementCheck, pin, target, begin
 
 	#make it 4 into a 0 for math reasons.
 	modded := pin, mod, 4
-	if (modded  -- atr == -1) then (
+	if (modded  -- atr == 1) then (
 		return (weak)
 	)
 
 	#make it 4 into a 0 for math reasons.
 	modded := atr, mod, 4
-	if (pin -- modded == 1) then (
+	if (pin -- modded == -1) then (
 		return (strong)
 	)
 end

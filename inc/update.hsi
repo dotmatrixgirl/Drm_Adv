@@ -116,8 +116,6 @@ script, animate, state, tick, begin
 				)
 				setSpriteFrame(sli, frame)
 			)
-			sli := lookupNextSlice (sli:walkabout, sli, lookupSlice(sl:heroLayer))
-			if (sli==false) then (break)
 		)
 	end
 end

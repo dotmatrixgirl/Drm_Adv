@@ -1,44 +1,64 @@
-script, initChar, who, begin
-	variable (sli, i)
-	sli := createContainer()
-	setParent(sli, lookupslice(sli:chars))
-	setSliceClipping(sli)
-	resizeExtra(sli, 16)
+script, initChars, begin
+	variable (parent, sli)
 
-	setParent(createContainer, sli)
-	setParent(createContainer, sli)
-	setParent(createContainer, sli)
-	setParent(createContainer, sli)
-	setParent(createContainer, sli)
+	addHero(char:kat)
 
-	addEquipPin(who, slot:atk2, pin:dummy)
-	addEquipPin(who, slot:stat1, pin:dummy)
-	addEquipPin(who, slot:stat2, pin:dummy)
+	sli := createContainer ()
+	setSliceLookup(sli, sli:chars)
+	sli := createContainer ()
+	setSliceLookup(sli, sli:pinBag)
 
-	switch (who) do (
-		case (hero:rose) do (
-			initLvl(who, lvl:life, 1)
-			initLvl(who, lvl:psi, 1)
-			initLvl(who, lvl:mind, 1)
-			initLvl(who, lvl:speed, 1)
-			initLvl(who, lvl:empathy, 1)
-			setLvl(who, stat:alignment, 50)
+	parent := createContainer()
+	setParent(parent, lookupslice(sli:chars))
+	setSliceClipping(parent)
+	resizeExtra(parent, 16)
 
-			addEquipPin(who, slot:atk1, pin:heart)
-			addEquipPin(who, slot:atr, pin:earthatr)
-		)
-		case (hero:kat) do (
-			initLvl(who, lvl:life, 4)
-			initLvl(who, lvl:psi, 3)
-			initLvl(who, lvl:mind, 5)
-			initLvl(who, lvl:speed, 4)
-			initLvl(who, lvl:empathy, 7)
-			setLvl(who, stat:alignment, 40)
 
-			addEquipPin(who, slot:atk1, pin:water)
-			addEquipPin(who, slot:atr, pin:waterAtr)
-		)
-	)
+	initLvl(char:rose, lvl:life, 6)
+	initLvl(char:rose, lvl:psi, 6)
+	initLvl(char:rose, lvl:mind, 4)
+	initLvl(char:rose, lvl:speed, 6)
+	initLvl(char:rose, lvl:empathy, 5)
+	setLvl(char:rose, stat:alignment, 50)
+
+	initPinSlot(char:rose, slot:atk1, pin:heart)
+	initPinSlot(char:rose, slot:atk2, pin:dummy)
+	initPinSlot(char:rose, slot:stat1, pin:dummy)
+	initPinSlot(char:rose, slot:stat2, pin:dummy)
+	initPinSlot(char:rose, slot:atr, pin:earthatr)
+
+	setParent(loadBorderSprite(2), parent)
+	$1="Rose"
+
+
+	parent := createContainer()
+	setParent(parent, lookupslice(sli:chars))
+	setSliceClipping(parent)
+	resizeExtra(parent, 16)
+
+	initLvl(char:kat, lvl:life, 4)
+	initLvl(char:kat, lvl:psi, 3)
+	initLvl(char:kat, lvl:mind, 6)
+	initLvl(char:kat, lvl:speed, 5)
+	initLvl(char:kat, lvl:empathy, 7)
+	setLvl(char:kat, stat:alignment, 40)
+
+	initPinSlot(char:kat, slot:atk1, pin:water)
+	initPinSlot(char:kat, slot:atk2, pin:dummy)
+	initPinSlot(char:kat, slot:stat1, pin:dummy)
+	initPinSlot(char:kat, slot:stat2, pin:dummy)
+	initPinSlot(char:kat, slot:atr, pin:waterAtr)
+
+	setParent(loadBorderSprite(1), parent)
+	$2="Kat"
+end
+
+script, getCharSprite, who, begin
+	variable(sli)
+	sli := lookupslice(sli:chars)
+	sli := sliceChild(sli, who)
+	sli := sliceChild(sli, char:sprite)
+	return (getSpriteSetNumber(sli))
 end
 
 script, initEnemy, who, begin
@@ -52,29 +72,84 @@ script, initEnemy, who, begin
 	sli := createContainer()
 	set parent(sli, lookupSlice(sli:chars))
 	resizeExtra(sli, 16)
+	setSliceClipping(sli, true)
 
 	switch (who) do (
 		case (enemy:dummy) do (
-			initLvl(sli, lvl:life, 3)
-			initLvl(sli, lvl:psi, 2)
-			initLvl(sli, lvl:mind, 4)
-			initLvl(sli, lvl:speed, 2)
-			initLvl(sli, lvl:will, 1)
-			setLvl(sli, stat:personality, type:logic)
+			initLvl(char:enemy, lvl:life, 20)
+			initLvl(char:enemy, lvl:psi, 2)
+			initLvl(char:enemy, lvl:mind, 4)
+			initLvl(char:enemy, lvl:speed, 2)
+			initLvl(char:enemy, lvl:will, 1)
+			setLvl(char:enemy, stat:personality, type:logic)
 
-			createContainer()
-			createContainer()
-			createContainer()
-			createContainer()
-			createContainer()
-			addEquipPin(char:enemy, slot:atk1, pin:flame)
-			addEquipPin(char:enemy, slot:atk2, pin:flame)
-			addEquipPin(char:enemy, slot:atr, pin:flameatr)
+			initPinSlot(char:enemy, slot:atk1, pin:flame)
+			initPinSlot(char:enemy, slot:atk2, pin:flame)
+			initPinSlot(char:enemy, slot:stat1, pin:dummy)
+			initPinSlot(char:enemy, slot:stat2, pin:dummy)
+			initPinSlot(char:enemy, slot:atr, pin:flameatr)
+
+			setparent(loadBorderSprite(2), sli)
+		) else (
+			initLvl(char:enemy, lvl:life, 20)
+			initLvl(char:enemy, lvl:psi, 2)
+			initLvl(char:enemy, lvl:mind, 4)
+			initLvl(char:enemy, lvl:speed, 2)
+			initLvl(char:enemy, lvl:will, 1)
+			setLvl(char:enemy, stat:personality, type:logic)
+
+			initPinSlot(char:enemy, slot:atk1, pin:flame)
+			initPinSlot(char:enemy, slot:atk2, pin:flame)
+			initPinSlot(char:enemy, slot:stat1, pin:dummy)
+			initPinSlot(char:enemy, slot:stat2, pin:dummy)
+			initPinSlot(char:enemy, slot:atr, pin:flameatr)
 
 			setparent(loadBorderSprite(2), sli)
 		)
 	)
 	return (sli)
+end
+
+script, maxHP, who, begin
+	return (statValue(who, stat:life))
+end
+
+script, statGain, who, type, begin
+	variable(i)
+	if (who := char:enemy) then (
+		exit script
+	)
+	switch (type) do (
+		case (gain:damaged) do (
+			addExpCapped (who, stat:life, 4*6)
+		)
+		case (gain:attack) do (
+			addExpCapped (who, stat:psi, 2*6)
+		)
+		case (gain:failtalk) do (
+			addExpCapped (who, stat:empathy, 2*6)
+		)
+		case (gain:talked) do (
+			addExpCapped (who, stat:empathy, 10*6)
+		)
+		case (gain:battled) do (
+			addExpCapped (who, stat:speed, random (2, 10)*6)
+			for (i, slot:atk1, slot:stat2) do (
+				addPinExpCapped(who, i, 8*6)
+			)
+		)
+	)
+end
+
+script, addExpCapped, who, stat, amount, begin
+	variable (lvlSum, i)
+	for (i, stat:life, stat:will) do (
+		lvlSum += statLvl (who, i)
+	)
+	if (lvlSum <= game:lvlCap) then (
+		addExp(who, stat, amount)
+		return (setStatLvl(who, stat))
+	)
 end
 
 script, addExp, who, stat, amount, begin

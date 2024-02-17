@@ -8,7 +8,20 @@ script, menuStats, who=0, begin
 	)
 	freeSlice(parent)
 
+	subscript, update, begin
+		if (newpresskey(b:b) || newpresskey(b:x)) then (
+			return (true)
+			exitScript()
+		)
+		if (newpresskey (b:u) || newpresskey (b:d) || newpresskey (b:r) || newpresskey (b:l)) then (
+			who += 1
+			if (who > 1) then (who := 0)
+			init
+		)
+	end
+
 	subscript, init, begin
+		if (parent) then (freeSlice(parent))
 		parent := loadSliceCollection(0)
 		sli := firstChild(firstChild(parent))
 		sli := sliceChild (sli, 1)
@@ -20,12 +33,12 @@ script, menuStats, who=0, begin
 			textSli := createText
 			setParent(textSli, sli)
 			setSliceText(textSli, 10)
-			set outline(textSli)
+			setOutline(textSli)
 			realignSlice(textSli, edge:left, edge:center, edge:left, edge:center)
 		)
-	end
-
-	subscript, update, begin
-		if (newpresskey(b:b) || newpresskey(b:x)) then (return (true), exitScript)
+		sli := firstChild(firstChild(firstChild(firstChild(parent))))
+		setSliceText(sli, who + strng:RoseName)
+		sli := firstChild(firstChild(firstChild(parent)))
+		setSpriteSetNumber(sli, getCharSprite(who))
 	end
 end

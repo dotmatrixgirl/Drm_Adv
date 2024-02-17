@@ -1,0 +1,249 @@
+Script trigger log for Dream Adventure, 02-17-2024 13:49:56
+
+Solid lines '|' show triggered scripts which have already started running but are
+waiting or paused due to either another script which was triggered (indicated by a
+line to its right) or while waiting for a script they called (not shown).
+Dotted lines ':' show triggered scripts which have not even had a chance to start.
+(...as above...) means that a script continues waiting multiple ticks for the same reason.
+
+ Symbols in front of script names:
++ -- A script was triggered (queued), possibly also started, possibly also finished
+! -- As above, but triggered as a side effect of something the script above it did,
+     such as running "close menu", interrupting that script.
+     (Note: ! is used only if the command didn't cause an implicit 'wait')
+* -- A queued script was started, possibly also finished
+- -- A previously started script finished
+
+
+           +onkey() on-key script ... finished
+tick 848        (waiting on wait in encounter)
+           +onkey() on-key script ... finished
+tick 849        (waiting on wait in encounter)
+           +onkey() on-key script ... finished
+tick 850        (waiting on wait in encounter)
+           +onkey() on-key script ... finished
+tick 851        (waiting on wait in encounter)
+           +onkey() on-key script ... finished
+tick 852        (waiting on wait in encounter)
+           +onkey() on-key script ... finished
+tick 853        (waiting on wait in encounter)
+           +onkey() on-key script ... finished
+tick 854        (waiting on wait in encounter)
+           +onkey() on-key script ... finished
+tick 855        (waiting on wait in encounter)
+           +onkey() on-key script ... finished
+tick 856        (waiting on wait in encounter)
+           +onkey() on-key script ... finished
+tick 857        (waiting on wait in encounter)
+           +onkey() on-key script ... finished
+tick 858        (waiting on wait in encounter)
+           +onkey() on-key script ... finished
+tick 859        (waiting on wait in encounter)
+           +onkey() on-key script ... finished
+tick 860        (waiting on wait in encounter)
+           +onkey() on-key script ... finished
+tick 861        (waiting on wait in encounter)
+           +onkey() on-key script ... finished
+tick 862        (waiting on wait in encounter)
+           +onkey() on-key script ... finished
+tick 863        (waiting on wait in encounter)
+           +onkey() on-key script ... finished
+tick 911        (waiting on wait in encounter)
+           +onkey() on-key script ... finished
+tick 912        (waiting on wait in encounter)
+           +onkey() on-key script ... finished
+tick 913        (waiting on wait in encounter)
+           +onkey() on-key script ... finished
+tick 914        (waiting on wait in encounter)
+           +onkey() on-key script ... finished
+tick 915        (waiting on wait in encounter)
+           +onkey() on-key script ... finished
+tick 916        (waiting on wait in encounter)
+           +onkey() on-key script ... finished
+tick 917        (waiting on wait in encounter)
+           +onkey() on-key script ... finished
+tick 918        (waiting on wait in encounter)
+           +onkey() on-key script ... finished
+tick 919        (waiting on wait in encounter)
+           +onkey() on-key script ... finished
+tick 920        (waiting on wait in encounter)
+           +onkey() on-key script ... finished
+tick 921        (waiting on wait in encounter)
+           +onkey() on-key script ... finished
+tick 922        (waiting on wait in encounter)
+           +onkey() on-key script ... finished
+tick 923        (waiting on wait in encounter)
+           +onkey() on-key script ... finished
+tick 924        (waiting on wait in encounter)
+           +onkey() on-key script ... finished
+tick 925        (waiting on wait in encounter)
+           +onkey() on-key script ... finished
+tick 926        (waiting on wait in encounter)
+           +onkey() on-key script ... finished
+tick 927        (waiting on wait in encounter)
+           +onkey() on-key script ... finished
+tick 928        (waiting on wait in encounter)
+           +onkey() on-key script ... finished
+tick 929        (waiting on wait in encounter)
+           +onkey() on-key script ... finished
+tick 930        (waiting on wait in encounter)
+           +onkey() on-key script ... finished
+tick 931        (waiting on wait in encounter)
+           +onkey() on-key script ... finished
+tick 932        (waiting on wait in encounter)
+           +onkey() on-key script ... finished
+tick 933        (waiting on wait in encounter)
+           +onkey() on-key script ... finished
+tick 934        (waiting on wait in encounter)
+           +onkey() on-key script ... finished
+tick 935        (waiting on wait in encounter)
+           +onkey() on-key script ... finished
+tick 936        (waiting on wait in encounter)
+           +onkey() on-key script ... finished
+tick 1016       (waiting on wait in encounter)
+           +onkey() on-key script ... finished
+tick 1017       (waiting on wait in encounter)
+           +onkey() on-key script ... finished
+tick 1018       (waiting on wait in encounter)
+           +onkey() on-key script ... finished
+tick 1019       (waiting on wait in encounter)
+           +onkey() on-key script ... finished
+tick 1020       (waiting on wait in encounter)
+           +onkey() on-key script ... finished
+tick 1021       (waiting on wait in encounter)
+           +onkey() on-key script ... finished
+tick 1022       (waiting on wait in encounter)
+           +onkey() on-key script ... finished
+tick 1136       (waiting on wait in encounter)
+           +onkey() on-key script ... finished
+tick 1137       (waiting on wait in encounter)
+           +onkey() on-key script ... finished
+tick 1138       (waiting on wait in encounter)
+           +onkey() on-key script ... finished
+tick 1139       (waiting on wait in encounter)
+           +onkey() on-key script ... finished
+tick 1140       (waiting on wait in encounter)
+           +onkey() on-key script ... finished
+tick 1141       (waiting on wait in encounter)
+           +onkey() on-key script ... finished
+tick 1142       (waiting on wait in encounter)
+           +onkey() on-key script ... finished
+tick 1213       (waiting on wait in encounter)
+           +onkey() on-key script ... finished
+tick 1214       (waiting on wait in encounter)
+           +onkey() on-key script ... finished
+tick 1215       (waiting on wait in encounter)
+           +onkey() on-key script ... finished
+tick 1216       (waiting on wait in encounter)
+           +onkey() on-key script ... finished
+tick 1217       (waiting on wait in encounter)
+           +onkey() on-key script ... finished
+tick 1218       (waiting on wait in encounter)
+           +onkey() on-key script ... finished
+tick 1219       (waiting on wait in encounter)
+           +onkey() on-key script ... finished
+tick 1220       (waiting on wait in encounter)
+           +onkey() on-key script ... finished
+tick 1303       (waiting on wait in encounter)
+           +onkey() on-key script ... finished
+tick 1304       (waiting on wait in encounter)
+           +onkey() on-key script ... finished
+tick 1305       (waiting on wait in encounter)
+           +onkey() on-key script ... finished
+tick 1306       (waiting on wait in encounter)
+           +onkey() on-key script ... finished
+tick 1307       (waiting on wait in encounter)
+           +onkey() on-key script ... finished
+tick 1308       (waiting on wait in encounter)
+           +onkey() on-key script ... finished
+tick 1309       (waiting on wait in encounter)
+           +onkey() on-key script ... finished
+tick 1310       (waiting on wait in encounter)
+           +onkey() on-key script ... finished
+tick 1311       (waiting on wait in encounter)
+           +onkey() on-key script ... finished
+tick 1360       (waiting on wait in encounter)
+           +onkey() on-key script ... finished
+tick 1361       (waiting on wait in encounter)
+           +onkey() on-key script ... finished
+tick 1362       (waiting on wait in encounter)
+           +onkey() on-key script ... finished
+tick 1363       (waiting on wait in encounter)
+           +onkey() on-key script ... finished
+tick 1364       (waiting on wait in encounter)
+           +onkey() on-key script ... finished
+tick 1365       (waiting on wait in encounter)
+           +onkey() on-key script ... finished
+tick 1366       (waiting on wait in encounter)
+           +onkey() on-key script ... finished
+tick 1389       (waiting on wait in encounter)
+           +onkey() on-key script ... finished
+tick 1390       (waiting on wait in encounter)
+           +onkey() on-key script ... finished
+tick 1391       (waiting on wait in encounter)
+           +onkey() on-key script ... finished
+tick 1392       (waiting on wait in encounter)
+           +onkey() on-key script ... finished
+tick 1393       (waiting on wait in encounter)
+           +onkey() on-key script ... finished
+tick 1394       (waiting on wait in encounter)
+           +onkey() on-key script ... finished
+tick 1395       (waiting on wait in encounter)
+           +onkey() on-key script ... finished
+tick 1396       (waiting on wait in encounter)
+           +onkey() on-key script ... finished
+tick 1429       (waiting on wait in encounter)
+           +onkey() on-key script ... finished
+tick 1430       (waiting on wait in encounter)
+           +onkey() on-key script ... finished
+tick 1431       (waiting on wait in encounter)
+           +onkey() on-key script ... finished
+tick 1432       (waiting on wait in encounter)
+           +onkey() on-key script ... finished
+tick 1433       (waiting on wait in encounter)
+           +onkey() on-key script ... finished
+tick 1434       (waiting on wait in encounter)
+           +onkey() on-key script ... finished
+tick 1435       (waiting on wait in encounter)
+           +onkey() on-key script ... finished
+tick 1487       (waiting on wait in mainloop)
+           +onkey() on-key script ... finished
+tick 1488       (...as above...)
+           +onkey() on-key script ... finished
+tick 1489       (waiting on wait in mainloop)
+           +onkey() on-key script ... finished
+tick 1490       (waiting on wait in mainloop)
+           +onkey() on-key script ... finished
+tick 1491       (waiting on wait in mainloop)
+           +onkey() on-key script ... finished
+tick 1492       (waiting on wait in mainloop)
+           +onkey() on-key script ... finished
+tick 1493       (waiting on wait in mainloop)
+           +onkey() on-key script ... finished
+tick 1494       (waiting on wait in mainloop)
+           +onkey() on-key script ... finished
+tick 1495       (waiting on wait in mainloop)
+           +onkey() on-key script ... finished
+tick 1496       (waiting on wait in mainloop)
+           +onkey() on-key script ... finished
+tick 1534       (waiting on wait in mainloop)
+           +onkey() on-key script ... finished
+tick 1535       (waiting on wait in mainloop)
+           +onkey() on-key script ... finished
+tick 1536       (waiting on wait in mainloop)
+           +onkey() on-key script ... finished
+tick 1537       (waiting on wait in mainloop)
+           +onkey() on-key script ... finished
+tick 1538       (waiting on wait in mainloop)
+           +onkey() on-key script ... finished
+tick 1539       (waiting on wait in mainloop)
+           +onkey() on-key script ... finished
+tick 1540       (waiting on wait in mainloop)
+           +onkey() on-key script ... finished
+tick 1541       (waiting on wait in mainloop)
+           +onkey() on-key script ... finished
+tick 1542       (waiting on wait in mainloop)
+           +onkey() on-key script ... finished
+tick 1543       (waiting on wait in mainloop)
+           +onkey() on-key script ... finished
+tick 1544       (waiting on wait in mainloop)

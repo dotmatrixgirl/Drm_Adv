@@ -6,6 +6,7 @@ script, textLine, parent, y=0, begin
 	putSlice (sli, 0, y*10)
 	resizeExtra(sli, 32)
 	setSliceText(sli, 10)
+	setOutline(sli)
 	return (sli)
 end
 
