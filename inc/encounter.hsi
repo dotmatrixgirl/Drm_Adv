@@ -79,6 +79,9 @@ script, encounter, who, tick, begin
 
 	subscript, enemyTurn, begin
 		variable (slot)
+
+		wait (60)
+
 		slot := random (1, 100)
 		if (slot > 75) then (
 			slot := slot:atk1
@@ -201,6 +204,11 @@ script, encounter, who, tick, begin
 	subscript, endEncounter, begin
 		wait (50)
 		freeSlice (parent)
+
+		statGain(char:Rose, gain:battled)
+		statGain(char:Kat, gain:battled)
+		setAllStatLvl(char:Rose)
+		setAllStatLvl(char:Kat)
 	end
 end
 

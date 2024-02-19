@@ -39,30 +39,32 @@ script, initPin, id, lvl, begin
 	setExtra(sli, pin:ID, id)
 	setExtra(sli, pin:lvl, lvl)
 	setExtra(sli, pin:exp, lvl ^ 2)
+	resizeExtra(sli, 16)
 	return(sli)
 end
 
 script, addPinExpCapped, who, slot, amount, begin
-	variable (sli, curlvl)
-	curlvl := getPinLvl(who, slot)
-	if (curlvl <= game:lvlCap/10) then (
+	variable (sli, lvl)
+	lvl := getPinLvl(who, slot)
+	if (lvl < = game:lvlCap / 10) then (
 		addPinExp(who, slot, amount)
 		return (lvlPin(who, slot))
 	)
 end
 
 script, lvlPin, who, slot, begin
-	variable(exp, lvl, origLvl, sli)
+	variable(exp, lvl, origLvl)
 
-	sli :=	firstChild(returnPinSlice(who, slot))
 	#get level to check for levelup later
 	origLvl := getpinLvl(who, slot)
 	exp := getPinExp(who, slot)
 
 	#this is where the level curve is determined
-	lvl := sqrt(exp)
+	lvl := expCurve(exp)
 
-	setExtra(sli, slot, lvl)
+	if (lvl >= game:lvlCap) then (lvl := game:lvlCap)
+
+	setPinLvl(who, slot, lvl)
 
 	#return true if leveled up
 	if (origLvl<>lvl) then (return (true))
@@ -82,7 +84,7 @@ end
 
 script, addPinExp, who, slot, value, begin
 	variable (sli)
-	setPinExp (who, slot, getPinExp(who, slot)+value)
+	setPinExp (who, slot, getPinExp(who, slot) + value)
 end
 
 script, setPinExp, who, slot, value, begin
@@ -147,15 +149,15 @@ script, usePin, attacker, target, slot, begin
 	if (pin >= pin:flame && pin <= pin:earth) then (
 		effect := getPinEffect(pin, psi, mind)
 
-		#*1.5 if attacking with atribute of pin
+		#*1.25 if attacking with atribute of pin
 		atr := pin
-		if (atr -- 9 == pin) then (effect := effect + effect/2)
+		if (atr -- 9 == pin) then (effect := effect + effect/4)
 
 		#if weak, damage*1.5 ; if strong, damage/2
 		if (elementCheck(pin, target) == weak) then (
-			effect := (effect + effect/2)
+			effect += effect/4
 		) else if (elementCheck(pin, target) == strong) then (
-			effect := (effect/2)
+			effect -= effect / 4
 		)
 		$11=""
 		appendNumber(11, effect)
@@ -163,21 +165,27 @@ script, usePin, attacker, target, slot, begin
 		if (hp < 0) then (hp := 0)
 		setLvl(target, stat:currentlife, hp)
 		statGain(attacker, gain:attack)
+		statGain(target, gain:damage)
+
+		#showValue(effect)
 	) else if (pin == pin:heart) then (
 		if (attacker == char:enemy) then (
 			heal (char:enemy)
 		) else (
 			heal (char:Rose)
+			#showValue(effect)
+			#wait (60)
 			heal (char:Kat)
+			#showValue(effect)
 		)
 		statGain(attacker, gain:attack)
 	)
+
 	subscript, heal, who, begin
 		hp := statLvl(who, stat:currentlife)
 		effect := getPinEffect (pin, lvl, psi, maxhp(who))
 		$12=""
 		appendNumber(12, effect)
-
 		hp += effect
 
 		if (hp > maxhp(who)) then (hp := maxhp(who))
@@ -191,19 +199,19 @@ script, getPinEffect, id, lvl, mod1, mod2=1, begin
 	switch (id) do (
 		#mod1 is psi, mod2 is target hp
 		case (pin:heart) do (
-			value :=  mod2 * (mod1 * lvl) * 8 / 6 / 100
+			value :=  (mod1 / 3 + lvl * 2 / 3 + 4) * mod2 / 100
 		)
 		#mod1 is empathy, mod2 is will
 		case (pin:calm, pin:read) do (
-			value := lvl * (mod1 + mod1*random(1, 8) / 10) / (mod2)
+			value := lvl * 2 / 5 + mod1 / 2 -- mod2 / 2 + random (-20, 20)
 		)
 		#mod1 is psi, mod2 is mind
 		case (pin:flame, pin:water, pin:shock, pin:earth) do (
-			value := lvl * mod1 / 4 / mod2
+			value := (lvl * 2 / 3 + mod1 / 10) -- mod2 / 5
 		)
 		#mod1 is original stat value
 		case (pin:life, pin:mind, pin:psi, pin:speed, pin:empathy) do (
-			value := lvl * mod1 / 4
+			value := lvl * mod1 / 10
 			value := value * value / 100
 		)
 	)

@@ -108,7 +108,7 @@ defineConstant, begin
 	5,	stat:personality
 	11,	stat:currentlife
 
-	0,	gain:damaged
+	0,	gain:damage
 	1,	gain:attack
 	2,	gain:speed
 	3,	gain:failTalk
@@ -153,6 +153,7 @@ globalVariable, begin
 
 
 	12,	game:lvlCap
+	13,	game:hard
 end
 
 #default scripts

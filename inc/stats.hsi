@@ -1,5 +1,5 @@
 script, initChars, begin
-	variable (parent, sli)
+	variable (parent, sli, i)
 
 	addHero(char:kat)
 
@@ -13,41 +13,39 @@ script, initChars, begin
 	setSliceClipping(parent)
 	resizeExtra(parent, 16)
 
-
-	initLvl(char:rose, lvl:life, 6)
+	initLvl(char:rose, lvl:life, 5)
 	initLvl(char:rose, lvl:psi, 6)
 	initLvl(char:rose, lvl:mind, 4)
-	initLvl(char:rose, lvl:speed, 6)
-	initLvl(char:rose, lvl:empathy, 5)
+	initLvl(char:rose, lvl:speed, 8)
+	initLvl(char:rose, lvl:empathy, 3)
 	setLvl(char:rose, stat:alignment, 50)
 
-	initPinSlot(char:rose, slot:atk1, pin:heart)
-	initPinSlot(char:rose, slot:atk2, pin:dummy)
-	initPinSlot(char:rose, slot:stat1, pin:dummy)
-	initPinSlot(char:rose, slot:stat2, pin:dummy)
-	initPinSlot(char:rose, slot:atr, pin:earthatr)
+	initPinSlot(char:rose, slot:atk1, pin:heart, 1)
+	initPinSlot(char:rose, slot:atk2, pin:dummy, 1)
+	initPinSlot(char:rose, slot:stat1, pin:dummy, 1)
+	initPinSlot(char:rose, slot:stat2, pin:dummy, 1)
+	initPinSlot(char:rose, slot:atr, pin:earthatr, 1)
 
 	setParent(loadBorderSprite(2), parent)
 	$1="Rose"
-
 
 	parent := createContainer()
 	setParent(parent, lookupslice(sli:chars))
 	setSliceClipping(parent)
 	resizeExtra(parent, 16)
 
-	initLvl(char:kat, lvl:life, 4)
-	initLvl(char:kat, lvl:psi, 3)
-	initLvl(char:kat, lvl:mind, 6)
+	initLvl(char:kat, lvl:life, 6)
+	initLvl(char:kat, lvl:psi, 4)
+	initLvl(char:kat, lvl:mind, 2)
 	initLvl(char:kat, lvl:speed, 5)
-	initLvl(char:kat, lvl:empathy, 7)
+	initLvl(char:kat, lvl:empathy, 6)
 	setLvl(char:kat, stat:alignment, 40)
 
-	initPinSlot(char:kat, slot:atk1, pin:water)
+	initPinSlot(char:kat, slot:atk1, pin:shock)
 	initPinSlot(char:kat, slot:atk2, pin:dummy)
 	initPinSlot(char:kat, slot:stat1, pin:dummy)
 	initPinSlot(char:kat, slot:stat2, pin:dummy)
-	initPinSlot(char:kat, slot:atr, pin:waterAtr)
+	initPinSlot(char:kat, slot:atr, pin:shockAtr)
 
 	setParent(loadBorderSprite(1), parent)
 	$2="Kat"
@@ -62,7 +60,7 @@ script, getCharSprite, who, begin
 end
 
 script, initEnemy, who, begin
-	variable (sli)
+	variable (sli, i)
 
 	sli := sliceChild(lookupSlice(sli:chars), char:enemy)
 	if (sli) then (
@@ -76,35 +74,40 @@ script, initEnemy, who, begin
 
 	switch (who) do (
 		case (enemy:dummy) do (
-			initLvl(char:enemy, lvl:life, 20)
-			initLvl(char:enemy, lvl:psi, 2)
-			initLvl(char:enemy, lvl:mind, 4)
-			initLvl(char:enemy, lvl:speed, 2)
-			initLvl(char:enemy, lvl:will, 1)
+			initLvl(char:enemy, lvl:life, 10)
+			initLvl(char:enemy, lvl:psi, 6)
+			initLvl(char:enemy, lvl:mind, 19)
+			initLvl(char:enemy, lvl:speed, 5)
+			initLvl(char:enemy, lvl:will, 3)
 			setLvl(char:enemy, stat:personality, type:logic)
 
-			initPinSlot(char:enemy, slot:atk1, pin:flame)
-			initPinSlot(char:enemy, slot:atk2, pin:flame)
+			initPinSlot(char:enemy, slot:atk1, pin:flame, 3)
+			initPinSlot(char:enemy, slot:atk2, pin:flame, 3)
 			initPinSlot(char:enemy, slot:stat1, pin:dummy)
 			initPinSlot(char:enemy, slot:stat2, pin:dummy)
 			initPinSlot(char:enemy, slot:atr, pin:flameatr)
 
 			setparent(loadBorderSprite(2), sli)
 		) else (
-			initLvl(char:enemy, lvl:life, 20)
-			initLvl(char:enemy, lvl:psi, 2)
-			initLvl(char:enemy, lvl:mind, 4)
+			initLvl(char:enemy, lvl:life, 9)
+			initLvl(char:enemy, lvl:psi, 4)
+			initLvl(char:enemy, lvl:mind, 6)
 			initLvl(char:enemy, lvl:speed, 2)
-			initLvl(char:enemy, lvl:will, 1)
+			initLvl(char:enemy, lvl:will, 5)
 			setLvl(char:enemy, stat:personality, type:logic)
 
-			initPinSlot(char:enemy, slot:atk1, pin:flame)
-			initPinSlot(char:enemy, slot:atk2, pin:flame)
+			initPinSlot(char:enemy, slot:atk1, pin:flame, 3)
+			initPinSlot(char:enemy, slot:atk2, pin:flame, 3)
 			initPinSlot(char:enemy, slot:stat1, pin:dummy)
 			initPinSlot(char:enemy, slot:stat2, pin:dummy)
 			initPinSlot(char:enemy, slot:atr, pin:flameatr)
 
 			setparent(loadBorderSprite(2), sli)
+		)
+	)
+	if (game:hard) then (
+		for (i, stat:life, stat:will) do (
+			addLvl (char:enemy, i, StatLvl(char:enemy, i) / 8)
 		)
 	)
 	return (sli)
@@ -114,31 +117,47 @@ script, maxHP, who, begin
 	return (statValue(who, stat:life))
 end
 
-script, statGain, who, type, begin
+script, statGain, who, type, modifier=0, begin
 	variable(i)
-	if (who := char:enemy) then (
+	if (who == char:enemy) then (
 		exit script
 	)
+	if (modifier == 0) then (
+		modifier := getEnemyLvl()
+		showValue(modifier)
+	)
 	switch (type) do (
-		case (gain:damaged) do (
-			addExpCapped (who, stat:life, 4*6)
+		case (gain:damage) do (
+			addExpCapped (who, stat:mind, modifier * 2)
 		)
 		case (gain:attack) do (
-			addExpCapped (who, stat:psi, 2*6)
+			addExpCapped (who, stat:psi, modifier / 2)
 		)
 		case (gain:failtalk) do (
-			addExpCapped (who, stat:empathy, 2*6)
+			addExpCapped (who, stat:empathy, modifier)
 		)
 		case (gain:talked) do (
-			addExpCapped (who, stat:empathy, 10*6)
+			addExpCapped (who, stat:empathy, modifier * 4)
 		)
 		case (gain:battled) do (
-			addExpCapped (who, stat:speed, random (2, 10)*6)
+			addExpCapped (who, stat:speed, random (3, 6) * modifier / 5)
+			addExpCapped (who, stat:life, random(3, 7) * modifier / 5)
 			for (i, slot:atk1, slot:stat2) do (
-				addPinExpCapped(who, i, 8*6)
+				addPinExpCapped(who, i, modifier * 2 / 5)
 			)
 		)
+		else (showValue(0))
 	)
+end
+
+script, getEnemyLvl, begin
+	variable (lvl, i)
+
+	for (i, stat:life, stat:will) do (
+		lvl += statLvl(char:enemy, i)
+	)
+	lvl := lvl/5
+	return (lvl)
 end
 
 script, addExpCapped, who, stat, amount, begin
@@ -148,28 +167,25 @@ script, addExpCapped, who, stat, amount, begin
 	)
 	if (lvlSum <= game:lvlCap) then (
 		addExp(who, stat, amount)
-		return (setStatLvl(who, stat))
 	)
 end
 
 script, addExp, who, stat, amount, begin
 	variable(exp)
-	exp := getExp(who, stat)+amount
-	setExp(who, stat+exp:life, exp)
+	exp := getExp(who, stat)
+	setExp(who, stat, exp+amount)
 end
 
 script, getExp, who, stat, begin
-	variable (sli, boostedStat, boost)
-	sli := lookupslice(sli:chars)
-	sli := sliceChild(sli, who)
+	variable (sli)
+	sli := getStatSlice(who)
 
 	return (getExtra(sli, stat+exp:Life))
 end
 
 script, setExp, who, stat, value, begin
 	variable(sli)
-	sli := lookupslice(sli:chars)
-	sli := sliceChild(sli, who)
+	sli := getStatSlice(who)
 
 	setExtra(sli, stat+exp:Life, value)
 end
@@ -183,31 +199,38 @@ script, setAllStatLvl, who, begin
 end
 
 script, initLvl, who, stat, lvl, begin
-	setExp (who, stat, lvl^2)
+	setExp (who, stat, expFromLevel(lvl))
 	setStatLvl (who, stat)
 end
 
 script, statLvl, who, stat, begin
 	variable(sli)
-	sli := lookupslice(sli:chars)
-	sli := sliceChild(sli, who)
+	sli := getStatSlice(who)
 
 	return (getExtra(sli, stat))
 end
 
 script, setLvl, who, stat, lvl, begin
 	variable(sli)
-	sli := lookupslice(sli:chars)
-	sli := sliceChild(sli, who)
+	sli := getStatSlice(who)
 
 	setExtra(sli, stat, lvl)
 end
 
-script, setStatLvl, who, stat, begin
-	variable(exp, lvl, origLvl, sli)
+script, addLvl, who, stat, amount, begin
+	variable(sli, i, lvlsum)
 
-	sli := lookupslice(sli:chars)
-	sli := sliceChild(sli, who)
+	for (i, stat:life, stat:will) do (
+		lvlSum += statLvl (who, i)
+	)
+	if (lvlSum < game:lvlCap) then (
+		setLvl(who, stat,  statLvl(who, stat) + amount)
+
+	)
+end
+
+script, setStatLvl, who, stat, begin
+	variable(exp, lvl, origLvl)
 
 	#get level to check for levelup later
 	origLvl := statLvl(who, stat)
@@ -215,12 +238,25 @@ script, setStatLvl, who, stat, begin
 	exp := getExp(who, stat)
 
 	#this is where the level curve is determined
-	lvl := sqrt(exp)
+	lvl := expCurve(exp)
 
-	setExtra(sli, stat, lvl)
+	setLvl(who, stat, lvl)
 
 	#return true if leveled up
-	if (origLvl<>lvl) then (return (true))
+	if (origLvl < lvl) then (return (true))
+end
+
+script, expCurve, exp, begin
+ 	variable (lvl)
+
+ 	lvl := sqrt(exp)
+ 	return (lvl)
+end
+
+script, expFromLevel, lvl, begin
+	variable (exp)
+	exp := lvl ^ 2
+	return (exp)
 end
 
 script, statValue, who, stat, begin
@@ -236,10 +272,17 @@ script, statValue, who, stat, begin
 		variable (pin)
 		pin := getPinId(who,slot)
 
-		if (pin := stat+10) then (
+		if (pin == stat+10) then (
 			return (getPinEffect(pin, getPinLvl(who, 3), stat))
-		)	
+		)
 	end
+end
+
+script, getStatSlice, who, begin
+	variable(sli)
+	sli := lookupslice(sli:chars)
+	sli := sliceChild(sli, who)
+	return (sli)
 end
 
 script, statBaseValue, who, stat, begin
