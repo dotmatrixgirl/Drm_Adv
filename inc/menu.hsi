@@ -27,16 +27,8 @@ script, menuStats, who=0, begin
 		sli := sliceChild (sli, 1)
 		sli := sliceChild (sli, 1)
 		for (i, stat:life, stat:alignment) do (
-			$10="lvl"
-			if (i == stat:alignment) then (
-				$10=""
-			)
-			appendNumber(10, statLvl(who, i))
-			$10+" "
-			if (i <> stat:alignment) then (
-				appendNumber(10, statValue(who, i))
-				
-			)
+			$10=""
+			appendNumber(10, getStat(who, i))
 			textSli := createText
 			setParent(textSli, sli)
 			setSliceText(textSli, 10)

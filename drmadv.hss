@@ -90,23 +90,29 @@ defineConstant, begin
 	16,	pin:waterAtr
 	17,	pin:shockAtr
 	18,	pin:earthAtr
+	19,	pin:addFlame
+	20,	pin:addWater
+	21,	pin:addShock
+	22,	pin:addEarth
 
-	0,	lvl:life
-	1,	lvl:psi
-	2,	lvl:mind
-	3,	lvl:speed
-	4,	lvl:empathy
-	4,	lvl:will
+	0,	stat:currentlife
+	1,	stat:life
+	2,	stat:psi
+	3,	stat:mind
+	4,	stat:speed
+	5,	stat:empathy
+	5,	stat:will
+	6,	stat:alignment
+	6,	stat:personality
+	7,	stat:atr
 
-	0,	stat:life
-	1,	stat:psi
-	2,	stat:mind
-	3,	stat:speed
-	4,	stat:empathy
-	4,	stat:will
-	5,	stat:alignment
-	5,	stat:personality
-	11,	stat:currentlife
+	10,	stat:lvled
+
+	0,	atr:none
+	1,	atr:flame
+	2,	atr:water
+	3,	atr:shock
+	4,	atr:earth
 
 	0,	gain:damage
 	1,	gain:attack
@@ -115,23 +121,18 @@ defineConstant, begin
 	4,	gain:talked
 	5,	gain:battled
 
-	6,	exp:life
-	7,	exp:psi
-	8,	exp:mind
-	9,	exp:speed
-	10,	exp:empathy
-
 	0,	slot:atk1
 	1,	slot:atk2
 	2,	slot:stat1
 	3,	slot:stat2
 	4,	slot:atr
+	5,	slot:none
 
 	5,	char:sprite
 
 	0,	pin:id
-	1,	pin:lvl
-	2,	pin:exp
+	1,	pin:exp
+	2,	pin:lvl
 end
 
 globalVariable, begin
@@ -176,7 +177,7 @@ plotscript, newGame, begin
 
 		#initChars()
 
-		game:lvlCap := 50
+		game:lvlCap := 3
 		
 		state := state:resume
 	end

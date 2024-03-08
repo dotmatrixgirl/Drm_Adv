@@ -1,5 +1,5 @@
 script, encounter, who, tick, begin
-	variable (parent, textSli, hpSli, condition, state, turn, i)
+	variable (parent, textSli, hpSli, condition, state, turn, i, j)
 	initEncounter()
 	while (true) do (
 		updateEncounter()
@@ -46,7 +46,7 @@ script, encounter, who, tick, begin
 						changeState(encounter:choose)
 					) else if (newpresskey(b:u)) then (
 						if (getPinId(turn, slot:atk1) == pin:heart) then (
-							usePin(turn,((turn + 1),mod,2), slot:atk1)
+							usePin(turn, char:Rose, slot:atk1)
 						) else(
 							usePin(turn, char:enemy, slot:atk1)
 						)
@@ -54,7 +54,7 @@ script, encounter, who, tick, begin
 						(nextTurn)
 					) else if (newpresskey(b:d)) then (
 						if (getPinId(turn, slot:atk2) == pin:heart) then (
-							usePin(turn, ((turn + 1),mod,2), slot:atk2)
+							usePin(turn, char:Rose, slot:atk2)
 						) else(
 							usePin(turn, char:enemy, slot:atk2)
 						)
@@ -92,10 +92,9 @@ script, encounter, who, tick, begin
 		if (getPinId(turn, slot) == pin:Life) then (
 			usePin(turn, turn, slot)
 		) else (
-			usePin(turn, random (char:Rose, char:Kat), slot)
+			usePin(turn, random(char:Rose, char:Kat), slot)
 		)
 	end
-
 
 	subscript, changeState, which, begin
 		switch (which) do (
@@ -142,9 +141,9 @@ script, encounter, who, tick, begin
 
 		for (i, 0, 2) do (
 			$10=""
-			appendNumber (10, statLvl(i, stat:currentlife))
+			appendNumber (10, getStat(i, stat:currentlife))
 			setSliceText(sliceChild(hpSli, i), 10)
-			if (i==char:enemy&&statLvl(i, stat:currentlife) == 0) then (
+			if (i==char:enemy && getStat(i, stat:currentlife) == 0) then (
 				condition := encounter:won
 			)
 		)
@@ -154,11 +153,11 @@ script, encounter, who, tick, begin
 		$10="Choose Pin"
 		textLine(textSli, 0)
 		
-		if (getPinId(turn, 0)==pin:dummy && getPinId(turn, 1)==pin:dummy) then (
+		if (getPinId(turn, slot:atk1) && getPinId(turn, slot:atk2) ) then (
 			$10="No equipped pins"
 			textLine(textSli, 2)
 		) else (
-			if (getPinId(turn, 0)==pin:dummy) then (
+			if (getPinId(turn, slot:atk1)==false) then (
 				$10="Empty"
 			) else (
 				getPinName(getPinId(turn, slot:atk1))
@@ -168,7 +167,7 @@ script, encounter, who, tick, begin
 			)
 			textLine(textSli, 2)
 
-			if (getPinId(turn, 1)==pin:dummy) then (
+			if (getPinId(turn, slot:atk2)==false) then (
 				$10="Empty"
 			) else (
 				getPinName(getPinId(turn, slot:atk2))
@@ -193,8 +192,9 @@ script, encounter, who, tick, begin
 
 		initEnemy(who)
 
-		for (i, char:Rose, char:Enemy) do (
-			setLvl(i, stat:currentlife, statValue(i, stat:life))
+		for (i, char:rose, char:enemy) do (
+			setStat(i, stat:currentlife, getStat(i, stat:life))
+			updateStats(who, true)
 		)
 		updateHP()
 
@@ -207,8 +207,9 @@ script, encounter, who, tick, begin
 
 		statGain(char:Rose, gain:battled)
 		statGain(char:Kat, gain:battled)
-		setAllStatLvl(char:Rose)
-		setAllStatLvl(char:Kat)
+
+		updateStats(char:rose)
+		updateStats(char:kat)
 	end
 end
 
@@ -238,9 +239,53 @@ end
 
 script, initDialogue, parent, begin
 	variable (rand, sli)
-	rand := random (0, 1)
+	rand := random (1, 2)
 	switch (rand) do (
 		case (0) do (
+			$10="question here" #put question here. always leave the "" in place
+			textLine(parent, 0) #do not change this line
+
+			$10="answer 1 here" #replace with the first answer
+			sli := textLine(parent, 2) #do not change this line
+			setExtra(sli,type:logic,	none) #change none to liked or
+			setExtra(sli,type:anger,	none) #disliked to fit the
+			setExtra(sli,type:slut,		none) #personality
+			setExtra(sli,type:selfish,	none)
+			setExtra(sli,type:caring,	none)
+			setExtra(sli,type:scared,	none)
+			setExtra(sli,type:sad,		none)
+
+			$10="answer 2 here" 
+			sli := textLine(parent, 3)
+			setExtra(sli,type:logic,	none)
+			setExtra(sli,type:anger,	none)
+			setExtra(sli,type:slut,		none)
+			setExtra(sli,type:selfish,	none)
+			setExtra(sli,type:caring,	none)
+			setExtra(sli,type:scared,	none)
+			setExtra(sli,type:sad,		none)
+
+			$10="answer 3 here"
+			sli := textLine(parent, 4)
+			setExtra(sli,type:logic,	none)
+			setExtra(sli,type:anger,	none)
+			setExtra(sli,type:slut,		none)
+			setExtra(sli,type:selfish,	none)
+			setExtra(sli,type:caring,	none)
+			setExtra(sli,type:scared,	none)
+			setExtra(sli,type:sad,		none)
+
+			$10="answer 4 here"
+			sli := textLine(parent, 5)
+			setExtra(sli,type:logic,	none)
+			setExtra(sli,type:anger,	none)
+			setExtra(sli,type:slut,		none)
+			setExtra(sli,type:selfish,	none)
+			setExtra(sli,type:caring,	none)
+			setExtra(sli,type:scared,	none)
+			setExtra(sli,type:sad,		none)
+		)
+		case (1) do (
 			$10="What do you want from life?"
 			textLine(parent, 0)
 
@@ -274,7 +319,7 @@ script, initDialogue, parent, begin
 			setExtra(sli,type:scared,	none)
 			setExtra(sli,type:sad,		none)
 		)
-		case (1) do (
+		case (2) do (
 			$10="Do you hate me?"
 			textLine(parent, 0)
 
