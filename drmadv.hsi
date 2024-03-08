@@ -1,6 +1,10 @@
 # HamsterSpeak constant definitions for drmadv.rpg
 
 define constant, begin
+1,song:first kiss
+2,song:home bittersweet home
+3,song:late night walk
+4,song:the mundane isn't so bad
 0,hero:Rose
 1,hero:Kat
 0,element:Fire

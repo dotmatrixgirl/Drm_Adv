@@ -14,6 +14,7 @@ script, mainLoop, state,  begin
 end
 
 script, keypresses, state, tick, begin
+	if (keyispressed(key:shift)&&keyispressed(key:q)) then (mundaneScreen)
 	switch (state) do (
 		case(state:resume) do (
 			moveResume()

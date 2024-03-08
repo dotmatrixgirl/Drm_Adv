@@ -41,3 +41,36 @@ script, menuStats, who=0, begin
 		setSpriteSetNumber(sli, getCharSprite(who))
 	end
 end
+
+script, mundaneScreen, begin
+	variable (sli, frame, tick)
+	init()
+	while (true) do (
+		wait
+		update
+	)
+	subscript, init, begin
+		teleportToMap (1, 0, 0)
+		setSliceVisible(getheroSlice(char:Rose), false)
+		if (heroByRank(1) <> -1) then (
+			setSliceVisible(getheroSlice(char:Kat), false)
+		)
+		sli := loadBackdropSprite (1)
+	end
+	subscript, update, begin
+		if (newpresskey(b:a) || newpresskey(b:b)) then (
+			gameOver
+		)
+
+		if (tick,mod,4==1) then (
+			if (frame >16) then (
+				frame := 1
+				setSpriteSetNumber (sli, frame)
+			) else (
+				frame += 1
+				setSpriteSetNumber (sli, frame)
+			)
+		)
+		tick += 1
+	end
+end

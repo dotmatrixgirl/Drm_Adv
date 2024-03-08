@@ -33,6 +33,7 @@ defineConstant, begin
 	5,	b:b
 	6,	b:x
 	7,	b:y
+	8,	b:any
 
 	0,	type:null
 	1,	type:logic
@@ -195,19 +196,40 @@ plotscript, loadGame, begin
 end
 
 plotscript, autorun, begin
-	variable(sli)
+	variable(sli, i)
 	if (lookupslice(sli:chars)==0) then (
 		initChars
+		createCharWalk (getCharSprite(char:Rose), char:Rose)
+		if (heroByRank(1) <> -1) then (
+			createCharWalk (getCharSprite(char:Kat), char:Kat)
+		)
 	)
 
-	createCharWalk (getCharSprite(char:Rose), char:Rose)
-
-	if (heroByRank(1) <> -1) then (
-		createCharWalk (getCharSprite(char:Kat), char:Kat)
+	switch (currentMap) do (
+		case (1) do (
+			for(i, 0, 4) do (	
+				if (heroByRank(i) <>-1) then (
+					sli := lastChild(getHeroSlice(i))
+					setSliceVisible (sli, false)
+				)
+			)
+		)
+		else (
+			for(i, 0, 4) do (	
+				if (heroByRank(i) <>-1) then (
+					sli := lastChild(getHeroSlice(i))
+					setSliceVisible (sli, true)
+				)
+			)
+		)
 	)
-	switch (current map) do (
+
+	switch (currentMap) do (
 		case (0) do (loadTrees(3))
-		else ()
+		case (1) do (
+			sli := lookup slice(sl:map layer0)
+			setSliceVelocity (sli, 2, 1)
+		)
 	)
 
 	subscript, createCharWalk, set, who, begin
