@@ -1,0 +1,102 @@
+# followed by text is a comment
+#===================================================================
+#          TEMPLATE
+#===================================================================
+
+
+#begin copy selection at the line below this line....
+
+$10="question here" #put question here. always leave the "" in place
+textLine(parent, 0) #do not change this line
+
+$10="answer 1 here" #replace with the first answer
+sli := textLine(parent, 2) #do not change this line
+setExtra(sli,type:logic,	none) #change none to liked or
+setExtra(sli,type:anger,	none) #disliked to fit the
+setExtra(sli,type:slut,		none) #personality
+setExtra(sli,type:selfish,	none)
+setExtra(sli,type:caring,	none)
+setExtra(sli,type:scared,	none)
+setExtra(sli,type:sad,		none)
+
+$10="answer 2 here" 
+sli := textLine(parent, 3) #do not change this line
+setExtra(sli,type:logic,	none)
+setExtra(sli,type:anger,	none)
+setExtra(sli,type:slut,		none)
+setExtra(sli,type:selfish,	none)
+setExtra(sli,type:caring,	none)
+setExtra(sli,type:scared,	none)
+setExtra(sli,type:sad,		none)
+
+$10="answer 3 here"
+sli := textLine(parent, 4) #do not change this line
+setExtra(sli,type:logic,	none)
+setExtra(sli,type:anger,	none)
+setExtra(sli,type:slut,		none)
+setExtra(sli,type:selfish,	none)
+setExtra(sli,type:caring,	none)
+setExtra(sli,type:scared,	none)
+setExtra(sli,type:sad,		none)
+
+$10="answer 4 here"
+sli := textLine(parent, 5) #do not change this line
+setExtra(sli,type:logic,	none)
+setExtra(sli,type:anger,	none)
+setExtra(sli,type:slut,		none)
+setExtra(sli,type:selfish,	none)
+setExtra(sli,type:caring,	none)
+setExtra(sli,type:scared,	none)
+setExtra(sli,type:sad,		none)
+
+#===================================================================
+
+# ... end copy selection at the line above this line
+#below is template to copy, above is a backup in case you overwrite
+#the template below
+
+
+$10="question here" #put question here. always leave the "" in place
+textLine(parent, 0) #do not change this line
+
+$10="answer 1 here" #replace with the first answer
+sli := textLine(parent, 2) #do not change this line
+setExtra(sli,type:logic,	none) #change none to liked or
+setExtra(sli,type:anger,	none) #disliked to fit the
+setExtra(sli,type:slut,		none) #personality
+setExtra(sli,type:selfish,	none)
+setExtra(sli,type:caring,	none)
+setExtra(sli,type:scared,	none)
+setExtra(sli,type:sad,		none)
+
+$10="answer 2 here" 
+sli := textLine(parent, 3) #do not change this line
+setExtra(sli,type:logic,	none)
+setExtra(sli,type:anger,	none)
+setExtra(sli,type:slut,		none)
+setExtra(sli,type:selfish,	none)
+setExtra(sli,type:caring,	none)
+setExtra(sli,type:scared,	none)
+setExtra(sli,type:sad,		none)
+
+$10="answer 3 here"
+sli := textLine(parent, 4) #do not change this line
+setExtra(sli,type:logic,	none)
+setExtra(sli,type:anger,	none)
+setExtra(sli,type:slut,		none)
+setExtra(sli,type:selfish,	none)
+setExtra(sli,type:caring,	none)
+setExtra(sli,type:scared,	none)
+setExtra(sli,type:sad,		none)
+
+$10="answer 4 here"
+sli := textLine(parent, 5) #do not change this line
+setExtra(sli,type:logic,	none)
+setExtra(sli,type:anger,	none)
+setExtra(sli,type:slut,		none)
+setExtra(sli,type:selfish,	none)
+setExtra(sli,type:caring,	none)
+setExtra(sli,type:scared,	none)
+setExtra(sli,type:sad,		none)
+
+#===================================================================
