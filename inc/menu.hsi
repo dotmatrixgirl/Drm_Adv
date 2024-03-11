@@ -62,7 +62,7 @@ script, mundaneScreen, begin
 			gameOver
 		)
 
-		if (tick,mod,4==1) then (
+		if (tick,mod,2==1) then (
 			if (frame >16) then (
 				frame := 1
 				setSpriteSetNumber (sli, frame)

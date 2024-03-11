@@ -23,6 +23,7 @@ defineConstant, begin
 	0,	strng:PlayerName
 	1,	strng:RoseName
 	2,	strng:KatName
+	3,	strng:EnemyName
 
 	#buttons
 	0,	b:u
@@ -63,6 +64,7 @@ defineConstant, begin
 	4,	encounter:item
 	5,	encounter:skill
 	7,	encounter:run
+	8,	encounter:target
 
 	0,	turn:rose
 	1,	turn:kat
@@ -73,6 +75,10 @@ defineConstant, begin
 	2,	char:enemy
 
 	0,	enemy:dummy
+
+	0,	target:party
+	1,	target:all
+	2,	target:enemy
 
 	0,	pin:dummy
 	1,	pin:heart

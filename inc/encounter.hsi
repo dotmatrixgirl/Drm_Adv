@@ -1,11 +1,12 @@
 script, encounter, who, tick, begin
-	variable (parent, textSli, hpSli, condition, state, turn, i, j)
+	variable (parent, textSli, hpSli, condition, state, turn, i, j, target, slot, textWait, lastTurn)
 	initEncounter()
 	while (true) do (
-		updateEncounter()
 		if (
 			condition==encounter:won || condition==encounter:lost || condition==encounter:ran
 		) then (break)
+		updateEncounter()
+		
 		tick += 1
 		wait
 	)
@@ -13,10 +14,16 @@ script, encounter, who, tick, begin
 	return(tick)
 
 	subscript, updateEncounter, begin
-		if (turn == turn:enemy) then (
+		if (textWait) then (
+			if (pressedkey(b:a)) then (
+				textWait := false
+				updateHP()
+			)
+		) else if (turn == turn:enemy) then (
+			updateTurn
 			enemyTurn
-			nextTurn
 		) else (
+			updateTurn
 			switch (state) do (
 				case (encounter:choose) do (
 					if (newpresskey(b:u)) then (
@@ -45,23 +52,81 @@ script, encounter, who, tick, begin
 					if (newpresskey(b:b)) then (
 						changeState(encounter:choose)
 					) else if (newpresskey(b:u)) then (
-						if (getPinId(turn, slot:atk1) == pin:heart) then (
-							usePin(turn, char:Rose, slot:atk1)
-						) else(
-							usePin(turn, char:enemy, slot:atk1)
+						slot := slot:atk1
+						if (getPinID(turn, slot)<>pin:dummy) then(
+							changeState(encounter:target)
 						)
-						
-						(nextTurn)
 					) else if (newpresskey(b:d)) then (
-						if (getPinId(turn, slot:atk2) == pin:heart) then (
-							usePin(turn, char:Rose, slot:atk2)
-						) else(
-							usePin(turn, char:enemy, slot:atk2)
+						slot := slot:atk2
+						if (getPinID(turn, slot)<>pin:dummy) then(
+							changeState(encounter:target)
 						)
-						(nextTurn)
 					)
 				)
-				else (
+				case (encounter:target) do (
+					if (newpresskey(b:b)) then (
+						changeState(encounter:skill)
+					) else if (newpresskey(b:u)) then (
+						if (getTargets()==target:party || getTargets()==target:all) then (
+							freeSliceChildren (TextSli)
+							if (turn == char:Rose) then (
+								getPinName(getPinId(turn, slot))
+								$10="${S1} used ${S11} on "
+							) else if (turn == char:kat) then (
+								getPinName(getPinId(turn, slot))
+								$10="${S2} used ${S11} on "
+							)
+							$10+"${S1}."
+							expandString(10)
+							textLine(textSli, 0)
+
+							usePin(turn, char:Rose, slot)
+							textLine(textSli, 2)
+
+							textWait := true
+							turn += 1
+						)					) else if (newpresskey(b:d)) then (
+						if (getTargets()==target:party || getTargets()==target:all) then (
+							freeSliceChildren (TextSli)
+							if (turn == char:Rose) then (
+								getPinName(getPinId(turn, slot))
+								$10="${S1} used ${S11} on "
+							) else if (turn == char:kat) then (
+								getPinName(getPinId(turn, slot))
+								$10="${S2} used ${S11} on "
+							)
+							$10+"${S2}."
+							expandString(10)
+							textLine(textSli, 0)
+
+							usePin(turn, char:kat, slot)
+							textLine(textSli, 2)
+
+							textWait := true
+							turn += 1
+						)
+					) else if (newpresskey(b:r)) then (
+						if (getTargets()==target:enemy) then (
+							freeSliceChildren (TextSli)
+							if (turn == char:Rose) then (
+								getPinName(getPinId(turn, slot))
+								$10="${S1} used ${S11} on "
+							) else if (turn == char:kat) then (
+								getPinName(getPinId(turn, slot))
+								$10="${S2} used ${S11} on "
+							)
+							$10+"${S3}."
+							expandString(10)
+							textLine(textSli, 0)
+
+							usePin(turn, char:Enemy, slot)
+							textLine(textSli, 2)
+							
+							textWait := true
+							turn += 1
+						)
+					)
+				) else (
 					if (newpresskey(b:b)) then (
 						changeState(encounter:choose)
 					)
@@ -70,17 +135,18 @@ script, encounter, who, tick, begin
 		)
 	end
 
-	subscript, nextTurn, begin
-		updateHP()
-		turn += 1
-		if (turn > char:enemy) then (turn := char:rose)
-		if (turn <> char:Rose) then (changeState(encounter:choose))
+	subscript, updateTurn, begin
+		if (lastTurn<>turn) then (
+			lastTurn := turn
+			if (turn > char:enemy) then (turn := char:rose)
+			if (turn <> char:Rose) then (changeState(encounter:choose))
+		)
 	end
 
 	subscript, enemyTurn, begin
-		variable (slot)
+		variable (slot, target)
 
-		wait (60)
+		wait (30)
 
 		slot := random (1, 100)
 		if (slot > 75) then (
@@ -88,12 +154,40 @@ script, encounter, who, tick, begin
 		) else (
 			slot := slot:atk2
 		)
-
-		if (getPinId(turn, slot) == pin:Life) then (
-			usePin(turn, turn, slot)
-		) else (
-			usePin(turn, random(char:Rose, char:Kat), slot)
+		switch (getTargets()) do (
+			case (target:enemy) do (
+				target := random(char:Rose, char:Kat)	
+			)
+			case (target:party) do (
+				target := char:enemy
+			)
+			case (target:all) do (
+				target := random(char:Rose, char:enemy)
+			)
 		)
+		freeSliceChildren (TextSli)
+
+		getPinName(getPinId(turn, slot))
+		$10="${S3} used ${S11} on "
+		switch (target) do (
+			case (char:rose) do (
+				$10+"${S1}"
+			)
+			case (char:kat) do (
+				$10+"${S2}"
+			)
+			case (char:enemy) do (
+				$10+"${S3}"
+			)
+		)
+		expandString(10)
+		textLine(textSli, 0)
+
+		usePin(turn, target, slot)
+		textLine(textSli, 2)
+
+		textWait := true
+		turn += 1
 	end
 
 	subscript, changeState, which, begin
@@ -129,6 +223,8 @@ script, encounter, who, tick, begin
 			case (encounter:skill) do (
 				freeSliceChildren (textSli)
 				initSkill()
+			) case (encounter:target) do (
+				initTarget()
 			)
 			else (
 				freeSliceChildren (textSli)
@@ -179,7 +275,56 @@ script, encounter, who, tick, begin
 		)
 	end
 
+	subscript, initTarget, begin
+		freeSliceChildren(textSli)
+		getPinName(slot)
+		$10="Choose who to use ${S11} on."
+		expandString(10)
+		
+		switch (getTargets()) do (
+			case (target:party) do (
+				textLine(textSli, 0)
+				$10="Up: ${S1}"
+				expandString(10)
+				textLine(textSli, 2)
+				$10="Down: ${S2}"
+				expandString(10)
+				textLine(textSli, 3)	
+			)
+			case (target:all) do (
+				textLine(textSli, 0)
+				$10="Up: ${S1}"
+				expandString(10)
+				textLine(textSli, 2)
+				$10="Down: for ${S2}"
+				expandString(10)
+				textLine(textSli, 3)
+				$10="Right: ${S3}"
+				expandString(10)
+				textLine(textSli, 4)
+			)
+			case (target:enemy) do (
+				$10="Attack ${S3}?"
+				expandString(10)
+				textLine(textSli, 0)
+				$10="Right: confirm"
+				textLine(textSli, 2)
+			)
+		)
+	end
+
+	subscript, getTargets, begin
+		if (getPinId(turn, slot) == pin:heart) then (
+			return (target:party)
+		) else if (getPinId(turn, slot) >= pin:addFlame && getPinId(turn, slot) <= pin:addEarth) then (
+			return (target:all)
+		) else (
+			return (target:enemy)
+		)
+	end
+
 	subscript, initEncounter, begin
+		playSong(song:home bittersweet home)
 		condition := encounter:peaceful
 		turn := turn:rose
 		parent := loadSliceCollection (1)
@@ -195,6 +340,7 @@ script, encounter, who, tick, begin
 		for (i, char:rose, char:enemy) do (
 			setStat(i, stat:currentlife, getStat(i, stat:life))
 			updateStats(who, true)
+			setStat(who, stat:atr, getPinID(who, slot:atr) + 1 -- pin:flameAtr)
 		)
 		updateHP()
 
@@ -210,31 +356,8 @@ script, encounter, who, tick, begin
 
 		updateStats(char:rose)
 		updateStats(char:kat)
+		playSong(getambientmusic)
 	end
-end
-
-#math go brr
-script, elementCheck, pin, target, begin
-	variable (modded, atr)
-
-	atr := getPinId(target, slot:atr)
-
-	if (atr == pin:dummy) then (exitScript)
-
-	pin := pin -- 5
-	atr := atr -- 14
-
-	#make it 4 into a 0 for math reasons.
-	modded := pin, mod, 4
-	if (modded  -- atr == 1) then (
-		return (weak)
-	)
-
-	#make it 4 into a 0 for math reasons.
-	modded := atr, mod, 4
-	if (pin -- modded == -1) then (
-		return (strong)
-	)
 end
 
 script, initDialogue, parent, begin

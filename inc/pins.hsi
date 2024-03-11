@@ -111,7 +111,7 @@ end
 script, getPinId, who, slot, begin
 	variable (sli)
 	sli :=	returnPinSlice(who, slot)
-	if (sli) then (return (getExtra(sli, pin:ID)))
+	if (sli) then (return (getExtra(sli, pin:ID))) else (return (pin:dummy))
 end
 
 script, getPinName, which, begin
@@ -134,6 +134,11 @@ script, getPinName, which, begin
 		case (pin:waterAtr) do ($11="Water Atr")
 		case (pin:shockAtr) do ($11="Shock Atr")
 		case (pin:earthAtr) do ($11="Earth Atr")
+
+		case (pin:addFlame) do ($11="+Flame")
+		case (pin:addWater) do ($11="+Water")
+		case (pin:addShock) do ($11="+Shock")
+		case (pin:addEarth) do ($11="+Earth")
 	)
 end
 
@@ -158,8 +163,8 @@ script, usePin, attacker, target, slot, begin
 		effect := getPinEffect(pin, lvl, psi, mind)
 
 		#*1.25 if attacking with atribute of pin
-		atr := pin
-		if (atr -- pin:flameAtr + 1 == pin) then (effect := effect + effect/4)
+		atr := getStat(attacker, stat:atr)
+		if (atr + 1 -- pin:addFlame == pin) then (effect := effect + effect/4)
 
 		#if weak, damage*1.25 ; if strong, damage*0.75
 		if (elementCheck(pin, target) == weak) then (
@@ -167,8 +172,9 @@ script, usePin, attacker, target, slot, begin
 		) else if (elementCheck(pin, target) == strong) then (
 			effect -= effect / 4
 		)
-		$11=""
-		appendNumber(11, effect)
+		$10="They took "
+		appendNumber(10, effect)
+		$10+" damage"
 		hp := getStat(target, stat:currentLife) -- effect
 		if (hp < 0) then (hp := 0)
 		setStat(target, stat:currentlife, hp)
@@ -176,24 +182,21 @@ script, usePin, attacker, target, slot, begin
 		statGain(target, gain:damage)
 		addPinExp(attacker, slot, getLvl(char:enemy) + 1 * random (2, 4))
 	) else if (pin == pin:heart) then (
-		if (attacker == char:enemy) then (
-			heal (char:enemy)
-		) else (
-			heal (char:Rose)
-			showValue(effect)
-			wait (20)
-			heal (char:Kat)
-			showValue(effect)
-		)
-		statGain(attacker, gain:attack, gain:attack)
+		heal (target)
+		statGain(attacker, gain:attack)
 		addPinExp(attacker, slot, getLvl(char:enemy) + 1 * random (2, 4))
+	) else if (pin >= pin:addFlame && pin <= pin:addEarth) then (
+		setStat(target, stat:atr, pin + 1 -- pin:addFlame)
+		statGain(attacker, gain:attack)
+		getPinName(pin--4)
+		$10="They gained the ${S11}"
 	)
 
 	subscript, heal, who, begin
 		hp := getStat(who, stat:currentlife)
 		effect := getPinEffect (pin, lvl, psi)
-		$12=""
-		appendNumber(12, effect)
+		$10="They healed by "
+		appendNumber(10, effect)
 		hp += effect
 
 		if (hp > getStat(who, stat:life)) then (hp := getStat(who, stat:life))
@@ -224,4 +227,28 @@ script, getPinEffect, id, lvl, mod1, mod2=1, begin
 		)
 	)
 	return (value)
+end
+
+#math go brr
+script, elementCheck, pin, target, begin
+	variable (modded, atr)
+
+	atr := getStat(target, stat:atr)
+
+	if (atr == pin:dummy) then (exitScript)
+
+	pin := pin -- 5
+	atr := atr -- 14
+
+	#make it 4 into a 0 for math reasons.
+	modded := pin, mod, 4
+	if (modded  -- atr == 1) then (
+		return (weak)
+	)
+
+	#make it 4 into a 0 for math reasons.
+	modded := atr, mod, 4
+	if (pin -- modded == -1) then (
+		return (strong)
+	)
 end

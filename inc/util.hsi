@@ -2,7 +2,7 @@ script, textLine, parent, y=0, begin
 	variable (sli)
 	sli := createText()
 	setParent (sli, parent)
-	setTextColor(sli, 2)
+	setTextColor(sli, ui:text)
 	putSlice (sli, 0, y*10)
 	resizeExtra(sli, 32)
 	setSliceText(sli, 10)

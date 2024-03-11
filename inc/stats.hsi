@@ -68,6 +68,7 @@ script, initEnemy, who, begin
 
 	switch (who) do (
 		case (enemy:dummy) do (
+			$3="DUMMY"
 			setStat(char:enemy, stat:life, 16)
 			setStat(char:enemy, stat:psi, 6)
 			setStat(char:enemy, stat:mind, 8)
@@ -83,6 +84,7 @@ script, initEnemy, who, begin
 
 			setparent(loadBorderSprite(2), sli)
 		) else (
+			$3="ERROR"
 			setStat(char:enemy, stat:life, 16)
 			setStat(char:enemy, stat:psi, 6)
 			setStat(char:enemy, stat:mind, 8)
