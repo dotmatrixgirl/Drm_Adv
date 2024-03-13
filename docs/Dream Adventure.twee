@@ -1,0 +1,72 @@
+:: StoryTitle
+Dream Adventure
+
+
+:: StoryData
+{
+  "ifid": "194F874D-05A8-4975-A378-43B4D3BA3765",
+  "format": "Harlowe",
+  "format-version": "3.3.8",
+  "start": "Intro",
+  "zoom": 1
+}
+
+
+:: Dark World {"position":"850,375","size":"100,100"}
+In the dark world, they find various trauma of their lives, reliving their worst moments together. They meet the embodiment of their fears. if they defeat it or talk to it, they are warped to [[Starland the Inbetween Land]], otherwise the game ends.
+
+
+:: Intro {"position":"125,25","size":"100,100"}
+Rose takes gift to Kat after Kat moves in. Rose comes back home, and is told her sister wanted to talk to her. [[play with sister]] or [[fall asleep]]
+
+
+:: Late night walk {"position":"350,200","size":"100,100"}
+Rose goes out for a walk in the nearby wetlands. she finds a crashed ship there, and inside she finds a strange artifact that glows in every color. She takes it and goes back. On the way, she sees Kat outside smoking weed and they talk. Kat calls Rose pretty, and after some awkward exchange, they kiss. While they are kissing, the artifact grows, and they warp to a subway station full of orbwebs. [[the subway]]
+
+
+:: Starland the Inbetween Land {"position":"1100,550","size":"100,100"}
+They meet Kat's mother, who calls them both beautiful. She hugs Kat, and then Rose, kissing them both on the cheek. She fades away, saying she was glad to have seen her daughter one last time. Rose and Kat find themselves back on the porch, and the game ends.
+
+
+:: a mirror {"position":"1150,225","size":"100,100"}
+Inside the mirror, Kat sees herself, and she sees that she is as pretty as her mother. she is euphoric, and hugs Rose. They warp to [[Starland the Inbetween Land]].
+
+
+:: fall asleep {"position":"300,50","size":"100,100"}
+Rose decides not to play with her sister and instead lays down, and falls asleep. she hears her mom call her but cannot move, and falls back asleep. [[Late night walk]]
+
+
+:: fight a mushroom spider {"position":"625,375","size":"100,100"}
+After defeating the spider, they find themselves in the [[Dark World]]
+
+
+:: meet an old woman {"position":"600,600","size":"100,100"}
+The old woman calls them beautiful. if they return the compliment, they go to [[Starland the Inbetween Land]].
+
+
+:: mirror shards {"position":"975,250","size":"100,100"}
+They cut their wrists and find themselves in the [[Dark World]] 
+
+
+:: mushroom land {"position":"425,325","size":"100,100"}
+They walk around the mushroom land. they talk to various spiders, [[meet an old woman]], and [[fight a mushroom spider]].
+
+
+:: play with sister {"position":"150,200","size":"100,100"}
+Rose plays with her sister and is called to dinner. during dinner, she faints. [[Late night walk]]
+
+
+:: subway car {"position":"650,175","size":"100,100"}
+Inside the subway car, the conducter asks them if they want to board the subway. They ask where. The conducter does not reply, and again asks if they will board. if they say yes, they will travel to the [[mushroom land]]
+
+
+:: the castle made of glass {"position":"975,100","size":"100,100"}
+They find [[a mirror]] and [[mirror shards]]
+
+
+:: the subway {"position":"500,100","size":"100,100"}
+they talk to orbwebs, [[they  find a tv]], and a [[subway car]]
+
+
+:: they  find a tv {"position":"750,75","size":"100,100"}
+in the tv, they see see a beautiful woman who resembles Kat. (her mother). They reach into the tv and travel to [[the castle made of glass]]

@@ -57,14 +57,14 @@ defineConstant, begin
 	3,	encounter:peaceful
 	4,	encounter:ran
 
-	0,	encounter:null
-	1,	encounter:choose
-	2,	encounter:talk
-	3,	encounter:fight
-	4,	encounter:item
-	5,	encounter:skill
-	7,	encounter:run
-	8,	encounter:target
+	5,	encounter:null
+	6,	encounter:choose
+	7,	encounter:talk
+	8,	encounter:fight
+	9,	encounter:item
+	10,	encounter:skill
+	11,	encounter:run
+	12,	encounter:target
 
 	0,	turn:rose
 	1,	turn:kat
