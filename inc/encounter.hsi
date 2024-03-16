@@ -30,7 +30,7 @@ script, encounter, who, tick, begin
 			updateTurn
 			switch (state) do (
 				case (encounter:choose) do (
-					if (newpresskey(b:u)) then (
+					if (newpresskey(b:l)) then (
 						if (condition == encounter:peaceful) then (
 							changeState(encounter:talk)
 						) else (
@@ -41,8 +41,6 @@ script, encounter, who, tick, begin
 						)
 					) else if (newpresskey(b:a)) then (
 						changeState(encounter:skill)
-					)else if (newpresskey(b:d)) then (
-						changeState(encounter:item)
 					)else if (newpresskey(b:b)) then (
 						changeState(encounter:run)
 					)
@@ -168,7 +166,6 @@ script, encounter, who, tick, begin
 		variable (slot, target)
 
 		if (condition == encounter:enraged) then (
-			wait (30)
 			slot := random (1, 100)
 			if (slot > 75) then (
 				slot := slot:atk1
@@ -224,14 +221,12 @@ script, encounter, who, tick, begin
 				$10="Choose Action"
 				textLine(textSli, 0)
 
-				$10="Up: talk"
+				$10="left: talk"
 				textLine(textSli, 2)
 				$10="A: pins"
 				textLine(textSli, 3)
-				$10="Down: items"
-				textLine(textSli, 4)
 				$10="B: run"
-				textLine(textSli, 5)
+				textLine(textSli, 4)
 			)
 			case (encounter:run) do (
 				freeSliceChildren(TextSli)
@@ -403,15 +398,165 @@ script, encounter, who, tick, begin
 	end
 
 	subscript, endEncounter, begin
-		wait (50)
 		freeSlice (parent)
 
 		statGain(char:Rose, gain:battled)
 		statGain(char:Kat, gain:battled)
 
-		updateStats(char:rose)
-		updateStats(char:kat)
 		playSong(getambientmusic)
+
+		afterEncounter(condition)
+	end
+end
+
+script, afterEncounter, condition, begin
+	variable(sli, stat, exiter, textWait, who, levelIsCapped, pin, i, state)
+	state := -1
+	init()
+	while (true) do (
+		if (textWait==true) then (
+			if (pressKey(b:a)) then (
+				freeSliceChildren (sli)
+				textWait := false	
+			)
+			wait
+		) else (if (update) then (break))
+	)
+	freeSlice(sliceParent(sli))
+
+	subscript, init, begin
+		switch (condition) do (
+			case (encounter:won) do (
+				sli := loadSliceCollection(2)
+				sli := firstChild(sli)
+				who := char:rose
+
+				$10="Encounter cleared."
+
+				textLine(sli, 0)
+
+				textWait := true
+				state := 0
+			)
+			case (encounter:ran) do (
+				sli := loadSliceCollection(2)
+				sli := firstChild(sli)
+				who := char:rose
+				$10="Successfully ran."
+				textLine(sli, 0)
+
+				textWait := true
+				state := -1
+			) else (
+				state := -1
+			)
+		)
+	end
+
+	subscript, update, begin
+		switch(state) do (
+			case (0) do (updateCapCheck)
+			case (1) do (statUpdate)
+			case (2) do (pinUpdate)
+			else (return (true))
+		)
+	end
+
+	subscript, statUpdate, begin
+		if (who > char:Kat) then (
+			pinInit()
+		) else if (getLvl(who) >= getCap) then (
+			freeSliceChildren(sli)
+			copyString(10, who+strng:roseName)
+			$10+" has reached the level cap."
+			expandString(10)
+			textLine(sli, 0)
+			who += 1
+			textWait := true
+		) else (
+			if (updateStat(who, stat, false)) then (
+				freeSliceChildren (sli)
+				copyString(10, who+strng:RoseName)
+
+				$10+"'s "
+
+				concatenateStrings (10, stat + strng:life -- stat:life)
+
+				$10+" grew to "
+
+				appendNumber(10, getStat(who, stat))
+
+				$10+"."
+
+				expandString(10)
+				textLine(sli, 0)
+				textWait := true
+			) else (
+				if (who > char:Kat) then (
+					pinInit()
+				)
+			)
+		)
+		stat += 1
+		if (stat > stat:empathy) then (
+			stat := stat:life
+			who += 1
+		)
+	end
+
+	subscript, statinit, begin
+		who := char:rose
+		stat := stat:life
+		state := 1
+	end
+
+	subscript, pinInit, begin
+		who := char:rose
+		state := 2
+	end
+
+	subscript, pinUpdate, begin
+
+		if (condition == encounter:won) then (
+			if (who > char:Kat) then (
+				state := -1
+			)else if (getPinId(who, pin)) then (
+				if (getPinCap(getPinLvl(who, pin))) then (
+					copyString(10, who+strng:RoseName)
+					getPinName(getPinId(who, pin))
+					$10+"'s ${S11} pin is max level."
+					expandString(10)
+					textLine(sli, 0)
+					textWait := true
+				) else (
+					if (lvlPin(who, pin)) then (
+						copyString(10, who+strng:RoseName)
+						getPinName(getPinId(who, pin))
+						$10+"'s ${S11} pin grew to "
+						appendNumber(10, getPinLvl(who, pin))
+						$10+"."
+						expandString(10)
+
+						textLine(sli, 0)
+						textWait := true
+					)
+				)
+			)
+			pin += 1
+			if (pin > slot:stat2) then (
+				pin := slot:atk1
+				who += 1
+			)
+		)
+	end
+
+	subscript, initCapCheck, begin
+		state := 0
+		who := char:rose
+	end
+
+	subscript,	updateCapCheck, begin
+		statInit()
 	end
 end
 

@@ -40,11 +40,14 @@ end
 
 script, addPinExpCapped, who, slot, amount, begin
 	variable (sli, lvl)
-	lvl := getPinLvl(who, slot)
-	if (lvl < = game:lvlCap) then (
+	lvl := expCurve(getPinExp(who, slot))
+	if (getPinCap(lvl)==false) then (
 		addPinExp(who, slot, amount)
-		return (lvlPin(who, slot))
 	)
+end
+
+script, getPinCap, lvl, begin
+	if (lvl > game:lvlCap * 4 -- 5) then (return(true))
 end
 
 script, initPinSlots, who, begin
@@ -65,7 +68,7 @@ script, lvlPin, who, slot, begin
 	#this is where the level curve is determined
 	lvl := expCurve(exp)
 
-	if (lvl >= game:lvlCap + 5) then (lvl := game:lvlCap + 5)
+	#if (lvl >= game:lvlCap * 3) then (lvl := game:lvlCap * 3)
 
 	setPinLvl(who, slot, lvl)
 
@@ -180,11 +183,9 @@ script, usePin, attacker, target, slot, begin
 		setStat(target, stat:currentlife, hp)
 		statGain(attacker, gain:attack)
 		statGain(target, gain:damage)
-		addPinExp(attacker, slot, getLvl(char:enemy) + 1 * random (2, 4))
 	) else if (pin == pin:heart) then (
 		heal (target)
 		statGain(attacker, gain:attack)
-		addPinExp(attacker, slot, getLvl(char:enemy) + 1 * random (2, 4))
 	) else if (pin >= pin:addFlame && pin <= pin:addEarth) then (
 		setStat(target, stat:atr, pin + 1 -- pin:addFlame)
 		statGain(attacker, gain:attack)
@@ -194,12 +195,11 @@ script, usePin, attacker, target, slot, begin
 
 	subscript, heal, who, begin
 		hp := getStat(who, stat:currentlife)
-		effect := getPinEffect (pin, lvl, psi)
-		$10="They healed by "
-		appendNumber(10, effect)
+		effect := getPinEffect (pin, lvl, psi,	hp)
 		hp += effect
-
 		if (hp > getStat(who, stat:life)) then (hp := getStat(who, stat:life))
+		$10="Health restored to "
+		appendNumber(10, hp)
 
 		setStat(who, stat:currentlife, hp)
 	end
@@ -210,15 +210,15 @@ script, getPinEffect, id, lvl, mod1, mod2=1, begin
 	switch (id) do (
 		#mod1 is psi
 		case (pin:heart) do (
-			value := (lvl + mod1 / 10) / 3
+			value := (lvl / 2 + mod1/2 + mod2 / 4) / 3
 		)
 		#mod1 is empathy, mod2 is will
 		case (pin:calm, pin:read) do (
-			value := lvl * 2 / 3 + mod1 / 2 -- mod2 / 2 + random (-20, 20)
+			value := lvl * 3 / 4 + mod1 / 2 -- mod2 / 2 + random (-20, 20)
 		)
 		#mod1 is psi, mod2 is mind
 		case (pin:flame, pin:water, pin:shock, pin:earth) do (
-			value := (lvl * 2 / 3 + mod1) -- mod2 / 3
+			value := (lvl * 3 / 7 + mod1) -- mod2 / 4
 		)
 		#mod1 is original stat value
 		case (pin:life, pin:mind, pin:psi, pin:speed, pin:empathy) do (

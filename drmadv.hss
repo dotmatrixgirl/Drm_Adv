@@ -24,6 +24,17 @@ defineConstant, begin
 	1,	strng:RoseName
 	2,	strng:KatName
 	3,	strng:EnemyName
+	30,	strng:life
+	31,	strng:psi
+	32,	strng:mind
+	33,	strng:speed
+	34,	strng:empathy
+	35,	strng:alignment
+	40,	strng:atk1
+	41,	strng:atk2
+	42,	strng:stat1
+	43,	strng:stat2
+	44,	strng:atr
 
 	#buttons
 	0,	b:u
@@ -115,6 +126,9 @@ defineConstant, begin
 
 	10,	stat:lvled
 
+	1,	stat:lvledUp
+	2,	stat:capped
+
 	0,	atr:none
 	1,	atr:flame
 	2,	atr:water
@@ -162,6 +176,9 @@ globalVariable, begin
 
 	12,	game:lvlCap
 	13,	game:hard
+
+	14,	maxLvl:rose
+	15,	maxLvl:Kat
 end
 
 #default scripts
@@ -183,6 +200,13 @@ plotscript, newGame, begin
 		resetKeys()
 
 		#initChars()
+
+		$30="Life"
+		$31="Psi"
+		$32="Mind"
+		$33="Speed"
+		$34="Empathy"
+		$35="Alignment"
 
 		game:lvlCap := 3
 		
