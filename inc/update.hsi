@@ -10,6 +10,7 @@ script, mainLoop, state,  begin
 	subscript, update, tick, state, begin
 		keypresses(state, tick)
 		animate(state, tick)
+		overlayToFront()
 	end
 end
 

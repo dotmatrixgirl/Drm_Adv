@@ -6,6 +6,8 @@ include, inc/encounter.hsi
 include, inc/menu.hsi
 include, inc/map.hsi
 include, inc/pins.hsi
+include, inc/sineEffect.hsi
+include, inc/thirdparty.hsi
 
 defineConstant, begin
 	#game states
@@ -18,6 +20,21 @@ defineConstant, begin
 	201,	sli:walkabout
 	202,	sli:chars
 	203,	sli:pinBag
+	204,	sli:battleback
+	205,	sli:overlay
+
+	0,	back:tick
+	1,	back:scrollxrate
+	2,	back:scrollyrate
+	3,	back:rate
+	4,	back:amplitude
+	5,	back:frequency
+	6,	back:mode
+	7,	back:compression
+	8,	back:scrollx
+	9,	back:scrolly
+
+	
 
 	#dedicatedStrings
 	0,	strng:PlayerName
@@ -261,6 +278,13 @@ plotscript, autorun, begin
 			setSliceVelocity (sli, 2, 1)
 		)
 	)
+
+	if (lookupSlice(sli:overlay)) then (
+	) else (
+		sli := loadBackdropSprite(17)
+		setSliceLookup(sli, sli:overlay)
+	)
+	sliceToFront(sli)
 
 	subscript, createCharWalk, set, who, begin
 		sli := loadBorderSprite(set)

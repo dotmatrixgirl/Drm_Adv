@@ -1,0 +1,170 @@
+script, loadbattleback, parent, which, begin
+	variable (sli, i, j, k, height, width)
+	variable (set, blend, opacity)
+
+	sli := load backdrop sprite (0)
+	setParent (sli, parent)
+	sliceToBack (sli)
+	return (sli)
+	height := sliceHeight(sli)
+	width  := sliceWidth(sli)
+	dissolve sprite (sli, dissolve:fade, 40, 0, true)
+	put slice (sli, 0, -10)
+	center slice (sli)
+
+	set slice clipping (sli, true)
+
+	for (j, 0, 1) do (
+		sli := firstChild(parent)
+		setParent(createContainer(), sli)
+		sli := lastChild(sli)
+		resizeExtra(sli, 16)
+		if (j == 0) then (
+			set		:= 18
+			opacity	:= 80
+			blend	:= blend:normal	
+			setExtra(sli, back:rate,		2)
+			setExtra(sli, back:amplitude,	10)
+			setExtra(sli, back:frequency,	10)
+			setExtra(sli, back:compression,	2)
+			setExtra(sli, back:mode,		1)
+			setExtra(sli, back:scrolly,		40)
+			setExtra(sli, back:scrollx,		0)
+			setExtra(sli, back:scrollxrate,	1)
+			setExtra(sli, back:scrollyrate,	1)
+		) else (
+			set		:= 18
+			opacity	:= 50
+			blend	:= blend:normal
+			setExtra(sli, back:rate,		2)
+			setExtra(sli, back:amplitude,	12)
+			setExtra(sli, back:frequency,	5)
+			setExtra(sli, back:compression,	2)
+			setExtra(sli, back:mode,		1)
+			setExtra(sli, back:scrolly,		20)
+			setExtra(sli, back:scrollx,		0)
+			setExtra(sli, back:scrollxrate,	1)
+			setExtra(sli, back:scrollyrate,	1)
+			
+		)
+		for (i, 0, height--1) do (
+			sli := lastChild(firstChild(parent))
+			setParent (createContainer(width*3, 1), sli)
+			sli := lastChild(sli)
+			putSlice (sli, 0, i)
+			setSliceClipping (sli, true)
+
+			setparent (loadBackdropSprite (set), sli)
+			sli := lastChild(sli)
+			setBlendMode (sli, blend)
+			setOpacity (sli, opacity)
+			putSlice (sli, 0, i * -1)
+			dissolveSprite (sli, dissolve:fade, 40, 0, true)
+
+			sli := lastChild(firstChild(parent))
+			sli := lastChild(sli)
+			setparent (loadBackdropSprite (set), sli)
+			sli := lastChild(sli)
+			setBlendMode (sli, blend)
+			setOpacity (sli, opacity)
+			putSlice (sli, width * -1, i * -1)
+			dissolveSprite (sli, dissolve:fade, 40, 0, true)
+		)
+	)
+end
+
+script, sinedist, parent, tick, begin
+	variable (i, j, k, sli, offset, x, y, t)
+	variable (amplitude, frequency, rate, mode, compression)
+	variable (scrolly, scrollx, height, width, scrollxrate, scrollyrate)
+
+	sli := firstChild (parent)
+
+	height := sliceHeight (sli)
+	width := sliceWidth (sli)
+
+	t := getExtra (sli, back:tick)
+	t += 1
+	setExtra(sli, back:tick, t)
+	t := t/80000000*rate
+
+	for (j, 0, 1) do (
+		sli := firstChild (parent)
+		sli := sliceChild(sli, j)
+
+		rate := getExtra(sli, back:rate)
+		frequency	:= getExtra (sli, back:frequency)
+		compression	:= getExtra (sli, back:compression)
+		amplitude	:= getExtra (sli, back:amplitude)
+
+		
+		scrolly 	:= getExtra (sli, back:scrolly)
+		scrollx 	:= getExtra (sli, back:scrollx)
+		scrollxrate	:= getExtra (sli, back:scrollyrate)
+		scrollyrate	:= getExtra (sli, back:scrollxrate)
+		mode		:= getExtra (sli, back:mode)
+
+		for (i, 0, height--1) do (
+			sli := firstChild (parent)
+			sli := sliceChild(sli, j)
+			sli := sliceChild(sli, i)
+			sli := firstChild(sli)
+
+			x := get slice extra (sli, 1)
+			y := get slice extra (sli, 2)
+
+			x += scrollX
+			y += scrollY
+			set slice extra (sli, 1, x)
+			set slice extra (sli, 2, y)
+
+			y := y/20
+			x := x/20
+
+			offset := sine ((frequency*i)/2 + t) * amplitude/6000
+
+			if (mode == 1) then(
+				x := offset + x
+				y := i + y
+			) else if (mode == 2) then (
+				if (i, mod, 2) then (offset := offset  + x * -1) else ()
+				x := offset  + x
+				y := i + y
+			) else if (mode == 3) then (
+				y := i * compression + offset + Y
+			)
+			
+			#wrap around x and y
+			x := x, mod, width
+			y := y, mod, height * -1
+
+			setSliceX (sli, x)
+			setSliceY (sli, y)
+			
+
+			sli := nextSibling(sli)
+			setSliceX (sli, x -- width)
+
+			#sli := sliceParent(sli)
+			setSliceY (sli, y)
+		)
+	)
+end
+
+script, freebattleback, parent, begin
+	variable (i, j, height, sli)
+
+	sli := firstChild (parent)
+	dissolve sprite (sli, dissolve:fade, 105)
+	height := sliceHeight (sli)
+
+	for (j, 0, 1) do (
+		for (i, 0, height--1) do (
+			sli := firstChild (parent)
+			sli := sliceChild(sli, j)
+			sli := sliceChild(sli,i)
+			sli := firstChild(sli)
+			dissolve sprite (sli, dissolve:fade, 105)
+		)
+	)
+end

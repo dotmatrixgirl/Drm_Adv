@@ -100,3 +100,206 @@ setExtra(sli,type:scared,	none)
 setExtra(sli,type:sad,		none)
 
 #===================================================================
+
+# ... end copy selection at the line above this line
+#below is template to copy, above is a backup in case you overwrite
+#the template below
+
+
+$10="What is love to you?" #put question here. always leave the "" in place
+textLine(parent, 0) #do not change this line
+
+$10="Love is deep acceptance." #replace with the first answer
+sli := textLine(parent, 2) #do not change this line
+setExtra(sli,type:logic,	disliked) #change none to liked or
+setExtra(sli,type:anger,	disliked) #disliked to fit the
+setExtra(sli,type:slut,		liked) #personality
+setExtra(sli,type:selfish,	none)
+setExtra(sli,type:caring,	liked)
+setExtra(sli,type:scared,	none)
+setExtra(sli,type:sad,		liked)
+
+$10="There is no such thing as love." 
+sli := textLine(parent, 3) #do not change this line
+setExtra(sli,type:logic,	none)
+setExtra(sli,type:anger,	liked)
+setExtra(sli,type:slut,		disliked)
+setExtra(sli,type:selfish,	disliked)
+setExtra(sli,type:caring,	dislike)
+setExtra(sli,type:scared,	disliked)
+setExtra(sli,type:sad,		liked)
+
+$10="Fuck you."
+sli := textLine(parent, 4) #do not change this line
+setExtra(sli,type:logic,	disliked)
+setExtra(sli,type:anger,	liked)
+setExtra(sli,type:slut,		disliked)
+setExtra(sli,type:selfish,	disliked)
+setExtra(sli,type:caring,	disliked)
+setExtra(sli,type:scared,	disliked)
+setExtra(sli,type:sad,		none)
+
+$10="Love is an attraction to another."
+sli := textLine(parent, 5) #do not change this line
+setExtra(sli,type:logic,	liked)
+setExtra(sli,type:anger,	none)
+setExtra(sli,type:slut,		none)
+setExtra(sli,type:selfish,	none)
+setExtra(sli,type:caring,	none)
+setExtra(sli,type:scared,	disliked)
+setExtra(sli,type:sad,		none)
+
+#===================================================================
+
+
+# ... end copy selection at the line above this line
+#below is template to copy, above is a backup in case you overwrite
+#the template below
+
+
+$10="Where do you think life comes from?" #put question here. always leave the "" in place
+textLine(parent, 0) #do not change this line
+
+$10="My cooter." #replace with the first answer
+sli := textLine(parent, 2) #do not change this line
+setExtra(sli,type:logic,	liked) #change none to liked or
+setExtra(sli,type:anger,	none) #disliked to fit the
+setExtra(sli,type:slut,		liked) #personality
+setExtra(sli,type:selfish,	none)
+setExtra(sli,type:caring,	disliked)
+setExtra(sli,type:scared,	none)
+setExtra(sli,type:sad,		none)
+
+$10="It comes from the ocean." 
+sli := textLine(parent, 3) #do not change this line
+setExtra(sli,type:logic,	liked)
+setExtra(sli,type:anger,	none)
+setExtra(sli,type:slut,		none)
+setExtra(sli,type:selfish,	none)
+setExtra(sli,type:caring,	disliked)
+setExtra(sli,type:scared,	none)
+setExtra(sli,type:sad,		liked)
+
+$10="They came from outer space."
+sli := textLine(parent, 4) #do not change this line
+setExtra(sli,type:logic,	liked)
+setExtra(sli,type:anger,	none)
+setExtra(sli,type:slut,		none)
+setExtra(sli,type:selfish,	disliked)
+setExtra(sli,type:caring,	none)
+setExtra(sli,type:scared,	liked)
+setExtra(sli,type:sad,		none)
+
+$10="A random explosion in space I guess."
+sli := textLine(parent, 5) #do not change this line
+setExtra(sli,type:logic,	liked)
+setExtra(sli,type:anger,	liked)
+setExtra(sli,type:slut,		none)
+setExtra(sli,type:selfish,	none)
+setExtra(sli,type:caring,	none)
+setExtra(sli,type:scared,	disliked)
+setExtra(sli,type:sad,		none)
+
+#===================================================================
+
+
+# ... end copy selection at the line above this line
+#below is template to copy, above is a backup in case you overwrite
+#the template below
+
+
+$10="Does life end after death?" #put question here. always leave the "" in place
+textLine(parent, 0) #do not change this line
+
+$10="No one can know what comes next." #replace with the first answer
+sli := textLine(parent, 2) #do not change this line
+setExtra(sli,type:logic,	liked) #change none to liked or
+setExtra(sli,type:anger,	none) #disliked to fit the
+setExtra(sli,type:slut,		none) #personality
+setExtra(sli,type:selfish,	disliked)
+setExtra(sli,type:caring,	likes)
+setExtra(sli,type:scared,	disliked)
+setExtra(sli,type:sad,		disliked)
+
+$10="I hope so..." 
+sli := textLine(parent, 3) #do not change this line
+setExtra(sli,type:logic,	none)
+setExtra(sli,type:anger,	none)
+setExtra(sli,type:slut,		liked)
+setExtra(sli,type:selfish,	none)
+setExtra(sli,type:caring,	liked)
+setExtra(sli,type:scared,	none)
+setExtra(sli,type:sad,		liked)
+
+$10="We become another part of the universe."
+sli := textLine(parent, 4) #do not change this line
+setExtra(sli,type:logic,	liked)
+setExtra(sli,type:anger,	none)
+setExtra(sli,type:slut,		none)
+setExtra(sli,type:selfish,	disliked)
+setExtra(sli,type:caring,	none)
+setExtra(sli,type:scared,	liked)
+setExtra(sli,type:sad,		liked)
+
+$10="Heaven or hell."
+sli := textLine(parent, 5) #do not change this line
+setExtra(sli,type:logic,	disliked)
+setExtra(sli,type:anger,	none)
+setExtra(sli,type:slut,		liked)
+setExtra(sli,type:selfish,	liked)
+setExtra(sli,type:caring,	liked)
+setExtra(sli,type:scared,	disliked)
+setExtra(sli,type:sad,		none)
+
+#===================================================================
+
+
+# ... end copy selection at the line above this line
+#below is template to copy, above is a backup in case you overwrite
+#the template below
+
+
+$10="Does life end after death?" #put question here. always leave the "" in place
+textLine(parent, 0) #do not change this line
+
+$10="No one can know what comes next." #replace with the first answer
+sli := textLine(parent, 2) #do not change this line
+setExtra(sli,type:logic,	liked) #change none to liked or
+setExtra(sli,type:anger,	none) #disliked to fit the
+setExtra(sli,type:slut,		none) #personality
+setExtra(sli,type:selfish,	disliked)
+setExtra(sli,type:caring,	likes)
+setExtra(sli,type:scared,	disliked)
+setExtra(sli,type:sad,		disliked)
+
+$10="I hope so..." 
+sli := textLine(parent, 3) #do not change this line
+setExtra(sli,type:logic,	none)
+setExtra(sli,type:anger,	none)
+setExtra(sli,type:slut,		liked)
+setExtra(sli,type:selfish,	none)
+setExtra(sli,type:caring,	liked)
+setExtra(sli,type:scared,	none)
+setExtra(sli,type:sad,		liked)
+
+$10="We become another part of the universe."
+sli := textLine(parent, 4) #do not change this line
+setExtra(sli,type:logic,	liked)
+setExtra(sli,type:anger,	none)
+setExtra(sli,type:slut,		none)
+setExtra(sli,type:selfish,	disliked)
+setExtra(sli,type:caring,	none)
+setExtra(sli,type:scared,	liked)
+setExtra(sli,type:sad,		liked)
+
+$10="Heaven or hell."
+sli := textLine(parent, 5) #do not change this line
+setExtra(sli,type:logic,	disliked)
+setExtra(sli,type:anger,	none)
+setExtra(sli,type:slut,		liked)
+setExtra(sli,type:selfish,	liked)
+setExtra(sli,type:caring,	liked)
+setExtra(sli,type:scared,	disliked)
+setExtra(sli,type:sad,		none)
+
+#===================================================================

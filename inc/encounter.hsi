@@ -5,15 +5,15 @@ script, encounter, who, tick, begin
 		if (
 			condition==encounter:won || condition==encounter:lost || condition==encounter:ran
 		) then (break)
-		updateEncounter()
-		
 		tick += 1
+		updateEncounter()
 		wait
 	)
 	endEncounter()
 	return(tick)
 
 	subscript, updateEncounter, begin
+		sinedist(parent, tick)
 		if (textWait) then (
 			if (newpresskey(b:a)) then (
 				textWait := false
@@ -152,6 +152,7 @@ script, encounter, who, tick, begin
 				)
 			)
 		)
+		overlayToFront()
 	end
 
 	subscript, updateTurn, begin
@@ -370,7 +371,7 @@ script, encounter, who, tick, begin
 				turn += 1
 		 	)
 		)
-		
+
 	end
 
 	subscript, initEncounter, begin
@@ -384,6 +385,7 @@ script, encounter, who, tick, begin
 		hpSli :=  sliceChild(firstChild(parent), 3)
 
 		who := enemy:dummy
+		loadbattleback(parent, who)
 
 		initEnemy(who)
 
@@ -398,18 +400,16 @@ script, encounter, who, tick, begin
 	end
 
 	subscript, endEncounter, begin
-		freeSlice (parent)
-
 		statGain(char:Rose, gain:battled)
 		statGain(char:Kat, gain:battled)
 
 		playSong(getambientmusic)
 
-		afterEncounter(condition)
+		afterEncounter(condition, parent)
 	end
 end
 
-script, afterEncounter, condition, begin
+script, afterEncounter, condition, parent, begin
 	variable(sli, stat, exiter, textWait, who, levelIsCapped, pin, i, state)
 	state := -1
 	init()
@@ -420,37 +420,17 @@ script, afterEncounter, condition, begin
 				textWait := false	
 			)
 			wait
+			overlayToFront
 		) else (if (update) then (break))
 	)
-	freeSlice(sliceParent(sli))
+	freeSlice(sli)
 
 	subscript, init, begin
-		switch (condition) do (
-			case (encounter:won) do (
-				sli := loadSliceCollection(2)
-				sli := firstChild(sli)
-				who := char:rose
-
-				$10="Encounter cleared."
-
-				textLine(sli, 0)
-
-				textWait := true
-				state := 0
-			)
-			case (encounter:ran) do (
-				sli := loadSliceCollection(2)
-				sli := firstChild(sli)
-				who := char:rose
-				$10="Successfully ran."
-				textLine(sli, 0)
-
-				textWait := true
-				state := -1
-			) else (
-				state := -1
-			)
-		)
+		freeSlice(lastChild(parent))
+		freeBattleBack(parent)
+		wait(104)
+		freeSlice(parent)
+		conditionInit()
 	end
 
 	subscript, update, begin
@@ -501,6 +481,35 @@ script, afterEncounter, condition, begin
 		if (stat > stat:empathy) then (
 			stat := stat:life
 			who += 1
+		)
+	end
+
+	subscript, conditionInit, begin
+		switch (condition) do (
+			case (encounter:won) do (
+				sli := loadSliceCollection(2)
+				sli := firstChild(sli)
+				who := char:rose
+
+				$10="Encounter cleared."
+
+				textLine(sli, 0)
+
+				textWait := true
+				state := 0
+			)
+			case (encounter:ran) do (
+				sli := loadSliceCollection(2)
+				sli := firstChild(sli)
+				who := char:rose
+				$10="Successfully ran."
+				textLine(sli, 0)
+
+				textWait := true
+				state := -1
+			) else (
+				state := -1
+			)
 		)
 	end
 

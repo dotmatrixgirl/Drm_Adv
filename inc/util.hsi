@@ -10,6 +10,17 @@ script, textLine, parent, y=0, begin
 	return (sli)
 end
 
+script, overlayToFront, begin
+	variable (sli)
+	if (lookupSlice(sli:overlay)==false) then (
+		sli := loadBackdropSprite(17)	
+	) else (
+		sli := lookupSlice(sli:overlay)
+		setSliceLookup(sli, sli:overlay)
+	)
+	sliceToFront(sli)
+end
+
 script, resetKeys, begin
 	k:u := key:up
 	k:d := key:down
