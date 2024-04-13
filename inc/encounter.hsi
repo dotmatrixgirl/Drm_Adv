@@ -375,7 +375,7 @@ script, encounter, who, tick, begin
 	end
 
 	subscript, initEncounter, begin
-		playSong(song:home bittersweet home)
+		#playSong(song:home bittersweet home)
 		condition := encounter:peaceful
 		turn := turn:rose
 		parent := loadSliceCollection (1)

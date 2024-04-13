@@ -12,7 +12,7 @@ script, loadbattleback, parent, which, begin
 	put slice (sli, 0, -10)
 	center slice (sli)
 
-	set slice clipping (sli, true)
+	#set slice clipping (sli, true)
 
 	for (j, 0, 1) do (
 		sli := firstChild(parent)
@@ -23,51 +23,48 @@ script, loadbattleback, parent, which, begin
 			set		:= 18
 			opacity	:= 80
 			blend	:= blend:normal	
-			setExtra(sli, back:rate,		2)
-			setExtra(sli, back:amplitude,	10)
-			setExtra(sli, back:frequency,	10)
-			setExtra(sli, back:compression,	2)
-			setExtra(sli, back:mode,		1)
-			setExtra(sli, back:scrolly,		40)
+			setExtra(sli, back:rate,		40)
+			setExtra(sli, back:amplitude,	20)
+			setExtra(sli, back:frequency,	6)
+			setExtra(sli, back:compression,	4)
+			setExtra(sli, back:mode,		3)
 			setExtra(sli, back:scrollx,		0)
+			setExtra(sli, back:scrolly,		40)
 			setExtra(sli, back:scrollxrate,	1)
 			setExtra(sli, back:scrollyrate,	1)
 		) else (
-			set		:= 18
+			set		:= 19
 			opacity	:= 50
 			blend	:= blend:normal
-			setExtra(sli, back:rate,		2)
-			setExtra(sli, back:amplitude,	12)
-			setExtra(sli, back:frequency,	5)
-			setExtra(sli, back:compression,	2)
-			setExtra(sli, back:mode,		1)
-			setExtra(sli, back:scrolly,		20)
+			setExtra(sli, back:rate,		80)
+			setExtra(sli, back:amplitude,	3)
+			setExtra(sli, back:frequency,	4)
+			setExtra(sli, back:compression,	8)
+			setExtra(sli, back:mode,		2)
 			setExtra(sli, back:scrollx,		0)
+			setExtra(sli, back:scrolly,		-12)
 			setExtra(sli, back:scrollxrate,	1)
 			setExtra(sli, back:scrollyrate,	1)
 			
 		)
 		for (i, 0, height--1) do (
 			sli := lastChild(firstChild(parent))
-			setParent (createContainer(width*3, 1), sli)
+			setParent (createContainer(width*2, 1), sli)
 			sli := lastChild(sli)
 			putSlice (sli, 0, i)
 			setSliceClipping (sli, true)
 
 			setparent (loadBackdropSprite (set), sli)
 			sli := lastChild(sli)
-			setBlendMode (sli, blend)
-			setOpacity (sli, opacity)
+			#setBlendMode (sli, blend)
+			#setOpacity (sli, opacity)
 			putSlice (sli, 0, i * -1)
 			dissolveSprite (sli, dissolve:fade, 40, 0, true)
-
-			sli := lastChild(firstChild(parent))
-			sli := lastChild(sli)
 			setparent (loadBackdropSprite (set), sli)
 			sli := lastChild(sli)
-			setBlendMode (sli, blend)
-			setOpacity (sli, opacity)
-			putSlice (sli, width * -1, i * -1)
+			#setBlendMode (sli, blend)
+			#setOpacity (sli, opacity)
+			putSlice (sli, width, 0)
 			dissolveSprite (sli, dissolve:fade, 40, 0, true)
 		)
 	)
@@ -83,14 +80,12 @@ script, sinedist, parent, tick, begin
 	height := sliceHeight (sli)
 	width := sliceWidth (sli)
 
-	t := getExtra (sli, back:tick)
-	t += 1
-	setExtra(sli, back:tick, t)
-	t := t/80000000*rate
-
 	for (j, 0, 1) do (
 		sli := firstChild (parent)
 		sli := sliceChild(sli, j)
+		t := getExtra (sli, back:tick)
+		t += 1
+		setExtra(sli, back:tick, t)
 
 		rate := getExtra(sli, back:rate)
 		frequency	:= getExtra (sli, back:frequency)
@@ -104,6 +99,8 @@ script, sinedist, parent, tick, begin
 		scrollyrate	:= getExtra (sli, back:scrollxrate)
 		mode		:= getExtra (sli, back:mode)
 
+		t := t*rate/10
+
 		for (i, 0, height--1) do (
 			sli := firstChild (parent)
 			sli := sliceChild(sli, j)
@@ -114,7 +111,7 @@ script, sinedist, parent, tick, begin
 			y := get slice extra (sli, 2)
 
 			x += scrollX
-			y += scrollY
+			y -= scrollY
 			set slice extra (sli, 1, x)
 			set slice extra (sli, 2, y)
 
@@ -127,26 +124,21 @@ script, sinedist, parent, tick, begin
 				x := offset + x
 				y := i + y
 			) else if (mode == 2) then (
-				if (i, mod, 2) then (offset := offset  + x * -1) else ()
+				
 				x := offset  + x
 				y := i + y
+				if (i, mod, 2==0) then (x := x * -1)
 			) else if (mode == 3) then (
 				y := i * compression + offset + Y
 			)
 			
 			#wrap around x and y
-			x := x, mod, width
-			y := y, mod, height * -1
-
-			setSliceX (sli, x)
-			setSliceY (sli, y)
+			x += (-1 *x  / width) * width
+			x := (x + width), mod, width -- width
+			y += (-1 *y  / height) * height
+			y := (y + height), mod, height
 			
-
-			sli := nextSibling(sli)
-			setSliceX (sli, x -- width)
-
-			#sli := sliceParent(sli)
-			setSliceY (sli, y)
+			putSlice(sli, x, y * -1)
 		)
 	)
 end
