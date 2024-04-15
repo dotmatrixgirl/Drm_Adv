@@ -147,7 +147,7 @@ script, freebattleback, parent, begin
 	variable (i, j, height, sli)
 
 	sli := firstChild (parent)
-	dissolve sprite (sli, dissolve:fade, 105)
+	dissolve sprite (sli, dissolve:fade, 45)
 	height := sliceHeight (sli)
 
 	for (j, 0, 1) do (
@@ -156,7 +156,9 @@ script, freebattleback, parent, begin
 			sli := sliceChild(sli, j)
 			sli := sliceChild(sli,i)
 			sli := firstChild(sli)
-			dissolve sprite (sli, dissolve:fade, 105)
+			dissolve sprite (sli, dissolve:fade, 45)
+			sli := firstChild(sli)
+			dissolve sprite (sli, dissolve:fade, 45)
 		)
 	)
 end

@@ -161,7 +161,7 @@ script, usePin, attacker, target, slot, begin
 
 	psi := getStat(attacker, stat:psi)
 	mind := getStat(target, stat:mind)
-
+	$10="what the fuck"
 	if (pin >= pin:flame && pin <= pin:earth) then (
 		effect := getPinEffect(pin, lvl, psi, mind)
 

@@ -196,6 +196,11 @@ globalVariable, begin
 
 	14,	maxLvl:rose
 	15,	maxLvl:Kat
+
+	16,	sel:ActionRose
+	17,	sel:ActionKat
+	18,	sel:PinRose
+	19,	sel:PinKat
 end
 
 #default scripts
@@ -228,6 +233,11 @@ plotscript, newGame, begin
 		game:lvlCap := 3
 		
 		state := state:resume
+
+		sel:ActionRose := 1
+		sel:ActionKat := 1
+		sel:PinRose := 1
+		sel:PinKat := 1
 	end
 end
 
