@@ -4,20 +4,21 @@ script, loadbattleback, parent, which, begin
 
 	sli := load backdrop sprite (0)
 	setParent (sli, parent)
-	sliceToBack (sli)
-	return (sli)
-	height := sliceHeight(sli)
-	width  := sliceWidth(sli)
-	dissolve sprite (sli, dissolve:fade, 40, 0, true)
-	put slice (sli, 0, -10)
-	center slice (sli)
+	setSliceLookup(sli, sli:battleback)
+	parent := lookupSlice(sli:battleback)
+	sliceToBack (parent)
+	height := sliceHeight(parent)
+	width  := sliceWidth(parent)
+	dissolve sprite (parent, dissolve:fade, 40, 0, true)
+	put slice (parent, 0, -10)
+	center slice (parent)
 
+	
 	#set slice clipping (sli, true)
 
 	for (j, 0, 1) do (
-		sli := firstChild(parent)
-		setParent(createContainer(), sli)
-		sli := lastChild(sli)
+		setParent(createContainer(), parent)
+		sli := lastChild(parent)
 		resizeExtra(sli, 16)
 		if (j == 0) then (
 			set		:= 18
@@ -48,7 +49,7 @@ script, loadbattleback, parent, which, begin
 			
 		)
 		for (i, 0, height--1) do (
-			sli := lastChild(firstChild(parent))
+			sli := lastChild(parent)
 			setParent (createContainer(width*2, 1), sli)
 			sli := lastChild(sli)
 			putSlice (sli, 0, i)
@@ -70,22 +71,19 @@ script, loadbattleback, parent, which, begin
 	)
 end
 
-script, sinedist, parent, tick, begin
-	variable (i, j, k, sli, offset, x, y, t)
+script, sinedist, begin
+	variable (i, j, k, sli, parent, offset, x, y, t)
 	variable (amplitude, frequency, rate, mode, compression)
 	variable (scrolly, scrollx, height, width, scrollxrate, scrollyrate)
 
-	sli := firstChild (parent)
+	parent := lookupSlice(sli:battleback)
 
-	height := sliceHeight (sli)
-	width := sliceWidth (sli)
+	height := sliceHeight (parent)
+	width := sliceWidth (parent)
 
 	for (j, 0, 1) do (
-		sli := firstChild (parent)
-		sli := sliceChild(sli, j)
-		t := getExtra (sli, back:tick)
-		t += 1
-		setExtra(sli, back:tick, t)
+		sli := sliceChild(parent, j)
+		t := game:tick
 
 		rate := getExtra(sli, back:rate)
 		frequency	:= getExtra (sli, back:frequency)
@@ -102,7 +100,7 @@ script, sinedist, parent, tick, begin
 		t := t*rate/10
 
 		for (i, 0, height--1) do (
-			sli := firstChild (parent)
+			sli := parent
 			sli := sliceChild(sli, j)
 			sli := sliceChild(sli, i)
 			sli := firstChild(sli)
@@ -143,17 +141,16 @@ script, sinedist, parent, tick, begin
 	)
 end
 
-script, freebattleback, parent, begin
-	variable (i, j, height, sli)
+script, freebattleback, begin
+	variable (i, j, height, sli, parent)
 
-	sli := firstChild (parent)
-	dissolve sprite (sli, dissolve:fade, 45)
-	height := sliceHeight (sli)
+	parent := lookupSlice(sli:battleback)
+	dissolve sprite (parent, dissolve:fade, 45)
+	height := sliceHeight (parent)
 
 	for (j, 0, 1) do (
 		for (i, 0, height--1) do (
-			sli := firstChild (parent)
-			sli := sliceChild(sli, j)
+			sli := sliceChild(parent, j)
 			sli := sliceChild(sli,i)
 			sli := firstChild(sli)
 			dissolve sprite (sli, dissolve:fade, 45)

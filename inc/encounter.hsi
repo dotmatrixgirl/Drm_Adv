@@ -1,20 +1,18 @@
-script, encounter, who, tick, begin
+script, encounter, who, begin
 	variable (parent, textSli, hpSli, condition, state, turn, i, j)
-	variable (target, slot, textWait, lastTurn, sel)
+	variable (target, slot, textWait, lastTurn, sel, ani, arrow)
 	initEncounter()
 	while (true) do (
 		if (
 			condition==encounter:won || condition==encounter:lost || condition==encounter:ran
 		) then (break)
-		tick += 1
 		updateEncounter()
-		wait
+		specwait
 	)
 	endEncounter()
-	return(tick)
 
 	subscript, updateEncounter, begin
-		sinedist(parent, tick)
+		#sinedist(parent)
 		if (textWait) then (
 			if (newpresskey(b:a) || newpresskey(b:b)) then (
 				textWait := false
@@ -23,7 +21,7 @@ script, encounter, who, tick, begin
 					changeState(encounter:choose)
 				)
 			)
-		) else if (turn == turn:enemy) then (
+		)else if (turn == turn:enemy) then (
 			updateTurn
 			enemyTurn
 		) else (
@@ -31,23 +29,21 @@ script, encounter, who, tick, begin
 			switch (state) do (
 				case (encounter:choose) do (
 					if (newpresskey(b:u)) then (
-						setTextColor(sliceChild(textsli, sel), ui:Text)
 						if (sel<=1) then (
 							sel := 3
 						) else (sel -= 1)
-						setTextColor(sliceChild(textsli, sel), ui:selectedItem)
 					)
 					if (newpresskey(b:d)) then (
-						setTextColor(sliceChild(textsli, sel), ui:Text)
 						if (sel>=3) then (
 							sel := 1
 						) else (sel += 1)
-						setTextColor(sliceChild(textsli, sel), ui:selectedItem)
 					) else if (newpresskey(b:a)) then (
-						if (turn==char:rose) then (
-							sel:ActionRose := sel
-						) else (
-							sel:ActionKat := sel
+						if (sel<>3) then (
+							if (turn==char:rose) then (
+								sel:ActionRose := sel
+							) else (
+								sel:ActionKat := sel
+							)
 						)
 						switch(sel) do (
 							case (1) do (
@@ -56,7 +52,7 @@ script, encounter, who, tick, begin
 								) else (
 									freeSliceChildren (TextSli)
 									$10="They are too angry to talk"
-									textLine(textSli, 0)
+									textLine(textSli, 0, true)
 									textWait:= true
 								)
 							)
@@ -64,7 +60,7 @@ script, encounter, who, tick, begin
 								if (getPinId(turn, slot:atk1) && getPinId(turn, slot:atk2) ) then (
 									freeSliceChildren (TextSli)
 									$10="No equipped pins"
-									textLine(textSli, 0)
+									textLine(textSli, 0, true)
 									textWait:= true
 								) else (
 									changeState(encounter:skill)
@@ -80,26 +76,37 @@ script, encounter, who, tick, begin
 					if (newpresskey(b:b)) then (
 						changeState(encounter:choose)
 					) else if (newpresskey(b:u)) then (
-						setTextColor(sliceChild(textsli, sel), ui:Text)
 						if (sel<=1) then (
 							sel := childCount(textSli) -- 1
 						) else (sel -= 1)
-						setTextColor(sliceChild(textsli, sel), ui:selectedItem)
 					) else if (newpresskey(b:d)) then (
-						setTextColor(sliceChild(textsli, sel), ui:Text)	
 						if (sel>=childCount(textSli) -- 1) then (
 							sel := 1
 						) else (sel += 1)
-						setTextColor(sliceChild(textsli, sel), ui:selectedItem)
 					) else if (newpresskey(b:a)) then (
 						answer(sel)
 					)
 				)
 				case (encounter:run) do (
-					if (newpresskey(b:a)) then (
-						condition := encounter:ran
-					)else if (newpresskey(b:b)) then (
+					if (newpresskey(b:b)) then (
 						changeState(encounter:choose)
+					) else if (newpresskey(b:u)) then (
+						if (sel<=1) then (
+							sel := childCount(textSli) -- 1
+						) else (sel -= 1)
+					) else if (newpresskey(b:d)) then (
+						if (sel>=childCount(textSli) -- 1) then (
+							sel := 1
+						) else (sel += 1)
+					) else if (newpresskey(b:a)) then (
+						switch(sel) do (
+							case (1) do (
+								condition := encounter:ran
+							)
+							case (2) do (
+								changeState(encounter:choose)
+							)
+						)
 					)
 				)
 				case (encounter:skill) do (
@@ -119,17 +126,13 @@ script, encounter, who, tick, begin
 						)
 						changeState(encounter:target)						
 					) else if (newpresskey(b:u)) then (
-						setTextColor(sliceChild(textsli, sel), ui:Text)	
 						if (sel<=1) then (
 							sel := childCount(textSli) -- 1
 						) else (sel -= 1)
-						setTextColor(sliceChild(textsli, sel), ui:selectedItem)
 					) else if (newpresskey(b:d)) then (
-						setTextColor(sliceChild(textsli, sel), ui:Text)	
 						if (sel>=childCount(textSli) -- 1) then (
 							sel := 1
 						) else (sel += 1)
-						setTextColor(sliceChild(textsli, sel), ui:selectedItem)
 					)
 				)
 				case (encounter:target) do (
@@ -148,9 +151,10 @@ script, encounter, who, tick, begin
 								case (1) do ($10+"${S1}.", target := char:rose)
 								case (2) do ($10+"${S2}.", target := char:kat)
 							)
-							textLine(textSli, 0)
+							textLine(textSli, 0, true)
 							usePin(turn, target, slot)
-							textline(textsli, 2)
+							animations()
+							textline(textsli, 2, true)
 							textWait := true
 							turn += 1
 						) else if (getTargets()==target:all) then (
@@ -159,20 +163,24 @@ script, encounter, who, tick, begin
 								case (2) do ($10+"${S2}.", target := char:kat)
 								case (3) do ($10+"${S3}.", target := char:enemy)
 							)
-							textLine(textSli, 0)
+							textLine(textSli, 0, true)
 							usePin(turn, target, slot)
-							textline(textsli, 2)
+							animations()
+							textline(textsli, 2, true)
+							
 							textWait := true
 							turn += 1
 						) else if (getTargets()==target:enemy) then (
 							if (sel==1) then (
 								$10+"${S3}."
-								textline(textsli, 0)
+								textline(textsli, 0, true)
 								target := char:enemy
 								usePin(turn, target, slot)
-								textline(textsli, 2)
+								animations()
+								textline(textsli, 2, true)
 								if (getPinId(turn, slot) >=pin:flame && getPinId(turn, slot) <= pin:shock) then (
 									condition := encounter:enraged
+									ani := ani:playerAttack
 								)
 								textWait:= true
 								turn += 1
@@ -181,22 +189,58 @@ script, encounter, who, tick, begin
 							)
 						)
 					) else if (newpresskey(b:u)) then (
-						setTextColor(sliceChild(textsli, sel), ui:Text)	
 						if (sel<=1) then (
 							sel := childCount(textSli) -- 1
 						) else (sel -= 1)
-						setTextColor(sliceChild(textsli, sel), ui:selectedItem)
 					) else if (newpresskey(b:d)) then (
-						setTextColor(sliceChild(textsli, sel), ui:Text)	
 						if (sel>=childCount(textSli) -- 1) then (
 							sel := 1
 						) else (sel += 1)
-						setTextColor(sliceChild(textsli, sel), ui:selectedItem)
 					)
 				)
 			)
 		)
-		overlayToFront()
+		setSliceY(arrow, 107 -- 12 + sel * 12 )
+	end
+
+	subscript, animations, begin
+		variable (sli)
+		setSliceVisible(arrow, false)
+		for (j, 0, 12) do (specwait)
+		sli := lastChild(parent)
+		switch (getPinId(turn, slot)) do (
+			case (pin:heart) do (
+				setParent(loadAttackSprite(1), sli)
+			)
+			case (pin:flame) do (
+				setParent(loadAttackSprite(2), sli)
+			)
+			else (setParent(loadAttackSprite(0), sli))
+		)
+		sli := lastChild(sli)
+		sliceToFront(sli)
+		for (i, 0, 2) do (
+			setSpriteFrame(sli, i)
+			for (j, 0, 4) do (specwait)
+		)
+		freeSlice(sli)
+		for (j, 0, 12) do (specwait)
+
+		if (turn<>char:enemy) then (
+			sli := firstChild(sliceChild(parent, 1))
+		) else(
+			sli := lastChild(parent)
+		)
+		if (getPinId(turn, slot) >=pin:flame && getPinId(turn, slot) <= pin:shock) then (
+			for (i, 4, 0, -1) do (
+				put slice (sli, -1 * i, 0)
+				for (j, 0, 2) do (specwait)
+				put slice (sli, i, 0)
+				for (j, 0, 2) do (specwait)
+			)
+			put slice (parent, 0, 0)
+		)
+		return (true)
 	end
 
 	subscript, updateTurn, begin
@@ -209,7 +253,7 @@ script, encounter, who, tick, begin
 
 	subscript, enemyTurn, begin
 		variable (slot, target)
-
+		setSliceVisible(arrow, false)
 		if (condition == encounter:enraged) then (
 			slot := random (1, 100)
 			if (slot > 75) then (
@@ -243,22 +287,25 @@ script, encounter, who, tick, begin
 					$10+"${S3}"
 				)
 			)
-			expandString(10)
-			textLine(textSli, 0)
 
+			expandString(10)
+			textLine(textSli, 0, true)
 			usePin(turn, target, slot)
-			textLine(textSli, 2)
+			animations()
+			
+			textLine(textSli, 2, true)
 			textWait := true
 		) else if (condition == encounter:peaceful) then (
 			freeSliceChildren(textSli)
 			$10="They seem to be waiting."
-			textLine(textSli, 0)
+			textLine(textSli, 0, true)
 			textWait := true
 		)
 		turn += 1
 	end
 
 	subscript, changeState, which, begin
+		setSliceVisible(arrow, false)
 		switch (which) do (
 			case (encounter:choose) do (
 				freeSliceChildren (TextSli)
@@ -272,7 +319,7 @@ script, encounter, who, tick, begin
 				)
 				expandString(10)
 				
-				textLine(textSli, 0)
+				textLine(textSli, 0, true)
 
 				$10="talk"
 				textLine(textSli, 2)
@@ -280,27 +327,31 @@ script, encounter, who, tick, begin
 				textLine(textSli, 3)
 				$10="run"
 				textLine(textSli, 4)
-				
-				setTextColor(sliceChild(textsli, sel), ui:SelectedItem)
+				setSliceVisible(arrow, true)
 			)
 			case (encounter:run) do (
 				freeSliceChildren(TextSli)
-				$10="Confirm"
-				textLine(textSli, 0)
-				$10="A: run"
+				$10="Run Away?"
+				textLine(textSli, 0, true)
+				$10="Yes"
 				textLine(textSli, 2)
-				$10="B: cancel"
+				$10="No"
 				textLine(textSli, 3)
+				sel := 1
+				setSliceVisible(arrow, true)
 			)
 			case (encounter:talk) do (
 				freeSliceChildren (textSli)
 				initDialogue(textSli)
+				setSliceVisible(arrow, true)
 			)
 			case (encounter:skill) do (
 				freeSliceChildren (textSli)
 				initSkill()
+				setSliceVisible(arrow, true)
 			) case (encounter:target) do (
 				initTarget()
+				setSliceVisible(arrow, true)
 			)
 			else (
 				freeSliceChildren (textSli)
@@ -323,7 +374,7 @@ script, encounter, who, tick, begin
 
 	subscript, initSkill, begin
 		$10="Choose Pin"
-		textLine(textSli, 0)
+		textLine(textSli, 0, true)
 
 		if (getPinId(turn, slot:atk1)<>false) then (
 			getPinName(getPinId(turn, slot:atk1))
@@ -342,7 +393,6 @@ script, encounter, who, tick, begin
 			) else (textLine(textSli, 3))
 		)
 		sel := 1
-		setTextColor(sliceChild(textsli, sel), ui:SelectedItem)
 	end
 
 	subscript, initTarget, begin
@@ -353,16 +403,16 @@ script, encounter, who, tick, begin
 		
 		switch (getTargets()) do (
 			case (target:party) do (
-				textLine(textSli, 0)
+				textLine(textSli, 0, true)
 				$10="${S1}"
 				expandString(10)
 				textLine(textSli, 2)
 				$10="${S2}"
 				expandString(10)
-				textLine(textSli, 3)	
+				textLine(textSli, 3)
 			)
 			case (target:all) do (
-				textLine(textSli, 0)
+				textLine(textSli, 0, true)
 				$10="${S1}"
 				expandString(10)
 				textLine(textSli, 2)
@@ -371,12 +421,12 @@ script, encounter, who, tick, begin
 				textLine(textSli, 3)
 				$10="${S3}"
 				expandString(10)
-				textLine(textSli, 4)
+				textLine(textSli, 4)	
 			)
 			case (target:enemy) do (
 				$10="Use ${S11} on ${S3}?"
 				expandString(10)
-				textLine(textSli, 0)
+				textLine(textSli, 0, true)
 				$10="Yes"
 				textLine(textSli, 2)
 				$10="No"
@@ -384,7 +434,6 @@ script, encounter, who, tick, begin
 			)
 		)
 		sel := 1
-		setTextColor(sliceChild(textsli, sel), ui:SelectedItem)
 	end
 
 	subscript, getTargets, begin
@@ -404,21 +453,21 @@ script, encounter, who, tick, begin
 			case (none) do (
 				freeSliceChildren(textSli)
 				$10="Neither liked nor disliked"
-				textLine(textSli, 0)
+				textLine(textSli, 0, true)
 				textWait := true
 				turn += 1
 		 	)
 		 	case (liked) do (
 		 		freeSliceChildren(textSli)
 		 		$10="Liked"
-				textLine(textSli, 0)
+				textLine(textSli, 0, true)
 				textWait := true
 				turn += 1
 		 	)
 		 	case (disliked) do (
 		 		freeSliceChildren(textSli)
 		 		$10="Disliked"
-				textLine(textSli, 0)
+				textLine(textSli, 0, true)
 				textWait := true
 				turn += 1
 		 	)
@@ -431,10 +480,13 @@ script, encounter, who, tick, begin
 		condition := encounter:peaceful
 		turn := turn:rose
 		parent := loadSliceCollection (1)
+		game:state := state:encounter
 
 		textSli := sliceChild(firstChild(parent), 1)
 
-		hpSli :=  sliceChild(firstChild(parent), 3)
+		arrow := sliceChild(firstChild(parent), 2)
+
+		hpSli :=  lastChild(firstChild(parent))
 
 		who := enemy:dummy
 		loadbattleback(parent, who)
@@ -466,23 +518,16 @@ script, afterEncounter, condition, parent, begin
 	state := -1
 	init()
 	while (true) do (
-		if (textWait==true) then (
-			if (pressKey(b:a)) then (
-				freeSliceChildren (sli)
-				textWait := false	
-			)
-			wait
-			overlayToFront
-		) else (if (update) then (break))
+		if (update) then (break)
 	)
 	freeSlice(sli)
 
 	subscript, init, begin
+		game:state := state:resume
 		freeSlice(lastChild(parent))
-		freeBattleBack(parent)
-		wait(44)
+		freeBattleBack()
+		specwait(44)
 		freeSlice(parent)
-		wait(10)
 		conditionInit()
 	end
 
@@ -499,16 +544,14 @@ script, afterEncounter, condition, parent, begin
 		if (who > char:Kat) then (
 			pinInit()
 		) else if (getLvl(who) >= getCap) then (
-			freeSliceChildren(sli)
 			copyString(10, who+strng:roseName)
 			$10+" has reached the level cap."
 			expandString(10)
-			textLine(sli, 0)
+			write(-1)
 			who += 1
 			textWait := true
 		) else (
 			if (updateStat(who, stat, false)) then (
-				freeSliceChildren (sli)
 				copyString(10, who+strng:RoseName)
 
 				$10+"'s "
@@ -522,8 +565,7 @@ script, afterEncounter, condition, parent, begin
 				$10+"."
 
 				expandString(10)
-				textLine(sli, 0)
-				textWait := true
+				write(-1)
 			) else (
 				if (who > char:Kat) then (
 					pinInit()
@@ -540,25 +582,19 @@ script, afterEncounter, condition, parent, begin
 	subscript, conditionInit, begin
 		switch (condition) do (
 			case (encounter:won) do (
-				sli := loadSliceCollection(2)
-				sli := firstChild(sli)
 				who := char:rose
 
 				$10="Encounter cleared."
 
-				textLine(sli, 0)
+				write(-1)
 
 				textWait := true
 				state := 0
 			)
 			case (encounter:ran) do (
-				sli := loadSliceCollection(2)
-				sli := firstChild(sli)
 				who := char:rose
 				$10="Successfully ran."
-				textLine(sli, 0)
-
-				textWait := true
+				write(-1)
 				state := -1
 			) else (
 				state := -1
@@ -588,8 +624,7 @@ script, afterEncounter, condition, parent, begin
 					getPinName(getPinId(who, pin))
 					$10+"'s ${S11} pin is max level."
 					expandString(10)
-					textLine(sli, 0)
-					textWait := true
+					write(-1)
 				) else (
 					if (lvlPin(who, pin)) then (
 						copyString(10, who+strng:RoseName)
@@ -599,8 +634,7 @@ script, afterEncounter, condition, parent, begin
 						$10+"."
 						expandString(10)
 
-						textLine(sli, 0)
-						textWait := true
+						write(-1)
 					)
 				)
 			)
@@ -628,7 +662,7 @@ script, initDialogue, parent, begin
 	switch (rand) do (
 		case (0) do (
 			$10="question here" #put question here. always leave the "" in place
-			textLine(parent, 0) #do not change this line
+			textLine(parent, 0, true) #do not change this line
 
 			$10="answer 1 here" #replace with the first answer
 			sli := textLine(parent, 2) #do not change this line
@@ -672,7 +706,7 @@ script, initDialogue, parent, begin
 		)
 		case (1) do (
 			$10="What do you want from life?"
-			textLine(parent, 0)
+			textLine(parent, 0, true)
 
 			$10="I need nothing."
 			sli := textLine(parent, 2)
@@ -706,7 +740,7 @@ script, initDialogue, parent, begin
 		)
 		case (2) do (
 			$10="Do you hate me?"
-			textLine(parent, 0)
+			textLine(parent, 0, true)
 
 			$10="No."
 			sli := textLine(parent, 2)
@@ -730,7 +764,7 @@ script, initDialogue, parent, begin
 		)
 		case (3) do (
 			$10="What is love to you?" #put question here. always leave the "" in place
-			textLine(parent, 0) #do not change this line
+			textLine(parent, 0, true) #do not change this line
 
 			$10="Love is deep acceptance." #replace with the first answer
 			sli := textLine(parent, 2) #do not change this line
@@ -774,7 +808,7 @@ script, initDialogue, parent, begin
 		)
 		case (4) do (
 			$10="Where does life comes from?" #put question here. always leave the "" in place
-			textLine(parent, 0) #do not change this line
+			textLine(parent, 0, true) #do not change this line
 
 			$10="My cooter." #replace with the first answer
 			sli := textLine(parent, 2) #do not change this line
@@ -817,7 +851,7 @@ script, initDialogue, parent, begin
 			setExtra(sli,type:sad,		none)
 		) case (5) do (
 			$10="Does life end after death?" #put question here. always leave the "" in place
-			textLine(parent, 0) #do not change this line
+			textLine(parent, 0, true) #do not change this line
 
 			$10="No one knows what's next." #replace with the first answer
 			sli := textLine(parent, 2) #do not change this line
@@ -860,5 +894,4 @@ script, initDialogue, parent, begin
 			setExtra(sli,type:sad,		none)
 		)
 	)
-	setTextColor(sliceChild(parent, 1), ui:selectedItem)
 end

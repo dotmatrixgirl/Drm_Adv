@@ -8,12 +8,15 @@ include, inc/map.hsi
 include, inc/pins.hsi
 include, inc/sineEffect.hsi
 include, inc/thirdparty.hsi
+include, inc/write.hsi
+include, inc/text.hsi
 
 defineConstant, begin
 	#game states
 	0,	state:suspend
 	1,	state:resume
 	2,	state:setkey
+	3,	state:encounter
 
 	#slice lookups
 	200,	sli:usable
@@ -41,6 +44,7 @@ defineConstant, begin
 	1,	strng:RoseName
 	2,	strng:KatName
 	3,	strng:EnemyName
+	4,	strng:deadname
 	30,	strng:life
 	31,	strng:psi
 	32,	strng:mind
@@ -159,6 +163,18 @@ defineConstant, begin
 	4,	gain:talked
 	5,	gain:battled
 
+	1,	ani:enemyAttack
+	2,	ani:playerAttack
+	3,	ani:flame
+	4,	ani:water
+	5,	ani:shock
+	6,	ani:earth
+	7,	ani:addFlame
+	8,	ani:addWater
+	9,	ani:addShock
+	10,	ani:addEarth
+	11,	ani:heart
+
 	0,	slot:atk1
 	1,	slot:atk2
 	2,	slot:stat1
@@ -201,6 +217,11 @@ globalVariable, begin
 	17,	sel:ActionKat
 	18,	sel:PinRose
 	19,	sel:PinKat
+
+	20,	game:font
+	21,	game:textspeed
+	22,	game:tick
+	23, game:state
 end
 
 #default scripts
@@ -211,10 +232,9 @@ plotscript, onKey, begin
 end
 
 plotscript, newGame, begin
-	variable(state)
 
 	init()
-	mainLoop(state)
+	mainLoop()
 
 	subscript, init, begin
 		variable (sli)
@@ -232,7 +252,7 @@ plotscript, newGame, begin
 
 		game:lvlCap := 3
 		
-		state := state:resume
+		game:state := state:resume
 
 		sel:ActionRose := 1
 		sel:ActionKat := 1
@@ -242,13 +262,12 @@ plotscript, newGame, begin
 end
 
 plotscript, loadGame, begin
-	variable(state)
 
 	init()
-	mainLoop(state)
+	mainLoop()
 
 	subscript, init, begin
-		state := state:resume
+		game:state := state:resume
 	end
 end
 

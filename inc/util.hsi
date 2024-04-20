@@ -1,15 +1,3 @@
-script, textLine, parent, y=0, begin
-	variable (sli)
-	sli := createText()
-	setParent (sli, parent)
-	setTextColor(sli, ui:text)
-	putSlice (sli, 0, y*12)
-	resizeExtra(sli, 32)
-	expandString(10)
-	setSliceText(sli, 10)
-	setOutline(sli)
-	return (sli)
-end
 
 script, overlayToFront, begin
 	variable (sli)
@@ -40,6 +28,16 @@ end
 script, returnKeypress, begin
 	if(keyIsPressed(anykey)) then (
 		return(waitforkey(anykey))
+	)
+end
+
+script, specwait, time=1, begin
+	variable (i)
+	for (i, 1, time) do (
+		wait
+		animate()
+		overlayToFront()
+		game:tick += 1
 	)
 end
 

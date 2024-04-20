@@ -2,6 +2,7 @@ script, initChars, begin
 	variable (parent, sli, i)
 
 	addHero(char:kat)
+	textbox text (3, 1)
 
 	sli := createContainer ()
 	setSliceLookup(sli, sli:chars)
@@ -29,6 +30,7 @@ script, initChars, begin
 
 	setParent(loadBorderSprite(2), parent)
 	$1="Rose"
+	
 
 	parent := createContainer()
 	setParent(parent, lookupslice(sli:chars))
@@ -50,7 +52,9 @@ script, initChars, begin
 	equipPin(char:kat, slot:atr, pin:shockatr, 0, false)
 
 	setParent(loadBorderSprite(1), parent)
-	$2="Kat"
+	#$2="Kat"
+	copyString(2, 3)
+	
 end
 
 script, initEnemy, who, begin
@@ -68,13 +72,13 @@ script, initEnemy, who, begin
 
 	switch (who) do (
 		case (enemy:dummy) do (
-			$3="DUMMY"
+			$3="Orbweb"
 			setStat(char:enemy, stat:life, 16)
 			setStat(char:enemy, stat:psi, 6)
 			setStat(char:enemy, stat:mind, 8)
 			setStat(char:enemy, stat:speed, 5)
 			setStat(char:enemy, stat:will, 3)
-			setStat(char:enemy, stat:personality, type:anger)
+			setStat(char:enemy, stat:personality, type:logic)
 
 			initPinSlots(char:enemy)
 

@@ -1,6 +1,7 @@
 # HamsterSpeak constant definitions for drmadv.rpg
 
 define constant, begin
+2,tag:yesno
 1,song:first kiss
 2,song:home bittersweet home
 3,song:late night walk

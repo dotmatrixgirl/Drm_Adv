@@ -1,0 +1,31 @@
+script, textLine, parent, y=0, typing=false, begin
+	variable (sli)
+	expandString(10)
+	sli := stringwrite(parent, y, typing)
+	resizeExtra(sli, 32)
+	return (sli)
+end
+
+
+script, getText, text, begin
+	switch (text) do (
+		case (0) do () #string defined elsewhere.
+		case (1) do (textbox1)
+		else (textboxNONE)
+	)
+	expandString(10)
+	subscript, textboxNONE, begin
+		#====================================|
+		$10="ERROR"
+		#====================================|
+	end
+	subscript, textbox1, begin
+		#====================================|
+		$10="sphinx of black quartz judge my"
+		appendAscii(10, 10)
+		$10+"vow SPHINX OF BLACK QUARTZ JUDGE"
+		appendAscii(10, 10)
+		$10+"MY VOW 0123456789.?-$"
+		#====================================|
+	end
+end

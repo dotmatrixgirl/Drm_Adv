@@ -1,26 +1,24 @@
 #main loop. Other scripts seprate to allow
 #compiling while game is running
-script, mainLoop, state,  begin
-	variable(tick)
+script, mainLoop,  begin
 	while (true) do (
-		wait()
-		update(tick, state)
-		tick += 1
+		specwait(1)
+		update()
 	)
-	subscript, update, tick, state, begin
-		keypresses(state, tick)
-		animate(state, tick)
-		overlayToFront()
+	subscript, update, begin
+		keypresses()
 	end
 end
 
-script, keypresses, state, tick, begin
+script, keypresses, begin
+	variable (sli)
 	if (keyispressed(key:shift)&&keyispressed(key:q)) then (mundaneScreen)
-	switch (state) do (
+	switch (game:state) do (
 		case(state:resume) do (
 			moveResume()
-			if (keyispressed(key:shift)&&keyispressed(key:b)) then (encounter (1, tick))
+			if (keyispressed(key:shift)&&keyispressed(key:b)) then (encounter (1))
 			if (newpresskey(b:x)) then (menuStats())
+			if (keyispressed(key:shift)&&keyispressed(key:t)) then (write(1))
 		)
 	)
 	subscript, moveResume, begin
@@ -93,14 +91,18 @@ script, keypresses, state, tick, begin
 	end
 end
 
-script, animate, state, tick, begin
+script, animate, begin
 	variable(sli)
-	switch (state) do (
+	aniwalking
+	if (lookupSlice(sli:battleback)<>0) then (sinedist())
+
+	switch (game:state) do (
 		case(state:resume) do (
-			aniResume()
+		)
+		case (state:encounter) do (
 		)
 	)
-	subscript, aniResume, begin
+	subscript, aniwalking, begin
 		variable (dir, frame, i)
 		
 		for(i, 0, 4) do (	
@@ -109,7 +111,7 @@ script, animate, state, tick, begin
 				sli := lastChild(getHeroSlice(i))
 				frame := getSpriteFrame(sli)
 				frame := dir*4 + frame,mod,4
-				if (tick,mod,6 == 0) then (
+				if (game:tick,mod,6 == 0) then (
 					if (frame,mod,4 == 3) then (
 						frame := dir*4
 					) else (
