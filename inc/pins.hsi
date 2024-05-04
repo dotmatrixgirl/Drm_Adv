@@ -47,7 +47,7 @@ script, addPinExpCapped, who, slot, amount, begin
 end
 
 script, getPinCap, lvl, begin
-	if (lvl > game:lvlCap * 4 -- 5) then (return(true))
+	if (lvl > game:lvlCap) then (return(true))
 end
 
 script, initPinSlots, who, begin
@@ -210,7 +210,7 @@ script, getPinEffect, id, lvl, mod1, mod2=1, begin
 	switch (id) do (
 		#mod1 is psi
 		case (pin:heart) do (
-			value := (lvl / 2 + mod1/2 + mod2 / 4) / 3
+			value := (lvl / 2 + mod1 + mod2 / 4) / 3
 		)
 		#mod1 is empathy, mod2 is will
 		case (pin:calm, pin:read) do (

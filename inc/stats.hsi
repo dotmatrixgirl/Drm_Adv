@@ -14,11 +14,11 @@ script, initChars, begin
 	setSliceClipping(parent)
 	resizeExtra(parent, 16)
 
-	setStat(char:rose, stat:life, 16)
-	setStat(char:rose, stat:psi, 6)
-	setStat(char:rose, stat:mind, 5)
-	setStat(char:rose, stat:speed, 8)
-	setStat(char:rose, stat:empathy, 4)
+	setStat(char:rose, stat:life, 74)
+	setStat(char:rose, stat:psi, 25)
+	setStat(char:rose, stat:mind, 27)
+	setStat(char:rose, stat:speed, 35)
+	setStat(char:rose, stat:empathy, 30)
 	setStat(char:rose, stat:alignment, 55)
 
 	updateStats(char:rose, true)
@@ -37,11 +37,11 @@ script, initChars, begin
 	setSliceClipping(parent)
 	resizeExtra(parent, 16)
 
-	setStat(char:kat, stat:life, 12)
-	setStat(char:kat, stat:psi, 7)
-	setStat(char:kat, stat:mind, 6)
-	setStat(char:kat, stat:speed, 6)
-	setStat(char:kat, stat:empathy, 7)
+	setStat(char:kat, stat:life, 68)
+	setStat(char:kat, stat:psi, 24)
+	setStat(char:kat, stat:mind, 38)
+	setStat(char:kat, stat:speed, 30)
+	setStat(char:kat, stat:empathy, 35)
 	setStat(char:kat, stat:alignment, 45)
 
 	updateStats(char:kat, true)
@@ -73,10 +73,10 @@ script, initEnemy, who, begin
 	switch (who) do (
 		case (enemy:dummy) do (
 			$3="Orbweb"
-			setStat(char:enemy, stat:life, 16)
-			setStat(char:enemy, stat:psi, 6)
-			setStat(char:enemy, stat:mind, 8)
-			setStat(char:enemy, stat:speed, 5)
+			setStat(char:enemy, stat:life, 60)
+			setStat(char:enemy, stat:psi, 30)
+			setStat(char:enemy, stat:mind, 24)
+			setStat(char:enemy, stat:speed, 40)
 			setStat(char:enemy, stat:will, 3)
 			setStat(char:enemy, stat:personality, type:logic)
 
@@ -89,10 +89,10 @@ script, initEnemy, who, begin
 			setparent(loadBorderSprite(2), sli)
 		) else (
 			$3="ERROR"
-			setStat(char:enemy, stat:life, 16)
-			setStat(char:enemy, stat:psi, 6)
-			setStat(char:enemy, stat:mind, 8)
-			setStat(char:enemy, stat:speed, 5)
+			setStat(char:enemy, stat:life, 40)
+			setStat(char:enemy, stat:psi, 36)
+			setStat(char:enemy, stat:mind, 20)
+			setStat(char:enemy, stat:speed, 24)
 			setStat(char:enemy, stat:will, 3)
 			setStat(char:enemy, stat:personality, type:anger)
 
@@ -135,44 +135,44 @@ script, statGain, who, type, pinSlot=slot:none, modifier=0, begin
 		exit script
 	)
 	if (modifier == 0) then (
-		modifier := getLvl(char:enemy) / 2
+		modifier := getLvl(char:enemy) / 4
 		modifier += 1
 	)
 	switch (type) do (
 		case (gain:damage) do (
-			if (random (0, 10) >= 5) then (
+			if (random (0, 20) >= 3) then (
 				#lvlStat(who, stat:mind, modifier * (random (2, 8)) / 8)
 			)
 		)
 		case (gain:attack) do (
-			if (random (0, 10) >= 6) then (
+			if (random (0, 20) <= 4) then (
 				lvlStat(who, stat:psi, modifier * (random (2, 8)) / 8)	
 			)
 		)
 		case (gain:failtalk) do (
-			if (random (0, 10) >= 7) then (
+			if (random (0, 20) <=4) then (
 				lvlStat(who, stat:empathy, modifier * (random (2, 8)) / 8)	
 			)
 		)
 		case (gain:talked) do (
-			if (random (0, 10) >= 3) then (
+			if (random (0, 20) <= 8) then (
 				lvlStat(who, stat:empathy, modifier * (random (2, 8)) / 8)	
 			)
-			if (random (0, 10) >= 4) then (
+			if (random (0, 20) <= 8) then (
 				lvlStat(who, stat:mind, modifier * (random (2, 8)) / 8)
 			)	
 		)
 		case (gain:battled) do (
 			for (i, slot:atk1, slot:stat2) do (
-				addPinExpCapped(who, i, modifier ^ 2 / 4)
+				addPinExpCapped(who, i, modifier ^ 2 / 16)
 			)
-			if (random (0, 10) >= 3) then (
+			if (random (0, 20) <= 13) then (
 				lvlStat(who, stat:speed, modifier * (random (2, 8)) / 8)
 			)
-			if (random (0, 10) >= 4) then ( 
-				lvlStat(who, stat:life, modifier * (random (2, 8)) / 4)
+			if (random (0, 20) <= 13) then ( 
+				lvlStat(who, stat:life, modifier * (random (2, 8)) / 3)
 			)
-			if (random (0, 10) >= 3) then (
+			if (random (0, 20) <= 13) then (
 				lvlStat(who, stat:mind, modifier * (random (2, 8)) / 8)	
 			)
 

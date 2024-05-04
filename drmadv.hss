@@ -250,7 +250,7 @@ plotscript, newGame, begin
 		$34="Empathy"
 		$35="Alignment"
 
-		game:lvlCap := 3
+		game:lvlCap := 10
 		
 		game:state := state:resume
 

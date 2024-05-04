@@ -17,7 +17,7 @@ script, keypresses, begin
 		case(state:resume) do (
 			moveResume()
 			if (keyispressed(key:shift)&&keyispressed(key:b)) then (encounter (1))
-			if (newpresskey(b:x)) then (menuStats())
+			if (newpresskey(b:x)) then (mundaneScreen)
 			if (keyispressed(key:shift)&&keyispressed(key:t)) then (write(1))
 		)
 	)

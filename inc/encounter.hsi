@@ -13,11 +13,30 @@ script, encounter, who, begin
 	endEncounter()
 
 	subscript, updateEncounter, begin
-		
-		if (turn == -1) then (
-			atbRose += getStat(char:rose, stat:speed) * 8 / 20
-			atbKat += getStat(char:kat, stat:speed) * 8 / 20
-			atbEnemy += getStat(char:enemy, stat:speed) * 8 / 20
+		if (condition == encounter:peaceful) then (
+			if (currentSong==song:the storm) then (
+				stop song()
+				playSound(0)
+			) else if (current song==-1) then (
+				if (sound is playing (0)==false) then (
+					playSong(song:the calm)
+				)
+			)
+		) if (condition == encounter:enraged) then (
+			if (currentSong==song:the calm) then (
+				stop song()
+				playSound(0)
+			) else if (current song==-1) then (
+				if (sound is playing (0)==false) then (
+					playSong(song:the storm)
+				)
+			)
+		)
+		if (sound is playing (0)) then (
+		) else if (turn == -1) then (
+			atbRose += getStat(char:rose, stat:speed) * 8 / 40
+			atbKat += getStat(char:kat, stat:speed) * 8 / 40
+			atbEnemy += getStat(char:enemy, stat:speed) * 8 / 40
 			show values (maxAtb, atbRose, atbKat, atbEnemy)
 			if (atbRose > maxAtb) then (
 				freeSliceChildren(textSli)
@@ -531,13 +550,16 @@ script, encounter, who, begin
 		maxAtb := getStat(char:rose, stat:speed) + getStat(char:kat, stat:speed) + getStat(char:enemy, stat:speed)
 
 		maxAtb := maxAtb * 20
+
+		atbRose := random(0, maxAtb)
+		atbKat := random(0, maxAtb)
+		atbEnemy := random(0, maxAtb)
 	end
 
 	subscript, endEncounter, begin
+		stop song
 		statGain(char:Rose, gain:battled)
 		statGain(char:Kat, gain:battled)
-
-		playSong(getambientmusic)
 
 		afterEncounter(condition, parent)
 	end
