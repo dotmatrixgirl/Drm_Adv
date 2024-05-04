@@ -96,9 +96,9 @@ script, encounter, who, begin
 										changeState(encounter:talk)
 									) else (
 										freeSliceChildren (TextSli)
-										$10="They are too angry to talk"
+										$10="They are too angry to talk."
 										textLine(textSli, 0, true)
-										changeState(encounter:skill)
+										state := encounter:choose
 										textWait:= true
 									)
 								)
@@ -107,7 +107,7 @@ script, encounter, who, begin
 										freeSliceChildren (TextSli)
 										$10="No equipped pins"
 										textLine(textSli, 0, true)
-										changeState(encounter:skill)
+										state := encounter:choose
 										textWait:= true
 									) else (
 										changeState(encounter:skill)
