@@ -2,10 +2,12 @@
 
 define constant, begin
 2,tag:yesno
+0,song:daydreaming flower
 1,song:getting high with you
 2,song:the calm
 3,song:the storm
-4,song:the mundane isn't so bad
+4,song:the mundane isnt so bad
+5,song:eight track train
 0,sfx:s t o p
 0,hero:Rose
 1,hero:Kat

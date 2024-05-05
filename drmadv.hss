@@ -307,13 +307,18 @@ plotscript, autorun, begin
 			setSliceVelocity (sli, 2, 1)
 		)
 	)
-
-	if (lookupSlice(sli:overlay)) then (
-	) else (
-		sli := loadBackdropSprite(17)
-		setSliceLookup(sli, sli:overlay)
+	#cases where overlay should not be visible
+	switch(currentMap) do (
+		case (1) do ()
+		else (
+			if (lookupSlice(sli:overlay)==false) then (
+				sli := loadBackdropSprite(17)
+				setSliceLookup(sli, sli:overlay)
+			)
+			sliceToFront(sli)
+		)
 	)
-	sliceToFront(sli)
+	
 
 	subscript, createCharWalk, set, who, begin
 		sli := loadBorderSprite(set)

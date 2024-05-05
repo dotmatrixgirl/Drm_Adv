@@ -56,14 +56,14 @@ script, mundaneScreen, begin
 			setSliceVisible(getheroSlice(char:Kat), false)
 		)
 		sli := loadBackdropSprite (1)
+		freeSlice(lookupSlice(sli:overlay))
 	end
 	subscript, update, begin
 		if (newpresskey(b:a) || newpresskey(b:b)) then (
-			gameOver
+			resetGame
 		)
-
-		if (tick,mod,2==1) then (
-			if (frame >16) then (
+		if (tick,mod,4==1) then (
+			if (frame >15) then (
 				frame := 1
 				setSpriteSetNumber (sli, frame)
 			) else (
