@@ -1,39 +1,35 @@
 script, encounter, who, begin
 	variable (parent, textSli, hpSli, condition, state, turn, i, j)
 	variable (target, slot, textWait, lastTurn, sel, ani, arrow)
-	variable (atbRose, atbKat, atbEnemy, maxAtb)
+	variable (atbRose, atbKat, atbEnemy, maxAtb, mood, question)
 	initEncounter()
 	while (true) do (
-		if (
-			condition==encounter:won || condition==encounter:lost || condition==encounter:ran
-		) then (break)
-		updateEncounter()
+		if (updateEncounter()==true) then (break)
 		specwait
 	)
 	endEncounter()
 
 	subscript, updateEncounter, begin
-		if (condition == encounter:peaceful) then (
-			if (currentSong==song:the storm) then (
-				stop song()
-				playSound(0)
-			) else if (current song==-1) then (
-				if (sound is playing (0)==false) then (
-					playSong(song:the calm)
+		if (textWait) then (
+			if (newpresskey(b:a) || newpresskey(b:b)) then (
+				textWait := false
+				updateHP()
+				if (state == encounter:choose) then (
+					changeState(encounter:choose)
 				)
 			)
-		) if (condition == encounter:enraged) then (
-			if (currentSong==song:the calm) then (
-				stop song()
-				playSound(0)
-			) else if (current song==-1) then (
-				if (sound is playing (0)==false) then (
-					playSong(song:the storm)
-				)
-			)
+			exitScript
+		) else if (
+			condition==encounter:won || condition==encounter:lost || condition==encounter:ran || condition==encounter:talked
+		) then (
+			exitReturning(true)
 		)
+		
 		if (sound is playing (0)) then (
-		) else if (turn == -1) then (
+			exitScript
+		)
+		
+		if (turn == -1) then (
 			atbRose += getStat(char:rose, stat:speed) * 8 / 40
 			atbKat += getStat(char:kat, stat:speed) * 8 / 40
 			atbEnemy += getStat(char:enemy, stat:speed) * 8 / 40
@@ -42,208 +38,214 @@ script, encounter, who, begin
 				freeSliceChildren(textSli)
 				atbRose := 0
 				turn := char:rose
+				setStat(turn, stat:defending, false)
 				setSliceVisible(textSli, true)
+				question := random (1, questions)
 				changeState(encounter:choose)
 				
 			) else if (atbKat > maxAtb) then (
 				freeSliceChildren(textSli)
 				atbKat := 0
 				turn := char:kat
+				setStat(turn, stat:defending, false)
 				setSliceVisible(textSli, true)
+				question := random (1, questions)
 				changeState(encounter:choose)
 				
 				
 			) else if (atbEnemy > maxAtb) then (
 				atbEnemy := char:enemy
 				turn := atbEnemy
+				setStat(turn, stat:defending, false)  
 				setSliceVisible(textSli, true)
 				freeSliceChildren(textSli)
 			)
-		) else (
-			if (textWait) then (
-				if (newpresskey(b:a) || newpresskey(b:b)) then (
-					textWait := false
-					updateHP()
-					if (state == encounter:choose) then (
-						changeState(encounter:choose)
+		)
+		if (state == encounter:between) then (updateTurn, exitScript)
+		if (turn == turn:enemy) then (
+			enemyTurn
+		) else if (turn==char:rose || turn==char:kat) then (	
+			switch (state) do (
+				case (encounter:choose) do (
+					if (newpresskey(b:u)) then (
+						if (sel<=1) then (
+							sel := childCount(textSli) -- 1
+						) else (sel -= 1)
 					)
-				)
-			)else if (turn == turn:enemy) then (
-				enemyTurn
-			) else if (turn==char:rose || turn==char:kat) then (	
-				switch (state) do (
-					case (encounter:choose) do (
-						if (newpresskey(b:u)) then (
-							if (sel<=1) then (
-								sel := 3
-							) else (sel -= 1)
-						)
-						if (newpresskey(b:d)) then (
-							if (sel>=3) then (
-								sel := 1
-							) else (sel += 1)
-						) else if (newpresskey(b:a)) then (
-							if (sel<>3) then (
-								if (turn==char:rose) then (
-									sel:ActionRose := sel
-								) else (
-									sel:ActionKat := sel
-								)
-							)
-							switch(sel) do (
-								case (1) do (
-									if (condition == encounter:peaceful) then (
-										changeState(encounter:talk)
-									) else (
-										freeSliceChildren (TextSli)
-										$10="They are too angry to talk."
-										textLine(textSli, 0, true)
-										state := encounter:choose
-										textWait:= true
-									)
-								)
-								case (2) do (
-									if (getPinId(turn, slot:atk1) && getPinId(turn, slot:atk2) ) then (
-										freeSliceChildren (TextSli)
-										$10="No equipped pins"
-										textLine(textSli, 0, true)
-										state := encounter:choose
-										textWait:= true
-									) else (
-										changeState(encounter:skill)
-									)
-								)
-								case (3) do (
-									changeState(encounter:run)
-								)
-							)
-						)
-					)
-					case (encounter:talk) do (
-						if (newpresskey(b:b)) then (
-							changeState(encounter:choose)
-						) else if (newpresskey(b:u)) then (
-							if (sel<=1) then (
-								sel := childCount(textSli) -- 1
-							) else (sel -= 1)
-						) else if (newpresskey(b:d)) then (
-							if (sel>=childCount(textSli) -- 1) then (
-								sel := 1
-							) else (sel += 1)
-						) else if (newpresskey(b:a)) then (
-							answer(sel)
-						)
-					)
-					case (encounter:run) do (
-						if (newpresskey(b:b)) then (
-							changeState(encounter:choose)
-						) else if (newpresskey(b:u)) then (
-							if (sel<=1) then (
-								sel := childCount(textSli) -- 1
-							) else (sel -= 1)
-						) else if (newpresskey(b:d)) then (
-							if (sel>=childCount(textSli) -- 1) then (
-								sel := 1
-							) else (sel += 1)
-						) else if (newpresskey(b:a)) then (
-							switch(sel) do (
-								case (1) do (
-									condition := encounter:ran
-								)
-								case (2) do (
-									changeState(encounter:choose)
-								)
-							)
-						)
-					)
-					case (encounter:skill) do (
-						if (newpresskey(b:b)) then (
-							changeState(encounter:choose)
-						) else if (newpresskey(b:a)) then (
-							if (getPinId(turn, slot:atk1) <> pin:dummy) then (
-								if (sel == 1) then (
-									slot := slot:atk1
-								) else if (sel == 2) then (
-									slot := slot:atk2
-								)
+					if (newpresskey(b:d)) then (
+						if (sel>= childCount(textSli) -- 1) then (
+							sel := 1
+						) else (sel += 1)
+					) else if (newpresskey(b:a)) then (
+						if (sel<>childCount(textSli) -- 1) then (
+							if (turn==char:rose) then (
+								sel:ActionRose := sel
 							) else (
-								if (sel == 1) then (
-									slot := slot:atk2
-								)
+								sel:ActionKat := sel
 							)
-							changeState(encounter:target)						
-						) else if (newpresskey(b:u)) then (
-							if (sel<=1) then (
-								sel := childCount(textSli) -- 1
-							) else (sel -= 1)
-						) else if (newpresskey(b:d)) then (
-							if (sel>=childCount(textSli) -- 1) then (
-								sel := 1
-							) else (sel += 1)
 						)
-					)
-					case (encounter:target) do (
-						if (newpresskey(b:b)) then (
-							changeState(encounter:skill)
-						) else if (newpresskey(b:a)) then (
-							freeSliceChildren (TextSli)
-							getPinName(getPinId(turn, slot))
-							if (turn == char:rose) then (
-								$10="${S1} used ${S11} on "
-							) else if (turn == char:kat) then (
-								$10="${S2} used ${S11} on "
-							)
-							if (getTargets()==target:party) then (
-								switch (sel) do (
-									case (1) do ($10+"${S1}.", target := char:rose)
-									case (2) do ($10+"${S2}.", target := char:kat)
-								)
-								textLine(textSli, 0, true)
-								usePin(turn, target, slot)
-								animations()
-								textline(textsli, 2, true)
-								textWait := true
-								updateTurn()
-							) else if (getTargets()==target:all) then (
-								switch (sel) do (
-									case (1) do ($10+"${S1}.", target := char:rose)
-									case (2) do ($10+"${S2}.", target := char:kat)
-									case (3) do ($10+"${S3}.", target := char:enemy)
-								)
-								textLine(textSli, 0, true)
-								usePin(turn, target, slot)
-								animations()
-								textline(textsli, 2, true)
-								
-								textWait := true
-								updateTurn()
-							) else if (getTargets()==target:enemy) then (
-								if (sel==1) then (
-									$10+"${S3}."
-									textline(textsli, 0, true)
-									target := char:enemy
-									usePin(turn, target, slot)
-									animations()
-									textline(textsli, 2, true)
+						switch(sel) do (
+							case (1) do (
+								if (condition == encounter:peaceful) then (
+									changeState(encounter:talk)
+								) else (
+									setSliceVisible(arrow, false)
+									freeSliceChildren (TextSli)
+									$10="They are too angry to talk."
+									textLine(textSli, 0, true)
+									state := encounter:choose
 									textWait:= true
-									if (getPinId(turn, slot) >=pin:flame && getPinId(turn, slot) <= pin:shock) then (
-										condition := encounter:enraged
-										ani := ani:playerAttack
-										updateTurn()
-									)
+								)
+							)
+							case (2) do (
+								if (getPinId(turn, slot:atk1) && getPinId(turn, slot:atk2) ) then (
+									freeSliceChildren (TextSli)
+									$10="No equipped pins"
+									textLine(textSli, 0, true)
+									state := encounter:choose
+									textWait:= true
 								) else (
 									changeState(encounter:skill)
 								)
 							)
-						) else if (newpresskey(b:u)) then (
-							if (sel<=1) then (
-								sel := childCount(textSli) -- 1
-							) else (sel -= 1)
-						) else if (newpresskey(b:d)) then (
-							if (sel>=childCount(textSli) -- 1) then (
-								sel := 1
-							) else (sel += 1)
+							case (3) do (
+								setSliceVisible(arrow)
+								freeSliceChildren (TextSli)
+								copyString(10, turn+strng:roseName)
+								$10+" defends."
+								textLine(textSli, 0, true)
+								setStat(turn, stat:defending, true)
+								textWait:= true
+								state := encounter:between
+							)
+							case (4) do (
+								changeState(encounter:run)
+							)
 						)
+					)
+				)
+				case (encounter:talk) do (
+					if (newpresskey(b:b)) then (
+						changeState(encounter:choose)
+					) else if (newpresskey(b:u)) then (
+						if (sel<=1) then (
+							sel := childCount(textSli) -- 1
+						) else (sel -= 1)
+					) else if (newpresskey(b:d)) then (
+						if (sel>=childCount(textSli) -- 1) then (
+							sel := 1
+						) else (sel += 1)
+					) else if (newpresskey(b:a)) then (
+						setSliceVisible(arrow, false)
+						answer(sel)
+					)
+				)
+				case (encounter:run) do (
+					if (newpresskey(b:b)) then (
+						changeState(encounter:choose)
+					) else if (newpresskey(b:u)) then (
+						if (sel<=1) then (
+							sel := childCount(textSli) -- 1
+						) else (sel -= 1)
+					) else if (newpresskey(b:d)) then (
+						if (sel>=childCount(textSli) -- 1) then (
+							sel := 1
+						) else (sel += 1)
+					) else if (newpresskey(b:a)) then (
+						switch(sel) do (
+							case (1) do (
+								condition := encounter:ran
+							)
+							case (2) do (
+								changeState(encounter:choose)
+							)
+						)
+					)
+				)
+				case (encounter:skill) do (
+					if (newpresskey(b:b)) then (
+						changeState(encounter:choose)
+					) else if (newpresskey(b:a)) then (
+						if (getPinId(turn, slot:atk1) <> pin:dummy) then (
+							if (sel == 1) then (
+								slot := slot:atk1
+							) else if (sel == 2) then (
+								slot := slot:atk2
+							)
+						) else (
+							if (sel == 1) then (
+								slot := slot:atk2
+							)
+						)
+						if (getTargets()==target:enemy) then (
+							$10+"${S3}."
+							textline(textsli, 0, true)
+							target := char:enemy
+							usePin(turn, target, slot)
+							animations()
+							textline(textsli, 2, true)
+							textWait:= true
+							if (getPinId(turn, slot) >=pin:flame && getPinId(turn, slot) <= pin:shock) then (
+								condition := encounter:enraged
+								ani := ani:playerAttack
+								state := encounter:between
+							)
+						) else (changeState(encounter:target))					
+					) else if (newpresskey(b:u)) then (
+						if (sel<=1) then (
+							sel := childCount(textSli) -- 1
+						) else (sel -= 1)
+					) else if (newpresskey(b:d)) then (
+						if (sel>=childCount(textSli) -- 1) then (
+							sel := 1
+						) else (sel += 1)
+					)
+				)
+				case (encounter:target) do (
+					if (newpresskey(b:b)) then (
+						changeState(encounter:skill)
+					) else if (newpresskey(b:a)) then (
+						setSliceVisible(arrow, false)
+						freeSliceChildren (TextSli)
+						getPinName(getPinId(turn, slot))
+						if (turn == char:rose) then (
+							$10="${S1} used ${S11} on "
+						) else if (turn == char:kat) then (
+							$10="${S2} used ${S11} on "
+						)
+						if (getTargets()==target:party) then (
+							switch (sel) do (
+								case (1) do ($10+"${S1}.", target := char:rose)
+								case (2) do ($10+"${S2}.", target := char:kat)
+							)
+							textLine(textSli, 0, true)
+							usePin(turn, target, slot)
+							animations()
+							textline(textsli, 2, true)
+							textWait := true
+							state := encounter:between
+						) else if (getTargets()==target:all) then (
+							switch (sel) do (
+								case (1) do ($10+"${S1}.", target := char:rose)
+								case (2) do ($10+"${S2}.", target := char:kat)
+								case (3) do ($10+"${S3}.", target := char:enemy)
+							)
+							textLine(textSli, 0, true)
+							usePin(turn, target, slot)
+							animations()
+							textline(textsli, 2, true)
+							
+							textWait := true
+							state := encounter:between
+						)
+					) else if (newpresskey(b:u)) then (
+						if (sel<=1) then (
+							sel := childCount(textSli) -- 1
+						) else (sel -= 1)
+					) else if (newpresskey(b:d)) then (
+						if (sel>=childCount(textSli) -- 1) then (
+							sel := 1
+						) else (sel += 1)
 					)
 				)
 			)
@@ -295,12 +297,14 @@ script, encounter, who, begin
 		turn := -1
 		setSliceVisible(textSli)
 		updateHP
-		textWait := false
+		state := encounter:choose
 	end
 
 	subscript, enemyTurn, begin
 		variable (slot, target)
 		setSliceVisible(arrow, false)
+		setSliceVisible(textSli, true)
+		state := encounter:choose
 		if (condition == encounter:enraged) then (
 			slot := random (1, 100)
 			if (slot > 75) then (
@@ -342,13 +346,14 @@ script, encounter, who, begin
 			
 			textLine(textSli, 2, true)
 			textWait := true
+			state := encounter:between
 		) else if (condition == encounter:peaceful) then (
 			freeSliceChildren(textSli)
 			$10="They seem to be waiting."
 			textLine(textSli, 0, true)
 			textWait := true
+			state := encounter:between
 		)
-		updateTurn
 	end
 
 	subscript, changeState, which, begin
@@ -364,16 +369,17 @@ script, encounter, who, begin
 					$10="What will ${S2} do?"
 					sel := sel:ActionKat
 				)
-				expandString(10)
 				
 				textLine(textSli, 0, true)
 
-				$10="talk"
+				$10="Talk"
 				textLine(textSli, 2)
-				$10="pins"
+				$10="Pins"
 				textLine(textSli, 3)
-				$10="run"
+				$10="Defend"
 				textLine(textSli, 4)
+				$10="Run"
+				textLine(textSli, 5)
 				setSliceVisible(arrow, true)
 			)
 			case (encounter:run) do (
@@ -389,7 +395,7 @@ script, encounter, who, begin
 			)
 			case (encounter:talk) do (
 				freeSliceChildren (textSli)
-				initDialogue(textSli)
+				initDialogue(textSli, question)
 				setSliceVisible(arrow, true)
 			)
 			case (encounter:skill) do (
@@ -426,14 +432,12 @@ script, encounter, who, begin
 		if (getPinId(turn, slot:atk1)<>false) then (
 			getPinName(getPinId(turn, slot:atk1))
 			$10="${S11} lvl "
-			expandString(10)
 			appendNumber(10, getPinLvl(turn, slot:atk1))
 			textLine(textSli, 2)
 		)
 		if (getPinId(turn, slot:atk2)<>false) then (
 			getPinName(getPinId(turn, slot:atk2))
 			$10="${S11} lvl "
-			expandString(10)
 			appendNumber(10, getPinLvl(turn, slot:atk2))
 			if (getPinId(turn, slot:atk1)==false) then (
 				textLine(textSli, 2)
@@ -444,9 +448,8 @@ script, encounter, who, begin
 
 	subscript, initTarget, begin
 		freeSliceChildren(textSli)
-		getPinName(slot)
+		getPinName(getPinId(turn, slot:atk1)) 
 		$10="Choose who to use ${S11} on."
-		expandString(10)
 		
 		switch (getTargets()) do (
 			case (target:party) do (
@@ -498,28 +501,31 @@ script, encounter, who, begin
 		if (sliceChild(textSli, which)==false) then (exitScript)
 		switch (getExtra(sliceChild(textSli, which), getStat(char:enemy, stat:personality))) do (
 			case (none) do (
-				freeSliceChildren(textSli)
-				$10="Neither liked nor disliked"
-				textLine(textSli, 0, true)
-				textWait := true
-				updateTurn()
+				$10="Neither liked nor disliked."
 		 	)
 		 	case (liked) do (
-		 		freeSliceChildren(textSli)
-		 		$10="Liked"
-				textLine(textSli, 0, true)
-				textWait := true
-				updateTurn()
+		 		mood += 10
+		 		$10="Liked."
+		 		statGain(turn, gain:talked)
 		 	)
 		 	case (disliked) do (
-		 		freeSliceChildren(textSli)
-		 		$10="Disliked"
-				textLine(textSli, 0, true)
-				textWait := true
-				updateTurn()
+		 		mood -= 10
+		 		$10="Disliked."
+		 		statGain(turn, gain:failtalk)
 		 	)
 		)
+		if (mood >= getStat(char:enemy, stat:will)) then (
+			condition := encounter:talked
+			$10="They no longer wish to fight."
+		) else if (mood <= getStat(char:enemy, stat:will) * -1) then (
+			$10="They became enraged."
+			condition := encounter:enraged
+		)
+		freeSliceChildren(textSli)
 
+		textLine(textSli, 0, true)
+		textWait := true
+		state := encounter:between
 	end
 
 	subscript, initEncounter, begin
@@ -540,13 +546,14 @@ script, encounter, who, begin
 
 		initEnemy(who)
 
+
 		for (i, char:rose, char:enemy) do (
 			setStat(i, stat:currentlife, getStat(i, stat:life))
 			updateStats(who, true)
 			setStat(who, stat:atr, getPinID(who, slot:atr) + 1 -- pin:flameAtr)
 		)
 		updateHP()
-
+		mood := getStat(char:enemy, stat:mood)
 		maxAtb := getStat(char:rose, stat:speed) + getStat(char:kat, stat:speed) + getStat(char:enemy, stat:speed)
 
 		maxAtb := maxAtb * 20
@@ -571,6 +578,7 @@ script, afterEncounter, condition, parent, begin
 	init()
 	while (true) do (
 		if (update) then (break)
+		wait
 	)
 	freeSlice(sli)
 
@@ -643,6 +651,16 @@ script, afterEncounter, condition, parent, begin
 				textWait := true
 				state := 0
 			)
+			case (encounter:talked) do (
+				who := char:rose
+
+				$10="They departed, satisfied."
+
+				write(-1)
+
+				textWait := true
+				state := 0
+			)
 			case (encounter:ran) do (
 				who := char:rose
 				$10="Successfully ran."
@@ -666,35 +684,32 @@ script, afterEncounter, condition, parent, begin
 	end
 
 	subscript, pinUpdate, begin
-
-		if (condition == encounter:won) then (
-			if (who > char:Kat) then (
-				state := -1
-			)else if (getPinId(who, pin)) then (
-				if (getPinCap(getPinLvl(who, pin))) then (
+		if (who > char:Kat) then (
+			state := -1
+		)else if (getPinId(who, pin)) then (
+			if (getPinCap(getPinLvl(who, pin))) then (
+				copyString(10, who+strng:RoseName)
+				getPinName(getPinId(who, pin))
+				$10+"'s ${S11} pin is max level."
+				expandString(10)
+				write(-1)
+			) else (
+				if (lvlPin(who, pin)) then (
 					copyString(10, who+strng:RoseName)
 					getPinName(getPinId(who, pin))
-					$10+"'s ${S11} pin is max level."
+					$10+"'s ${S11} pin grew to "
+					appendNumber(10, getPinLvl(who, pin))
+					$10+"."
 					expandString(10)
-					write(-1)
-				) else (
-					if (lvlPin(who, pin)) then (
-						copyString(10, who+strng:RoseName)
-						getPinName(getPinId(who, pin))
-						$10+"'s ${S11} pin grew to "
-						appendNumber(10, getPinLvl(who, pin))
-						$10+"."
-						expandString(10)
 
-						write(-1)
-					)
+					write(-1)
 				)
 			)
-			pin += 1
-			if (pin > slot:stat2) then (
-				pin := slot:atk1
-				who += 1
-			)
+		)
+		pin += 1
+		if (pin > slot:stat2) then (
+			pin := slot:atk1
+			who += 1
 		)
 	end
 
@@ -708,10 +723,10 @@ script, afterEncounter, condition, parent, begin
 	end
 end
 
-script, initDialogue, parent, begin
-	variable (rand, sli)
-	rand := random (1, 5)
-	switch (rand) do (
+define constant (5, questions)
+script, initDialogue, parent, question,  begin
+	variable (sli)
+	switch (question) do (
 		case (0) do (
 			$10="question here" #put question here. always leave the "" in place
 			textLine(parent, 0, true) #do not change this line

@@ -97,6 +97,9 @@ defineConstant, begin
 	10,	encounter:skill
 	11,	encounter:run
 	12,	encounter:target
+	13,	encounter:talked
+	14,	encounter:between
+	15, encounter:defend
 
 	0,	turn:rose
 	1,	turn:kat
@@ -144,6 +147,8 @@ defineConstant, begin
 	6,	stat:alignment
 	6,	stat:personality
 	7,	stat:atr
+	8,	stat:mood
+	9,	stat:defending
 
 	10,	stat:lvled
 
@@ -247,8 +252,13 @@ plotscript, newGame, begin
 		$31="Psi"
 		$32="Mind"
 		$33="Speed"
-		$34="Empathy"
-		$35="Alignment"
+		$34="Empath"
+		$35="Align"
+		$36="Act Pin"
+		$37="Act Pin"
+		$38="Stat Pin"
+		$39="Stat Pin"
+		$40="Atr Pin"
 
 		game:lvlCap := 10
 		

@@ -77,8 +77,9 @@ script, initEnemy, who, begin
 			setStat(char:enemy, stat:psi, 30)
 			setStat(char:enemy, stat:mind, 24)
 			setStat(char:enemy, stat:speed, 40)
-			setStat(char:enemy, stat:will, 3)
+			setStat(char:enemy, stat:will, 10)
 			setStat(char:enemy, stat:personality, type:logic)
+			setStat(char:enemy, stat:mood, 5)
 
 			initPinSlots(char:enemy)
 
@@ -93,7 +94,7 @@ script, initEnemy, who, begin
 			setStat(char:enemy, stat:psi, 36)
 			setStat(char:enemy, stat:mind, 20)
 			setStat(char:enemy, stat:speed, 24)
-			setStat(char:enemy, stat:will, 3)
+			setStat(char:enemy, stat:will, 10)
 			setStat(char:enemy, stat:personality, type:anger)
 
 			initPinSlots(char:enemy)
@@ -130,52 +131,84 @@ script, setLvlCap, amount, begin
 end
 
 script, statGain, who, type, pinSlot=slot:none, modifier=0, begin
-	variable(i)
+	variable(i, pin)
 	if (who == char:enemy) then (
 		exit script
 	)
 	if (modifier == 0) then (
-		modifier := getLvl(char:enemy) / 4
+		modifier := getLvl(char:enemy)
 		modifier += 1
 	)
+	if (pinslot<>slot:none) then (pin := getPinId(who, pinslot))
+	
 	switch (type) do (
 		case (gain:damage) do (
-			if (random (0, 20) >= 3) then (
-				#lvlStat(who, stat:mind, modifier * (random (2, 8)) / 8)
+			if (random (0, 20) <= 4) then ( 
+				lvlStat(who, stat:life, modifier * (random (2, 8)) / 4)
+			)
+			if (random (0, 20) <= 4) then (
+				lvlStat(who, stat:mind, modifier * (random (2, 8)) / 8)	
 			)
 		)
 		case (gain:attack) do (
-			if (random (0, 20) <= 4) then (
-				lvlStat(who, stat:psi, modifier * (random (2, 8)) / 8)	
+			if (random (0, 20) <= 6) then (
+				lvlStat(who, stat:psi, modifier * (random (2, 8)) / 4)	
 			)
+			if (random (0, 20) <= 3) then (
+				lvlStat(who, stat:mind, modifier * (random (2, 8)) / 7)	
+			)
+			if (random (0, 20) <= 4) then (
+				lvlStat(who, stat:speed, modifier * (random (2, 8)) / 6)
+			)
+			if (pinSlot<>slot:none) then (
+				addPinExpCapped(who, pinSlot, modifier ^ 2 / 24)
+			)
+			if (pin >= pin:flame && pin <= pin:earth) then (
+				lvlStat(who, stat:alignment, -1)
+			) else if (pin == pin:heart) then (
+				lvlStat(who, stat:alignment, 1)
+			)
+			
 		)
 		case (gain:failtalk) do (
-			if (random (0, 20) <=4) then (
-				lvlStat(who, stat:empathy, modifier * (random (2, 8)) / 8)	
+			if (random (0, 20) <=5) then (
+				lvlStat(who, stat:empathy, modifier * (random (2, 8)) / 6)	
+			)
+			if (random (0, 20) <= 4) then (
+				lvlStat(who, stat:mind, modifier * (random (2, 8)) / 6)
+			)
+			if (random (0, 20) <= 4) then (
+				lvlStat(who, stat:speed, modifier * (random (2, 8)) / 6)
 			)
 		)
 		case (gain:talked) do (
-			if (random (0, 20) <= 8) then (
-				lvlStat(who, stat:empathy, modifier * (random (2, 8)) / 8)	
+			if (random (0, 20) <= 14) then (
+				lvlStat(who, stat:empathy, modifier * (random (2, 8)) / 4)	
 			)
-			if (random (0, 20) <= 8) then (
-				lvlStat(who, stat:mind, modifier * (random (2, 8)) / 8)
+			if (random (0, 20) <= 7) then (
+				lvlStat(who, stat:mind, modifier * (random (2, 8)) / 5)
 			)	
+			if (random (0, 20) <= 4) then (
+				lvlStat(who, stat:speed, modifier * (random (2, 8)) / 6)
+			)
+			if (random (0, 20) <= 7) then ( 
+				lvlStat(who, stat:life, modifier * (random (2, 8)) / 4)
+			)
+			lvlStat(who, stat:alignment, 1)
 		)
 		case (gain:battled) do (
-			for (i, slot:atk1, slot:stat2) do (
+			for (i, slot:stat1, slot:stat2) do (
 				addPinExpCapped(who, i, modifier ^ 2 / 16)
 			)
-			if (random (0, 20) <= 13) then (
-				lvlStat(who, stat:speed, modifier * (random (2, 8)) / 8)
+			if (random (0, 20) <= 5) then (
+				lvlStat(who, stat:speed, modifier * (random (2, 8)) / 6)
 			)
-			if (random (0, 20) <= 13) then ( 
-				lvlStat(who, stat:life, modifier * (random (2, 8)) / 3)
+			if (random (0, 20) <= 6) then ( 
+				lvlStat(who, stat:life, modifier * (random (2, 8)) / 2)
 			)
-			if (random (0, 20) <= 13) then (
-				lvlStat(who, stat:mind, modifier * (random (2, 8)) / 8)	
+			if (random (0, 20) <= 4) then (
+				lvlStat(who, stat:mind, modifier * (random (2, 8)) / 6)	
 			)
-
 		)
 	)
 end
@@ -205,14 +238,30 @@ end
 script, setStat, who, stat, value, begin
 	variable (sli)
 	sli := getStatSlice(who)
+
 	return(setExtra(sli, stat, value))
 end
 
 script, lvlStat, who, stat, amount, capped=true, begin
 	variable(i, current, lvlSum, cap, origStat, target)
 
+	
+
+	if (stat == stat:alignment) then (
+		current := getStat(who, stat, false)
+		target := current + amount
+		if (target < 0) then (
+			target := 0
+		)
+		if (target > 100) then (
+			target := 100
+		)
+		setStat(who, stat, target)
+		exitScript
+	)
+
 	current := getStat(who, stat + stat:lvled, false)
-	target := getStat(who, stat + stat:lvled, false) + amount
+	target := current + amount
 
 	if (capped == true) then (
 		
@@ -241,7 +290,7 @@ script, lvlStat, who, stat, amount, capped=true, begin
 			return (stat:capped)
 		)
 	) else (
-		setStat(who, stat + stat:lvled, current + amount)
+		setStat(who, stat + stat:lvled, target)
 	)
 end
 
@@ -254,7 +303,7 @@ script, updateStats, who, lvled=false, begin
 end
 
 script, getCap, begin
-	return (game:lvlCap * stat:empathy * 2 / 3)
+	return (game:lvlCap)
 end
 
 script, updateStat, who, stat, lvled=false, begin
@@ -271,12 +320,11 @@ end
 script, getLvl, who, begin
 	variable (lvl, i)
 
-	lvl += getStat(who, stat:life, false)
+	lvl += getStat(who, stat:life/10, false)
 	for (i, stat:psi, stat:empathy) do (
-		lvl += getStat(who, i, false) / 3
-		#change "12" as needed to modify lvl cap
+		lvl += getStat(who, i, false) / 5
 	)
-	lvl :=  lvl / stat:empathy
+	lvl :=  lvl / stat:empathy / 3 -- 1
 	return (lvl)
 end
 

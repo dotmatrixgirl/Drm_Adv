@@ -142,6 +142,7 @@ script, getPinName, which, begin
 		case (pin:addWater) do ($11="+Water")
 		case (pin:addShock) do ($11="+Shock")
 		case (pin:addEarth) do ($11="+Earth")
+		case (pin:dummy) do ($11="Empty")
 	)
 end
 
@@ -154,13 +155,14 @@ end
 #caculate attack damage using attacker, attack, and target
 # *brian explodes*
 script, usePin, attacker, target, slot, begin
-	variable (atr, psi, mind, sli, effect, pin, lvl, hp)
+	variable (atr, psi, mind, sli, effect, pin, lvl, hp, def)
 
 	pin := getPinId(attacker, slot)
 	lvl := getPinLvl(attacker, slot)
 
 	psi := getStat(attacker, stat:psi)
 	mind := getStat(target, stat:mind)
+	def := getStat(target, stat:defending)
 	$10="what the fuck"
 	if (pin >= pin:flame && pin <= pin:earth) then (
 		effect := getPinEffect(pin, lvl, psi, mind)
@@ -175,20 +177,25 @@ script, usePin, attacker, target, slot, begin
 		) else if (elementCheck(pin, target) == strong) then (
 			effect -= effect / 4
 		)
+		if (def) then (
+			effect -= effect / 4
+		)
 		$10="They took "
 		appendNumber(10, effect)
 		$10+" damage"
 		hp := getStat(target, stat:currentLife) -- effect
 		if (hp < 0) then (hp := 0)
 		setStat(target, stat:currentlife, hp)
-		statGain(attacker, gain:attack)
+		statGain(attacker, gain:attack, slot)
 		statGain(target, gain:damage)
+
+
 	) else if (pin == pin:heart) then (
 		heal (target)
 		statGain(attacker, gain:attack)
 	) else if (pin >= pin:addFlame && pin <= pin:addEarth) then (
 		setStat(target, stat:atr, pin + 1 -- pin:addFlame)
-		statGain(attacker, gain:attack)
+		statGain(attacker, gain:attack, slot)
 		getPinName(pin--4)
 		$10="They gained the ${S11}"
 	)
@@ -218,7 +225,7 @@ script, getPinEffect, id, lvl, mod1, mod2=1, begin
 		)
 		#mod1 is psi, mod2 is mind
 		case (pin:flame, pin:water, pin:shock, pin:earth) do (
-			value := (lvl * 3 / 7 + mod1) -- mod2 / 4
+			value := (lvl * 3 / 4 + mod1 * 3 / 4) -- mod2 / 4
 		)
 		#mod1 is original stat value
 		case (pin:life, pin:mind, pin:psi, pin:speed, pin:empathy) do (
