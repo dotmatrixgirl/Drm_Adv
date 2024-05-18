@@ -311,7 +311,7 @@ plotscript, autorun, begin
 	)
 
 	switch (currentMap) do (
-		case (0) do (loadTrees(3))
+		case (0) do (loadTrees(2))
 		case (1) do (
 			sli := lookup slice(sl:map layer0)
 			setSliceVelocity (sli, 2, 1)
