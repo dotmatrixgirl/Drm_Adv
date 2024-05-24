@@ -10,6 +10,10 @@ script, overlayToFront, begin
 	sliceToFront(sli)
 end
 
+script, getPercent, divider, divided, total, begin
+	return (total * divided / divider)
+end
+
 script, resetKeys, begin
 	k:u := key:up
 	k:d := key:down

@@ -25,7 +25,8 @@ script, initChars, begin
 
 	initPinSlots(char:rose)
 
-	equipPin(char:Rose, slot:atk1, pin:heart, 5, false)
+	equipPin(char:Rose, slot:atk1, pin:earth, 5, false)
+	equipPin(char:Rose, slot:atk2, pin:heart, 5, false)
 	equipPin(char:Rose, slot:atr, pin:earthatr, 0, false)
 
 	setParent(loadBorderSprite(2), parent)

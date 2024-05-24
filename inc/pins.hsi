@@ -180,11 +180,16 @@ script, usePin, attacker, target, slot, begin
 		if (def) then (
 			effect -= effect / 4
 		)
-		$10="They took "
-		appendNumber(10, effect)
-		$10+" damage"
+		
 		hp := getStat(target, stat:currentLife) -- effect
-		if (hp < 0) then (hp := 0)
+		if (hp <= 0) then (
+			hp := 0
+			$10="They faded away"
+		) else (
+			$10="They took "
+			appendNumber(10, effect)
+			$10+" damage"
+		)
 		setStat(target, stat:currentlife, hp)
 		statGain(attacker, gain:attack, slot)
 		statGain(target, gain:damage)
@@ -192,7 +197,6 @@ script, usePin, attacker, target, slot, begin
 
 	) else if (pin == pin:heart) then (
 		heal (target)
-		statGain(attacker, gain:attack)
 	) else if (pin >= pin:addFlame && pin <= pin:addEarth) then (
 		setStat(target, stat:atr, pin + 1 -- pin:addFlame)
 		statGain(attacker, gain:attack, slot)
@@ -202,13 +206,24 @@ script, usePin, attacker, target, slot, begin
 
 	subscript, heal, who, begin
 		hp := getStat(who, stat:currentlife)
-		effect := getPinEffect (pin, lvl, psi,	hp)
-		hp += effect
-		if (hp > getStat(who, stat:life)) then (hp := getStat(who, stat:life))
-		$10="Health restored to "
-		appendNumber(10, hp)
+		if (hp == getStat(who, stat:life)) then (
+			$10="They are already healthy."
+		) else if (hp <= 0) then (
+			$10="They have already faded away."
+		) else (
+			effect := getPinEffect (pin, lvl, psi,	hp)
+			hp += effect
+			if (hp > getStat(who, stat:life)) then (
+				hp := getStat(who, stat:life)
+				$10="Life fully restored"
+			) else (
+				$10="Life restored to "
+				appendNumber(10, hp)
+			)
+			statGain(attacker, gain:attack)
 
-		setStat(who, stat:currentlife, hp)
+			setStat(who, stat:currentlife, hp)
+		)
 	end
 end
 

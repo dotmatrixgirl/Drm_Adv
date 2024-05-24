@@ -1,5 +1,5 @@
 script, encounter, who, begin
-	variable (parent, textSli, hpSli, condition, state, turn, i, j)
+	variable (parent, textSli, statSli, condition, state, turn, i, j)
 	variable (target, slot, textWait, lastTurn, sel, ani, arrow)
 	variable (atbRose, atbKat, atbEnemy, maxAtb, mood, question)
 	initEncounter()
@@ -10,10 +10,10 @@ script, encounter, who, begin
 	endEncounter()
 
 	subscript, updateEncounter, begin
+		updateHP()
 		if (textWait) then (
 			if (newpresskey(b:a) || newpresskey(b:b)) then (
 				textWait := false
-				updateHP()
 				if (state == encounter:choose) then (
 					changeState(encounter:choose)
 				)
@@ -30,13 +30,8 @@ script, encounter, who, begin
 		)
 		
 		if (turn == -1) then (
-			atbRose += getStat(char:rose, stat:speed) * 8 / 40
-			atbKat += getStat(char:kat, stat:speed) * 8 / 40
-			atbEnemy += getStat(char:enemy, stat:speed) * 8 / 40
-			show values (maxAtb, atbRose, atbKat, atbEnemy)
 			if (atbRose > maxAtb) then (
 				freeSliceChildren(textSli)
-				atbRose := 0
 				turn := char:rose
 				setStat(turn, stat:defending, false)
 				setSliceVisible(textSli, true)
@@ -45,7 +40,6 @@ script, encounter, who, begin
 				
 			) else if (atbKat > maxAtb) then (
 				freeSliceChildren(textSli)
-				atbKat := 0
 				turn := char:kat
 				setStat(turn, stat:defending, false)
 				setSliceVisible(textSli, true)
@@ -59,6 +53,14 @@ script, encounter, who, begin
 				setStat(turn, stat:defending, false)  
 				setSliceVisible(textSli, true)
 				freeSliceChildren(textSli)
+			) else (
+				if (getStat(char:rose, stat:currentlife) > 0) then (
+					atbRose += getStat(char:rose, stat:speed) * 8 / 40
+				) 
+				if (getStat(char:kat, stat:currentlife) > 0) then (
+					atbKat += getStat(char:kat, stat:speed) * 8 / 40
+				)
+				atbEnemy += getStat(char:enemy, stat:speed) * 8 / 40
 			)
 		)
 		if (state == encounter:between) then (updateTurn, exitScript)
@@ -98,7 +100,7 @@ script, encounter, who, begin
 								)
 							)
 							case (2) do (
-								if (getPinId(turn, slot:atk1) && getPinId(turn, slot:atk2) ) then (
+								if (getPinId(turn, slot:atk1) == pin:dummy && getPinId(turn, slot:atk2) == pin:dummy) then (
 									freeSliceChildren (TextSli)
 									$10="No equipped pins"
 									textLine(textSli, 0, true)
@@ -166,6 +168,7 @@ script, encounter, who, begin
 					if (newpresskey(b:b)) then (
 						changeState(encounter:choose)
 					) else if (newpresskey(b:a)) then (
+						freeSliceChildren(textSli)
 						if (getPinId(turn, slot:atk1) <> pin:dummy) then (
 							if (sel == 1) then (
 								slot := slot:atk1
@@ -178,6 +181,14 @@ script, encounter, who, begin
 							)
 						)
 						if (getTargets()==target:enemy) then (
+							setSliceVisible(arrow, false)
+							freeSliceChildren (TextSli)
+							getPinName(getPinId(turn, slot))
+							if (turn == char:rose) then (
+								$10="${S1} used ${S11} on "
+							) else if (turn == char:kat) then (
+								$10="${S2} used ${S11} on "
+							)
 							$10+"${S3}."
 							textline(textsli, 0, true)
 							target := char:enemy
@@ -185,11 +196,11 @@ script, encounter, who, begin
 							animations()
 							textline(textsli, 2, true)
 							textWait:= true
-							if (getPinId(turn, slot) >=pin:flame && getPinId(turn, slot) <= pin:shock) then (
+							if (getPinId(turn, slot) >=pin:flame && getPinId(turn, slot) <= pin:earth) then (
 								condition := encounter:enraged
-								ani := ani:playerAttack
-								state := encounter:between
+								ani := ani:playerAttack	
 							)
+							state := encounter:between
 						) else (changeState(encounter:target))					
 					) else if (newpresskey(b:u)) then (
 						if (sel<=1) then (
@@ -275,13 +286,12 @@ script, encounter, who, begin
 		)
 		freeSlice(sli)
 		for (j, 0, 12) do (specwait)
-
 		if (turn<>char:enemy) then (
 			sli := firstChild(sliceChild(parent, 1))
 		) else(
 			sli := lastChild(parent)
 		)
-		if (getPinId(turn, slot) >=pin:flame && getPinId(turn, slot) <= pin:shock) then (
+		if (getPinId(turn, slot) >=pin:flame && getPinId(turn, slot) <= pin:earth) then (
 			for (i, 4, 0, -1) do (
 				put slice (sli, -1 * i, 0)
 				for (j, 0, 2) do (specwait)
@@ -290,14 +300,26 @@ script, encounter, who, begin
 			)
 			put slice (parent, 0, 0)
 		)
+		updateHP
 		return (true)
 	end
 
 	subscript, updateTurn, begin
+		if (turn == char:rose) then (
+			atbRose := 0
+		) else if (turn ==char:Kat) then (
+			atbKat := 0
+		)
 		turn := -1
 		setSliceVisible(textSli)
-		updateHP
 		state := encounter:choose
+
+		if (getStat(char:Rose, stat:currentLife) == 0 && getStat(char:Rose, stat:currentLife) == 0) then (
+			condition := encounter:lost
+		)
+		if (getStat(char:enemy, stat: currentLife) == 0) then (
+			condition := encounter:won
+		)
 	end
 
 	subscript, enemyTurn, begin
@@ -414,15 +436,13 @@ script, encounter, who, begin
 	end
 
 	subscript, updateHP, begin
-
-		for (i, 0, 2) do (
-			$10=""
-			appendNumber (10, getStat(i, stat:currentlife))
-			setSliceText(sliceChild(hpSli, i), 10)
-			if (i==char:enemy && getStat(i, stat:currentlife) == 0) then (
-				condition := encounter:won
-			)
-		)
+		variable (sli)
+		sli := sliceChild (statSli, 0)
+		setSliceWidth(sliceChild(sli, 0), 40 * getStat(char:rose, stat:currentlife) / getStat(char:rose, stat:life))
+		setSliceWidth(sliceChild(sli, 1), 40 * atbRose / maxAtb)
+		sli := sliceChild (statSli, 1)
+		setSliceWidth(sliceChild(sli, 0), 40 * getStat(char:kat, stat:currentlife) / getStat(char:kat, stat:life))
+		setSliceWidth(sliceChild(sli, 1), 40 * atbKat / maxAtb)
 	end
 
 	subscript, initSkill, begin
@@ -448,7 +468,7 @@ script, encounter, who, begin
 
 	subscript, initTarget, begin
 		freeSliceChildren(textSli)
-		getPinName(getPinId(turn, slot:atk1)) 
+		getPinName(getPinId(turn, slot)) 
 		$10="Choose who to use ${S11} on."
 		
 		switch (getTargets()) do (
@@ -539,7 +559,7 @@ script, encounter, who, begin
 
 		arrow := sliceChild(firstChild(parent), 2)
 
-		hpSli :=  lastChild(firstChild(parent))
+		statSli :=  sliceChild(firstChild(parent), 3)
 
 		who := enemy:dummy
 		loadbattleback(parent, who)
@@ -552,11 +572,12 @@ script, encounter, who, begin
 			updateStats(who, true)
 			setStat(who, stat:atr, getPinID(who, slot:atr) + 1 -- pin:flameAtr)
 		)
-		updateHP()
+		
 		mood := getStat(char:enemy, stat:mood)
 		maxAtb := getStat(char:rose, stat:speed) + getStat(char:kat, stat:speed) + getStat(char:enemy, stat:speed)
 
-		maxAtb := maxAtb * 20
+		maxAtb := maxAtb * 3 / 2
+		updateHP()
 
 		atbRose := random(0, maxAtb)
 		atbKat := random(0, maxAtb)
@@ -578,12 +599,21 @@ script, afterEncounter, condition, parent, begin
 	init()
 	while (true) do (
 		if (update) then (break)
-		wait
+		specwait
 	)
 	freeSlice(sli)
 
 	subscript, init, begin
+		if (getStat(who, stat:currentLife)<= 0) then (
+			updateStats(who)
+		)
+
 		game:state := state:resume
+
+		
+		dissolve sprite (firstChild(lastChild(parent)), dissolve:fade, 45)
+		specwait(44)
+
 		freeSlice(lastChild(parent))
 		freeBattleBack()
 		specwait(44)
