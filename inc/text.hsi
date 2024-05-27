@@ -1,7 +1,7 @@
-script, textLine, parent, y=0, typing=false, begin
+script, textLine, parent, y=0, type=false, begin
 	variable (sli)
 	expandString(10)
-	sli := stringwrite(parent, y, typing)
+	sli := stringwrite(parent, y, type)
 	resizeExtra(sli, 32)
 	return (sli)
 end
@@ -26,6 +26,8 @@ script, getText, text, begin
 		$10+"vow SPHINX OF BLACK QUARTZ JUDGE"
 		appendAscii(10, 10)
 		$10+"MY VOW 0123456789.?-$"
+		appendAscii(10, 10)
+		$10+"WOOOOOOOOOOOOOOOOO"
 		#====================================|
 	end
 end

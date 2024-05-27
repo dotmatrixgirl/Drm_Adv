@@ -254,11 +254,11 @@ plotscript, newGame, begin
 		$33="Speed"
 		$34="Empath"
 		$35="Align"
-		$36="Act Pin"
-		$37="Act Pin"
-		$38="Stat Pin"
-		$39="Stat Pin"
-		$40="Atr Pin"
+		$40="Act Pin"
+		$41="Act Pin"
+		$42="Stat Pin"
+		$43="Stat Pin"
+		$44="Atr Pin"
 
 		game:lvlCap := 10
 		

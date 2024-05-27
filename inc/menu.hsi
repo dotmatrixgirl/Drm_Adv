@@ -29,19 +29,67 @@ script, menuStats, who=0, begin
 		setSpriteSetNumber(sli, getCharSprite(who))
 
 		sli := firstChild(parent)
-		10 $= who + 1
-		sli := textLine(sli, 0)
-		putSlice(sli, 30, 20)
+		sli := firstChild(sli)
+		10 $= who + strng:RoseName
+		textsli := textLine(sli, 0)
+		setSliceX(textSli, 20)
+
+		$10="Align:"
+		textLine(sli, 2)
+
+		getAlign(who)
+		$10="${S11}"
+		textSli := textLine(sli, 2)
+		setSliceX(textSli, 50)
+
+		for (i, strng:atk1, strng:atr) do (
+			10 $= i
+			$10+":"
+			textLine(sli, i--strng:atk1 + 4)
+		)
+
+		for (i, slot:atk1, slot:atk2) do (
+			if (getPinId(who, i)) then (
+				getPinName(getPinId(who, i))
+				10 $= 11
+				if (getPinId(who, i) >= pin:addFlame && getPinId(who, i) <= pin:addEarth) then (
+				) else if (getPinId(who, i) >= pin:FlameAtr && getPinId(who, i) <= pin:EarthAtr) then (
+				) else (
+					$10+" "
+					appendNumber(10, getPinLvl(who, i))
+				)
+				textSli := textLine(sli, i -- slot:atk1 + 4)
+				setSliceX(textSli, 68)
+			)
+		)
+		for (i, slot:stat1, slot:stat2) do (
+			if (getPinId(who, i)) then (
+				getPinName(getPinId(who, i))
+				10 $= 11
+				$10+" "
+				appendNumber(10, getPinLvl(who, i))
+				textSli := textLine(sli, i -- slot:atk1 + 4)
+				setSliceX(textSli, 76)
+			)
+		)
+		if (getPinId(who, i)) then (
+			getPinName(getPinId(who, i))
+			10 $= 11
+			$10+" "
+			appendNumber(10, getPinLvl(who, i))
+			textSli := textLine(sli, i -- slot:atk1 + 4)
+			setSliceX(textSli, 76)
+		)
 
 		sli := firstChild (parent)
 		sli := sliceChild(sli, 1)
 
 		$10="Level:"
 		textLine(sli)
-		for (i, 30, 35) do (
+		for (i, strng:life, strng:empathy) do (
 			10 $= i
 			$10+":"
-			textLine(sli, i--29)
+			textLine(sli, i -- strng:life +1)
 		)
 
 		sli := firstChild(sli)
@@ -49,30 +97,10 @@ script, menuStats, who=0, begin
 		$10=""
 		appendNumber(10, getLvl(who))
 		textLine(sli)
-		for (i, stat:life, stat:alignment) do (
+
+		for (i, stat:life, stat:empathy) do (
 			$10=""
 			appendNumber(10, getStat(who, i))
-			textLine(sli, i -- stat:life + 1)
-		)
-
-		sli := sliceParent(sli)
-		sli := nextSibling(sli)
-
-		for (i, 36, 40) do (
-			10 $= i
-			$10+":"
-			textLine(sli, i--36)
-		)
-
-		sli := firstChild(sli)
-
-		for (i, slot:atk1, slot:atr) do (
-			getPinName(getPinId(who, i))
-			$10="${S11} "
-
-			if (i<>slot:atr && getPinId(who, i)) then (
-				appendNumber(10, getPinLvl(who, i))
-			)
 			textLine(sli, i -- stat:life + 1)
 		)
 	end

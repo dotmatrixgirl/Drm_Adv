@@ -5,7 +5,10 @@ define constant, begin
 	14, font:columns
 	12, font:grid x
 	12, font:grid y
-	16, font:spacing
+	14, font:spacing
+
+	1, font:typing
+	2, font:offset
 end
 
 script, getFontWidth, font, begin
@@ -27,7 +30,7 @@ script, returnFont, text, begin
 		return (1)
 	)
 end
-script, stringwrite, parent, y=0, typing=false, overwridefont=false, begin
+script, stringwrite, parent, y=0, type=false, overwridefont=false, begin
 	variable(
 	font,
 	cont,
@@ -53,6 +56,7 @@ script, stringwrite, parent, y=0, typing=false, overwridefont=false, begin
 
 	skip
 	sfx
+	x
 
 	#this is how wide/high a font is
 	w
@@ -73,10 +77,12 @@ script, stringwrite, parent, y=0, typing=false, overwridefont=false, begin
 
 	wt:=game:textspeed
 
+	if (type == font:offset) then (x := 8)
 
 	msg := create container()
 	setParent (msg, parent)
-	putSlice (msg, 0, y*12)
+	putSlice (msg, x, y*14)
+	expandString(10)
 
 	for(pos, 1, string length(10)) do(
 		def letter(asciifromstring(10, pos))
@@ -90,7 +96,7 @@ script, stringwrite, parent, y=0, typing=false, overwridefont=false, begin
 	for(pos, 1, string length(10)) do(
 		set slice visible(letter, ON)
 	  	letter:=next sibling(letter)
-	  	if (typing) then (
+	  	if (type == font:typing) then (
 	  		for (i, 0,1) do (
 		  		if (skip==0) then (
 					specwait ()
@@ -106,7 +112,7 @@ script, stringwrite, parent, y=0, typing=false, overwridefont=false, begin
 	)
 	refresh
 	return(msg)
-	if (typing) then (
+	if (type == font:typing) then (
 		specWait(10)
 	)
 	

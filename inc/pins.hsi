@@ -47,7 +47,7 @@ script, addPinExpCapped, who, slot, amount, begin
 end
 
 script, getPinCap, lvl, begin
-	if (lvl > game:lvlCap) then (return(true))
+	if (lvl > game:lvlCap / 2) then (return(true))
 end
 
 script, initPinSlots, who, begin
@@ -138,10 +138,10 @@ script, getPinName, which, begin
 		case (pin:shockAtr) do ($11="Shock Atr")
 		case (pin:earthAtr) do ($11="Earth Atr")
 
-		case (pin:addFlame) do ($11="+Flame")
-		case (pin:addWater) do ($11="+Water")
-		case (pin:addShock) do ($11="+Shock")
-		case (pin:addEarth) do ($11="+Earth")
+		case (pin:addFlame) do ($11="Add Flame")
+		case (pin:addWater) do ($11="Add Water")
+		case (pin:addShock) do ($11="Add Shock")
+		case (pin:addEarth) do ($11="Add Earth")
 		case (pin:dummy) do ($11="Empty")
 	)
 end
@@ -158,12 +158,12 @@ script, usePin, attacker, target, slot, begin
 	variable (atr, psi, mind, sli, effect, pin, lvl, hp, def)
 
 	pin := getPinId(attacker, slot)
-	lvl := getPinLvl(attacker, slot)
+	lvl := getPinLvl(attacker, slot) + 4
 
 	psi := getStat(attacker, stat:psi)
 	mind := getStat(target, stat:mind)
 	def := getStat(target, stat:defending)
-	$10="what the fuck"
+	$10="what the fuck?!?!"
 	if (pin >= pin:flame && pin <= pin:earth) then (
 		effect := getPinEffect(pin, lvl, psi, mind)
 
@@ -180,15 +180,15 @@ script, usePin, attacker, target, slot, begin
 		if (def) then (
 			effect -= effect / 4
 		)
-		
+		10 $= target + strng:RoseName
 		hp := getStat(target, stat:currentLife) -- effect
 		if (hp <= 0) then (
 			hp := 0
-			$10="They faded away"
+			$10+" faded away!"
 		) else (
-			$10="They took "
+			$10+" took "
 			appendNumber(10, effect)
-			$10+" damage"
+			$10+" damage!"
 		)
 		setStat(target, stat:currentlife, hp)
 		statGain(attacker, gain:attack, slot)
@@ -201,24 +201,26 @@ script, usePin, attacker, target, slot, begin
 		setStat(target, stat:atr, pin + 1 -- pin:addFlame)
 		statGain(attacker, gain:attack, slot)
 		getPinName(pin--4)
-		$10="They gained the ${S11}"
+		$10="They gained ${S11}."
 	)
 
 	subscript, heal, who, begin
 		hp := getStat(who, stat:currentlife)
+		10 $= target + strng:RoseName
 		if (hp == getStat(who, stat:life)) then (
-			$10="They are already healthy."
+			$10+" is already healthy!"
 		) else if (hp <= 0) then (
-			$10="They have already faded away."
+			$10+" has already faded away!"
 		) else (
 			effect := getPinEffect (pin, lvl, psi,	hp)
 			hp += effect
 			if (hp > getStat(who, stat:life)) then (
 				hp := getStat(who, stat:life)
-				$10="Life fully restored"
+				$10+"'s life  is fully restored!"
 			) else (
-				$10="Life restored to "
+				$10+"'s' Life is restored to "
 				appendNumber(10, hp)
+				$10+"!"
 			)
 			statGain(attacker, gain:attack)
 
