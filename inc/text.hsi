@@ -1,7 +1,7 @@
-script, textLine, parent, y=0, type=false, begin
+script, textLine, parent, y=0, type=false, string=10, begin
 	variable (sli)
 	expandString(10)
-	sli := stringwrite(parent, y, type)
+	sli := stringwrite(parent, y, type, string)
 	resizeExtra(sli, 32)
 	return (sli)
 end

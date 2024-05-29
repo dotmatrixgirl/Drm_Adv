@@ -28,8 +28,26 @@ script, encounter, who, begin
 		if (sound is playing (0)) then (
 			exitScript
 		)
-		
+		if (mood <= getStat(char:enemy, stat:will) * -1 && condition <> encounter:enraged) then (
+			condition := encounter:enraged
+			playSound(0)
+			stopSong
+			setSliceVisible(textSli, true)
+			freeSliceChildren(textSli)
+			10 $= strng:EnemyName
+			$10+" became enraged"
+			textLine(textSli, 0, font:typing)
+			textWait := true
+			exitScript
+		)
+		if (condition == encounter:enraged && currentSong <> song:the storm) then (
+			playSong(song:the storm)
+		)
+		if (condition == encounter:peaceful && currentSong <> song:the calm) then (
+			playSong(song:the calm)
+		)
 		if (turn == -1) then (
+			setSliceVisible(textSli, false)
 			if (atbRose > maxAtb) then (
 				freeSliceChildren(textSli)
 				turn := char:rose
@@ -64,9 +82,10 @@ script, encounter, who, begin
 			)
 		)
 		if (state == encounter:between) then (updateTurn, exitScript)
+		if (state == encounter:animate) then (animations, exitScript)
 		if (turn == turn:enemy) then (
 			enemyTurn
-		) else if (turn==char:rose || turn==char:kat) then (	
+		) else if (turn==char:rose || turn==char:kat) then (
 			switch (state) do (
 				case (encounter:choose) do (
 					if (newpresskey(b:u)) then (
@@ -195,15 +214,7 @@ script, encounter, who, begin
 							$10+"${S3}."
 							textline(textsli, 0, font:typing)
 							target := char:enemy
-							usePin(turn, target, slot)
-							animations()
-							textline(textsli, 3, font:typing)
-							textWait:= true
-							if (getPinId(turn, slot) >=pin:flame && getPinId(turn, slot) <= pin:earth) then (
-								condition := encounter:enraged
-								ani := ani:playerAttack	
-							)
-							state := encounter:between
+							state := encounter:animate
 						) else (changeState(encounter:target))					
 					) else if (newpresskey(b:u)) then (
 						if (sel<=1) then (
@@ -234,11 +245,8 @@ script, encounter, who, begin
 								case (2) do ($10+"${S2}.", target := char:kat)
 							)
 							textLine(textSli, 0, font:typing)
-							usePin(turn, target, slot)
-							animations()
-							textline(textsli, 3, font:typing)
-							textWait := true
-							state := encounter:between
+							state := encounter:animate
+							
 						) else if (getTargets()==target:all) then (
 							switch (sel) do (
 								case (1) do ($10+"${S1}.", target := char:rose)
@@ -246,12 +254,7 @@ script, encounter, who, begin
 								case (3) do ($10+"${S3}.", target := char:enemy)
 							)
 							textLine(textSli, 0, font:typing)
-							usePin(turn, target, slot)
-							animations()
-							textline(textsli, 3, font:typing)
-							
-							textWait := true
-							state := encounter:between
+							state := encounter:animate
 						)
 					) else if (newpresskey(b:u)) then (
 						if (sel<=1) then (
@@ -269,9 +272,12 @@ script, encounter, who, begin
 	end
 
 	subscript, animations, begin
-		variable (sli)
+		variable (sli, sliAmount, textCheck)
 		setSliceVisible(arrow, false)
 		for (j, 0, 12) do (specwait)
+		textCheck := usePin(turn, target, slot)
+
+		setSliceVisible(textSli)
 		sli := lastChild(parent)
 		switch (getPinId(turn, slot)) do (
 			case (pin:heart) do (
@@ -289,12 +295,13 @@ script, encounter, who, begin
 			for (j, 0, 4) do (specwait)
 		)
 		freeSlice(sli)
-		for (j, 0, 12) do (specwait)
-		if (turn<>char:enemy) then (
+		
+		if (target == char:enemy) then (
 			sli := firstChild(sliceChild(parent, 1))
 		) else(
-			sli := lastChild(parent)
+			sli := sliceChild (statSli, target)
 		)
+		for (j, 0, 12) do (specwait)
 		if (getPinId(turn, slot) >=pin:flame && getPinId(turn, slot) <= pin:earth) then (
 			for (i, 4, 0, -1) do (
 				put slice (sli, -1 * i, 0)
@@ -303,9 +310,44 @@ script, encounter, who, begin
 				for (j, 0, 2) do (specwait)
 			)
 			put slice (parent, 0, 0)
+		) else (
 		)
+
+		sliAmount := createRect ((string length(12) + 1) * 8 + 4, 16)
+		setParent(sliAmount, lastChild (parent))
+		textLine(sliAmount, 0, false, 12)
+		switch (target) do (
+			case (char:rose) do (
+				#realignSlice(sliAmount, edge:left, edge:top, edge:left, edge:top)
+				putSlice(sliAmount, 4, 54)
+			)
+			case (char:kat) do (
+				realignSlice(sliAmount, edge:right, edge:top, edge:right, edge:top)
+				putSlice(sliAmount, -4, 54)
+			)
+			case (char:enemy) do (
+				centerSlice(sliAmount)
+			)
+		)
+		specWait(24)
+
+		freeSlice(sliAmount)
 		updateHP
-		return (true)
+
+		if (getPinId(turn, slot) >=pin:flame && getPinId(turn, slot) <= pin:earth) then (
+			if (condition <> encounter:enraged) then (
+				mood := getStat(char:enemy, stat:will) * -1
+			)
+		)
+
+		if (textCheck) then (
+			setSliceVisible(textSli, true)
+			freeSliceChildren (TextSli)
+			textLine(textSli, 0, font:typing)
+			textWait := true
+		)
+		
+		state := encounter:between
 	end
 
 	subscript, updateTurn, begin
@@ -327,7 +369,7 @@ script, encounter, who, begin
 	end
 
 	subscript, enemyTurn, begin
-		variable (slot, target)
+		variable (slot)
 		setSliceVisible(arrow, false)
 		setSliceVisible(textSli, true)
 		state := encounter:choose
@@ -358,12 +400,8 @@ script, encounter, who, begin
 			$10+"."
 
 			textLine(textSli, 0, font:typing)
-			usePin(turn, target, slot)
-			animations()
 			
-			textLine(textSli, 2, font:typing)
-			textWait := true
-			state := encounter:between
+			state := encounter:animate
 		) else if (condition == encounter:peaceful) then (
 			freeSliceChildren(textSli)
 			10 $= strng:EnemyName
@@ -431,6 +469,85 @@ script, encounter, who, begin
 		state := which
 	end
 
+	subscript, responseLiked, begin
+		$10="${S3} "
+		switch (getStat(char:enemy, stat:personality)) do (
+			case (type:logic) do (
+				$10+"sees your point."
+			)
+			case (type:anger) do (
+				$10+"seems excited."
+			)
+			case (type:slut) do (
+				$10+"looks lustful."
+			)
+			case (type:selfish) do (
+				$10+"appears pleased."
+			)
+			case (type:caring) do (
+				$10="smiles."
+			)
+			case (type:scared) do (
+				$10="calms down."
+			)
+			case (type:sad) do (
+				$10="appears comforted."
+			)
+		)
+	end
+	subscript, responseNone, begin
+		$10="${S3} "
+		switch (getStat(char:enemy, stat:personality)) do (
+			case (type:logic) do (
+				$10+"remains silent."
+			)
+			case (type:anger) do (
+				$10+"ignores you."
+			)
+			case (type:slut) do (
+				$10+"appears distracted."
+			)
+			case (type:selfish) do (
+				$10+"ignores you."
+			)
+			case (type:caring) do (
+				$10+"seems distracted."
+			)
+			case (type:scared) do (
+				$10+"ignores you."
+			)
+			case (type:sad) do (
+				$10+"remains silent."
+			)
+		)
+	end
+	subscript, responseDisliked, begin
+		$10="${S3} "
+		switch (getStat(char:enemy, stat:personality)) do (
+			case (type:logic) do (
+				$10+"appears displeased."
+			)
+			case (type:anger) do (
+				$10+"looks angry."
+			)
+			case (type:slut) do (
+				$10+"looks angry."
+			)
+			case (type:selfish) do (
+				$10+"looks angry."
+			)
+			case (type:caring) do (
+				$10+"appears displeased."
+			)
+			case (type:scared) do (
+				$10+"begins to cry."
+			)
+			case (type:sad) do (
+				$10+"begins to cry."
+			)
+		)
+	end
+
 	subscript, updateHP, begin
 		variable (sli)
 		sli := sliceChild (statSli, 0)
@@ -449,14 +566,21 @@ script, encounter, who, begin
 
 		if (getPinId(turn, slot:atk1)<>false) then (
 			getPinName(getPinId(turn, slot:atk1))
-			$10="${S11}"
-			appendNumber(10, getPinLvl(turn, slot:atk1))
+			$10="${S11} "
+			if (getPinId(turn, slot:atk1) >= pin:addFlame && getPinId(turn, slot:atk1) <= pin:addEarth) then (
+			) else (
+				appendNumber(10, getPinLvl(turn, slot:atk1))
+			)
 			textLine(textSli, 1, font:offset)
 		)
 		if (getPinId(turn, slot:atk2)<>false) then (
 			getPinName(getPinId(turn, slot:atk2))
-			$10="${S11} lvl "
-			appendNumber(10, getPinLvl(turn, slot:atk2))
+			$10="${S11} "
+			if (getPinId(turn, slot:atk2) >= pin:addFlame && getPinId(turn, slot:atk2) <= pin:addEarth) then (	
+			) else (
+				appendNumber(10, getPinLvl(turn, slot:atk2))
+			)
+
 			if (getPinId(turn, slot:atk1)==false) then (
 				textLine(textSli, 1, font:offset)
 			) else (textLine(textSli, 2, font:offset))
@@ -519,16 +643,16 @@ script, encounter, who, begin
 		if (sliceChild(textSli, which)==false) then (exitScript)
 		switch (getExtra(sliceChild(textSli, which), getStat(char:enemy, stat:personality))) do (
 			case (none) do (
-				$10="Neither liked nor disliked"
+				responseNone()
 		 	)
 		 	case (liked) do (
-		 		mood += 10
-		 		$10="Liked"
+		 		mood += getStat(turn, stat:empathy)/30
+		 		responseLiked()
 		 		statGain(turn, gain:talked)
 		 	)
 		 	case (disliked) do (
-		 		mood -= 10
-		 		$10="Disliked"
+		 		mood -= getStat(char:enemy, stat:will) / 8
+		 		responseDisliked()
 		 		statGain(turn, gain:failtalk)
 		 	)
 		)
@@ -536,20 +660,17 @@ script, encounter, who, begin
 			condition := encounter:talked
 			10 $= strng:EnemyName
 			$10+" no longer wishes to fight"
-		) else if (mood <= getStat(char:enemy, stat:will) * -1) then (
-			10 $= strng:EnemyName
-			$10+" became enraged"
-			condition := encounter:enraged
-		)
-		freeSliceChildren(textSli)
+			freeSliceChildren(textSli)
 
-		textLine(textSli, 0, font:typing)
-		textWait := true
+			textLine(textSli, 0, font:typing)
+			textWait := true
+		) else if (mood <= getStat(char:enemy, stat:will) * -1) then (
+		)
 		state := encounter:between
 	end
 
 	subscript, initEncounter, begin
-		#playSong(song:home bittersweet home)
+		playSong(song:the calm)
 		condition := encounter:peaceful
 		turn := -1
 		parent := loadSliceCollection (1)
@@ -585,15 +706,15 @@ script, encounter, who, begin
 	end
 
 	subscript, endEncounter, begin
-		stop song
+		stopSong
 		statGain(char:Rose, gain:battled)
 		statGain(char:Kat, gain:battled)
 
-		afterEncounter(condition, parent)
+		afterEncounter(condition, parent, who)
 	end
 end
 
-script, afterEncounter, condition, parent, begin
+script, afterEncounter, condition, parent, enemy, begin
 	variable(sli, stat, exiter, textWait, who, levelIsCapped, pin, i, state)
 	state := -1
 	init()

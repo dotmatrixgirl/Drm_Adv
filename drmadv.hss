@@ -100,6 +100,7 @@ defineConstant, begin
 	13,	encounter:talked
 	14,	encounter:between
 	15, encounter:defend
+	16,	encounter:animate
 
 	0,	turn:rose
 	1,	turn:kat

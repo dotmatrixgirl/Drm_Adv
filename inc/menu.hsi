@@ -72,13 +72,12 @@ script, menuStats, who=0, begin
 				setSliceX(textSli, 76)
 			)
 		)
-		if (getPinId(who, i)) then (
-			getPinName(getPinId(who, i))
+		if (getPinId(who, slot:atr)) then (
+			getPinName(getPinId(who, slot:atr))
 			10 $= 11
 			$10+" "
-			appendNumber(10, getPinLvl(who, i))
-			textSli := textLine(sli, i -- slot:atk1 + 4)
-			setSliceX(textSli, 76)
+			textSli := textLine(sli, slot:atr -- slot:atk1 + 4)
+			setSliceX(textSli, 68)
 		)
 
 		sli := firstChild (parent)
