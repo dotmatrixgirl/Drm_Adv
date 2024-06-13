@@ -11,6 +11,17 @@ script, encounter, who, begin
 
 	subscript, updateEncounter, begin
 		updateHP()
+
+		if (sound is playing (0)) then (
+			exitScript
+		) else (
+			if (condition == encounter:enraged && currentSong <> song:the storm) then (
+				playSong(song:the storm)
+			)
+			if (condition == encounter:peaceful && currentSong <> song:the calm) then (
+				playSong(song:the calm)
+			)
+		)
 		if (textWait) then (
 			if (newpresskey(b:a) || newpresskey(b:b)) then (
 				textWait := false
@@ -24,10 +35,6 @@ script, encounter, who, begin
 		) then (
 			exitReturning(true)
 		)
-		
-		if (sound is playing (0)) then (
-			exitScript
-		)
 		if (mood <= getStat(char:enemy, stat:will) * -1 && condition <> encounter:enraged) then (
 			condition := encounter:enraged
 			playSound(0)
@@ -35,17 +42,14 @@ script, encounter, who, begin
 			setSliceVisible(textSli, true)
 			freeSliceChildren(textSli)
 			10 $= strng:EnemyName
-			$10+" became enraged"
-			textLine(textSli, 0, font:typing)
+			$10+" became enraged."
+			textLine(textSli, 0)
 			textWait := true
 			exitScript
 		)
-		if (condition == encounter:enraged && currentSong <> song:the storm) then (
-			playSong(song:the storm)
-		)
-		if (condition == encounter:peaceful && currentSong <> song:the calm) then (
-			playSong(song:the calm)
-		)
+		
+		
+
 		if (turn == -1) then (
 			setSliceVisible(textSli, false)
 			if (atbRose > maxAtb) then (
@@ -281,18 +285,18 @@ script, encounter, who, begin
 		sli := lastChild(parent)
 		switch (getPinId(turn, slot)) do (
 			case (pin:heart) do (
-				setParent(loadAttackSprite(1), sli)
+				setParent(loadHeroSprite(2), sli)
 			)
 			case (pin:flame) do (
-				setParent(loadAttackSprite(2), sli)
+				setParent(loadHeroSprite(1), sli)
 			)
-			else (setParent(loadAttackSprite(0), sli))
+			else (setParent(loadheroSprite(0), sli))
 		)
 		sli := lastChild(sli)
 		sliceToFront(sli)
-		for (i, 0, 2) do (
+		for (i, 0, 7) do (
 			setSpriteFrame(sli, i)
-			for (j, 0, 4) do (specwait)
+			for (j, 0, 2) do (specwait)
 		)
 		freeSlice(sli)
 		
@@ -644,16 +648,25 @@ script, encounter, who, begin
 		switch (getExtra(sliceChild(textSli, which), getStat(char:enemy, stat:personality))) do (
 			case (none) do (
 				responseNone()
+				freeSliceChildren(textSli)
+				textLine(textSli, 0, font:typing)
+				textWait := true
 		 	)
 		 	case (liked) do (
 		 		mood += getStat(turn, stat:empathy)/30
 		 		responseLiked()
 		 		statGain(turn, gain:talked)
+		 		freeSliceChildren(textSli)
+		 		textLine(textSli, 0, font:typing)
+				textWait := true
 		 	)
 		 	case (disliked) do (
 		 		mood -= getStat(char:enemy, stat:will) / 8
 		 		responseDisliked()
 		 		statGain(turn, gain:failtalk)
+		 		freeSliceChildren(textSli)
+		 		textLine(textSli, 0, font:typing)
+				textWait := true
 		 	)
 		)
 		if (mood >= getStat(char:enemy, stat:will)) then (
