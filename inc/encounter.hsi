@@ -140,6 +140,7 @@ script, encounter, who, begin
 								$10+" defends!"
 								textLine(textSli, 0, font:typing)
 								setStat(turn, stat:defending, true)
+								statGain(turn, gain:defend)
 								textWait:= true
 								state := encounter:between
 							)
@@ -285,10 +286,19 @@ script, encounter, who, begin
 		sli := lastChild(parent)
 		switch (getPinId(turn, slot)) do (
 			case (pin:heart) do (
-				setParent(loadHeroSprite(2), sli)
+				setParent(loadHeroSprite(0), sli)
 			)
 			case (pin:flame) do (
 				setParent(loadHeroSprite(1), sli)
+			)
+			case (pin:shock) do (
+				setParent(loadHeroSprite(2), sli)
+			)
+			case (pin:water) do (
+				setParent(loadHeroSprite(3), sli)
+			)
+			case (pin:earth) do (
+				setParent(loadHeroSprite(4), sli)
 			)
 			else (setParent(loadheroSprite(0), sli))
 		)
@@ -364,7 +374,7 @@ script, encounter, who, begin
 		setSliceVisible(textSli)
 		state := encounter:choose
 
-		if (getStat(char:Rose, stat:currentLife) == 0 && getStat(char:Rose, stat:currentLife) == 0) then (
+		if (getStat(char:Rose, stat:currentLife) == 0 && getStat(char:Kat, stat:currentLife) == 0) then (
 			condition := encounter:lost
 		)
 		if (getStat(char:enemy, stat: currentLife) == 0) then (
@@ -386,13 +396,20 @@ script, encounter, who, begin
 			)
 			switch (getTargets()) do (
 				case (target:enemy) do (
-					target := random(char:Rose, char:Kat)	
+					while (true) do (
+						target := random(char:Rose, char:Kat)
+						if (getStat(target, stat:currentlife) > 0) then (break)
+					)
+
 				)
 				case (target:party) do (
 					target := char:enemy
 				)
 				case (target:all) do (
-					target := random(char:Rose, char:enemy)
+					while (true) do (
+						target := random(char:Rose, char:enemy)
+						if (getStat(target, stat:currentlife) > 0) then (break)
+					)	
 				)
 			)
 			freeSliceChildren (TextSli)
@@ -728,167 +745,104 @@ script, encounter, who, begin
 end
 
 script, afterEncounter, condition, parent, enemy, begin
-	variable(sli, stat, exiter, textWait, who, levelIsCapped, pin, i, state)
-	state := -1
+	variable(sli, textWait, check, i, j)
 	init()
-	while (true) do (
-		if (update) then (break)
-		specwait
-	)
+	update()
 	freeSlice(sli)
+	playSong(GetambientMusic)
 
 	subscript, init, begin
-		if (getStat(who, stat:currentLife)<= 0) then (
-			updateStats(who)
-		)
-
 		game:state := state:resume
-
-		
 		dissolve sprite (firstChild(lastChild(parent)), dissolve:fade, 45)
 		specwait(44)
-
 		freeSlice(lastChild(parent))
 		freeBattleBack()
 		specwait(44)
 		freeSlice(parent)
-		conditionInit()
 	end
 
 	subscript, update, begin
-		switch(state) do (
-			case (0) do (updateCapCheck)
-			case (1) do (statUpdate)
-			case (2) do (pinUpdate)
-			else (return (true))
-		)
-	end
-
-	subscript, statUpdate, begin
-		if (who > char:Kat) then (
-			pinInit()
-		) else if (getLvl(who) >= getCap) then (
-			copyString(10, who+strng:roseName)
-			$10+" has reached the"
-			appendAscii(10, 10)
-			$10+"level cap."
-			expandString(10)
-			write(-1)
-			who += 1
-			textWait := true
-		) else (
-			if (updateStat(who, stat, false)) then (
-				copyString(10, who+strng:RoseName)
-
-				$10+"'s "
-
-				concatenateStrings (10, stat + strng:life -- stat:life)
-
-				$10+" grew to "
-
-				appendNumber(10, getStat(who, stat))
-
-				$10+""
-
-				expandString(10)
-				write(-1)
-			) else (
-				if (who > char:Kat) then (
-					pinInit()
-				)
-			)
-		)
-		stat += 1
-		if (stat > stat:empathy) then (
-			stat := stat:life
-			who += 1
-		)
-	end
-
-	subscript, conditionInit, begin
 		switch (condition) do (
 			case (encounter:won) do (
-				who := char:rose
-
 				$10="Encounter cleared."
-
 				write(-1)
+				waitForWritePress()
 
-				textWait := true
-				state := 0
+				updateAllStats
 			)
 			case (encounter:talked) do (
-				who := char:rose
-
 				10 $= strng:enemyName
 				$10+" departed, satisfied"
-
 				write(-1)
+				waitForWritePress()
 
-				textWait := true
-				state := 0
+				updateAllStats
 			)
 			case (encounter:ran) do (
-				who := char:rose
 				10 $= strng:RoseName
 				$10+" and "
 				10 $+ strng:KatName
 				appendAscii(10, 10)
 				$10+"successfully ran."
 				write(-1)
-				state := -1
-			) else (
-				state := -1
+				waitForWritePress()
 			)
 		)
 	end
 
-	subscript, statinit, begin
-		who := char:rose
-		stat := stat:life
-		state := 1
-	end
+	subscript, updateAllStats, begin
+		for (j, char:rose, char:kat) do (
+			if (getStat(j, stat:currentLife)>0) then (
+				for (i, stat:life, stat:empathy) do (
+					if (updateStat(j, i, false)) then (
+						10 $=  j+strng:roseName
+						$10+"'s "
+						concatenateStrings (10, i + strng:life -- stat:life)
+						$10+" grew to "
+						appendNumber(10, getStat(j, i))
+						$10+""
+						write(-1)
+						waitForWritePress()
+					)
+				)
 
-	subscript, pinInit, begin
-		who := char:rose
-		state := 2
-	end
-
-	subscript, pinUpdate, begin
-		if (who > char:Kat) then (
-			state := -1
-		)else if (getPinId(who, pin)) then (
-			if (getPinCap(getPinLvl(who, pin))) then (
-				copyString(10, who+strng:RoseName)
-				getPinName(getPinId(who, pin))
-				$10+"'s ${S11} pin is max level"
-				expandString(10)
-				write(-1)
 			) else (
-				if (lvlPin(who, pin)) then (
-					copyString(10, who+strng:RoseName)
-					getPinName(getPinId(who, pin))
-					$10+"'s ${S11} pin grew to "
+				resetTempPinExp(j)
+			)
+		)
+		for (j, char:rose, char:kat) do (
+			for (i, slot:atk1, slot:stat) do (
+				updatePinExp(j, i)
+				if (getPinCap(getPinLvl(j, i))) then (
+					10 $=  j+strng:roseName
+					getPinName(getPinId(j, i))
+					$10+"'s ${S11} pin is"
 					appendAscii(10, 10)
-					appendNumber(10, getPinLvl(who, pin))
+					$10+" max level."
 					write(-1)
+					waitForWritePress()
+				) else (
+					if (lvlPin(j, i)) then (
+						10 $=  j+strng:roseName
+						getPinName(getPinId(j, i))
+						$10+"'s ${S11} pin grew to"
+						appendAscii(10, 10)
+						$10+"level "
+						appendNumber(10, getPinLvl(j, i))
+						write(-1)
+						waitForWritePress()	
+					)
+				)
+			)
+			for (j, char:rose, char:kat) do (
+				if (getStat(j, stat:currentLife) <= 0) then (
+					10 $=  j+strng:roseName
+					$10+" recovered."
+					write(-1)
+					waitForWritePress()
 				)
 			)
 		)
-		pin += 1
-		if (pin > slot:stat2) then (
-			pin := slot:atk1
-			who += 1
-		)
-	end
-
-	subscript, initCapCheck, begin
-		state := 0
-		who := char:rose
-	end
-
-	subscript,	updateCapCheck, begin
-		statInit()
 	end
 end
 

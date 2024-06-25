@@ -1,6 +1,6 @@
 script, menuStats, who=0, begin
-	variable (parent, sli, i, textSli)
-
+	variable (parent, sli, sli2, i, textSli, desc, box1, box2, arrow1, arrow2, equip, graphic, scroll)
+	variable (slot, bag, id, sel, sel2, scrolltemp, arrow, stats)
 	init()
 	while (true) do (
 		specwait
@@ -9,15 +9,117 @@ script, menuStats, who=0, begin
 	freeSlice(parent)
 
 	subscript, update, begin
-		if (newpresskey(b:b) || newpresskey(b:x)) then (
-			return (true)
-			exitScript()
+		if (equip == true) then (
+			if (newpressKey(b:b)) then (
+				equip := false
+				freeSlice(parent)
+				init
+			)else if (newpressKey(b:a)) then (
+				if (sel2 == childCount(sli)--1) then (
+					unequipPin(who, sel+slot:atk1)
+				) else (
+					equipPin(who, sel+slot:atk1, sel2)
+				)
+				equip := false
+				freeSlice(parent)
+				init
+			) else if (pressKey(b:u)) then (
+				sli := scroll
+				if (sel2 <= 0) then (
+					sel2 := childCount(sli)--1
+				) else (
+					sel2 -= 1
+				)
+				scrollToSlice(scroll, sliceChild(sli, sel2))
+				freeSliceChildren(desc)
+				getPinDesc(getPinId(slot, sel2, true))
+				10 $= 11
+				textLine(desc)
+			) else if (pressKey(b:d)) then (
+				sli := scroll
+				if (sel2 >= childCount(sli)--1) then (
+					sel2 := 0
+				) else (
+					sel2 += 1
+				)
+				scrollToSlice(scroll, sliceChild(sli, sel2))
+				freeSliceChildren(desc)
+				getPinDesc(getPinId(slot, sel2, true))
+				10 $= 11
+				textLine(desc)
+			)
+			setParent(arrow2, sliceChild(scroll, sel2))
+		) else (
+			if (newpresskey(b:x)) then (
+				return (true)
+			) else if (newpresskey(b:a)) then (
+				initEquip()
+			) else if (newpresskey (b:r) || newpresskey (b:l)) then (
+				who += 1
+				if (who > char:kat) then (who := char:rose)
+				freeSlice(parent)
+				sel := 0
+				init
+			) else if (pressKey(b:u)) then (
+				if (sel <= 0) then (
+					sel := childCount(stats)
+				) else (
+					sel -= 1
+				)
+			)
+			else if (pressKey(b:d)) then (
+				if (sel >= childCount(stats)) then (
+					sel := 0
+				) else (
+					sel += 1
+				)
+			)
+			setParent(arrow, sliceChild(stats, sel))
+		)	
+	end
+
+	subscript, initEquip, begin
+		equip := true
+		freeSliceChildren (box2)
+		scroll := cloneSlice(scrolltemp)
+		setSliceVisible(scroll, true)
+		setParent(scroll, box2)
+
+		arrow2 := cloneSlice(arrow)
+		setSliceVisible(arrow2, true)
+		sel2 := 0
+		slot := sel
+		bag := getBagFromSlot(slot)
+		for (i, 0, childCount(getBagSlot(slot))--1) do (
+
+			id := getPinId(slot, i, true)
+
+			getPinName(id)
+			10 $= 11
+			
+			sli := textLine(scroll, i)
+			setSliceHeight(sli, 16)
+			setSliceX(sli, 4)
+
+			if (bag <> bag:atr) then (
+				$10=""
+				appendNumber (10, getPinLvl(slot, i, true))
+				sli := textLine(sli)
+				setSliceX(sli, 64)
+			)
 		)
-		if (newpresskey (b:u) || newpresskey (b:d) || newpresskey (b:r) || newpresskey (b:l)) then (
-			who += 1
-			if (who > char:kat) then (who := char:rose)
-			init
-		)
+		$10="Unequip"
+		sli := textLine(scroll, i)
+		setSliceHeight(sli, 16)
+		setSliceX(sli, 4)
+
+
+		setParent(arrow2, sliceChild(scroll, sel2))
+		scrollToSlice(scroll, sliceChild(scroll, sel2))
+		getPinDesc(getPinId(slot, sel2, true))
+		10 $= 11
+		freeSliceChildren(desc)
+		textLine(desc)
 	end
 
 	subscript, init, begin
@@ -25,83 +127,84 @@ script, menuStats, who=0, begin
 		parent := loadSliceCollection(0)
 		overlayToFront()
 
-		sli := firstChild(firstChild(firstChild(parent)))
+		box1	:= sliceChild(parent, 0)
+		box2	:= sliceChild(parent, 1)
+		desc	:= sliceChild(parent, 2)
+		graphic	:= sliceChild(parent, 3)
+		arrow	:= sliceChild(parent, 4)
+		scrolltemp	:= sliceChild(parent, 5)
+
+		sli := firstChild(box1)
 		setSpriteSetNumber(sli, getCharSprite(who))
 
-		sli := firstChild(parent)
-		sli := firstChild(sli)
 		10 $= who + strng:RoseName
-		textsli := textLine(sli, 0)
-		setSliceX(textSli, 20)
+		textsli := textLine(box1)
+		putslice(textSli, 20, 4)
+		
+		sli := createContainer
 
+		setParent (sli, box1)
+		setSlice Y (sli, 28)
+
+
+		stats := createContainer()
+		setParent(stats, sli)
+		setSliceX(stats, 4)
 		$10="Align:"
-		textLine(sli, 2)
+		textsli := textLine(sli)
 
 		getAlign(who)
 		$10="${S11}"
-		textSli := textLine(sli, 2)
-		setSliceX(textSli, 50)
+		textSli := textLine(sli)
+		setSliceX(textSli, 48)
 
 		for (i, strng:atk1, strng:atr) do (
 			10 $= i
 			$10+":"
-			textLine(sli, i--strng:atk1 + 4)
-		)
-
-		for (i, slot:atk1, slot:atk2) do (
-			if (getPinId(who, i)) then (
-				getPinName(getPinId(who, i))
+			sli2 := textLine(stats, i--strng:atk1 + 1)
+			setSliceHeight(sli2, 16)
+			slot := (i -- strng:atk1 + slot:atk1)
+			if (getPinId(who, slot)) then (
+				getPinName(getPinId(who, slot))
 				10 $= 11
-				if (getPinId(who, i) >= pin:addFlame && getPinId(who, i) <= pin:addEarth) then (
-				) else if (getPinId(who, i) >= pin:FlameAtr && getPinId(who, i) <= pin:EarthAtr) then (
-				) else (
+				if (slot <> slot:atr) then (
 					$10+" "
-					appendNumber(10, getPinLvl(who, i))
+					appendNumber(10, getPinLvl(who, slot))
 				)
-				textSli := textLine(sli, i -- slot:atk1 + 4)
-				setSliceX(textSli, 68)
+				textSli := textLine(sli2)
+				if (slot <> slot:stat) then (
+					setSliceX (textSli, 68)
+				) else (
+					setSliceX(textSli, 74)
+				)
 			)
 		)
-		for (i, slot:stat1, slot:stat2) do (
-			if (getPinId(who, i)) then (
-				getPinName(getPinId(who, i))
-				10 $= 11
-				$10+" "
-				appendNumber(10, getPinLvl(who, i))
-				textSli := textLine(sli, i -- slot:atk1 + 4)
-				setSliceX(textSli, 76)
-			)
-		)
-		if (getPinId(who, slot:atr)) then (
-			getPinName(getPinId(who, slot:atr))
-			10 $= 11
-			$10+" "
-			textSli := textLine(sli, slot:atr -- slot:atk1 + 4)
-			setSliceX(textSli, 68)
-		)
-
-		sli := firstChild (parent)
-		sli := sliceChild(sli, 1)
+		
+		sli := box2
 
 		$10="Level:"
-		textLine(sli)
-		for (i, strng:life, strng:empathy) do (
-			10 $= i
-			$10+":"
-			textLine(sli, i -- strng:life +1)
-		)
-
-		sli := firstChild(sli)
+		sli2 := textLine(sli)
 
 		$10=""
 		appendNumber(10, getLvl(who))
-		textLine(sli)
+		textSli := textLine(sli2)
+		setSliceX(textSli, 60)
 
-		for (i, stat:life, stat:empathy) do (
+		sli := createContainer()
+		setParent(sli, box2)
+		setSlice Y (sli, 28)
+
+		for (i, strng:life, strng:empathy) do (
+			10 $= i
+			$10+":"
+			sli2 := textLine(sli, i -- strng:life)
 			$10=""
-			appendNumber(10, getStat(who, i))
-			textLine(sli, i -- stat:life + 1)
+			appendNumber(10, getStat(who, i -- strng:life + stat:life))
+			textSli := textLine(sli2)
+			setSliceX(textSli, 60)
+
 		)
+		setParent(arrow, sliceChild(stats, sel))
 	end
 end
 

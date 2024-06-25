@@ -1,53 +1,90 @@
 script, addPinToBag, id, lvl=1, begin
 	variable (sli)
 	sli := initPin(id, lvl)
-	setParent(sli, lookupSlice(sli:pinbag))
+	setParent(sli, getBagSlot(getPinSlot(id)))
 end
 
-script, equipPin, who, slot, bagSlotID, lvl=0, fromBag=true, begin
-	variable(sli, sliSlot, sliBagPin)
+script, findBagPin, id, begin
+	variable (sli)
+	sli := getBagSlot(getPinSlot(id))
 
-	sli := returnPinSlice(who, slot)
-	sliSlot := sliceChild(sliceChild(lookupSlice(sli:chars), who), slot)
-
-	if (fromBag) then (
-		if (sli) then (
-			setParent(sli, lookupSlice(sli:pinbag))
+	sli := firstChild(sli)
+	while (sli) do (
+		if (getExtra(sli, pin:ID)==id) then (
+			return (slice child index (sli))
+			exitScript
 		)
-		sliBagPin := sliceChild(lookupSlice(sli:pinbag), bagSlotID)
-		if (sliBagPin) then (
-			setParent(sliBagPin, sliSlot)
-			return (true)
-		) else (return (false))
-	) else  if (sli == false) then (
-		sli := initPin(bagSlotID, lvl)
-		setParent(sli, sliSlot)
+		sli := nextSibling(sli)
+	)
+end
+
+script, unequipPin, who, slot, begin
+	variable (sli)
+	sli := getPinSlice(who, slot)
+	if (sli) then (
+		setParent(sli, getBagSlot(slot))
+		return(true)
+	)
+end
+
+script, equipPin, who, slot, bagSlot, begin
+	variable(sli)
+	sli := getPinSlice(slot, bagSlot, true)
+	if (sli) then (
+		unequipPin(who, slot)
+		setParent(sli, getCharPin(who, slot))
 		return (true)
-	) else (return (false))
+	)
+end
+
+script, equipEnemyPin, slot, id, lvl=1, begin
+	variable (sli)
+	sli := initPin(id, lvl)
+
+	setParent(sli, getCharPin(char:enemy, slot))
+end
+
+script, initPinBag, begin
+	variable (i, parent, sli)
+
+	parent := createContainer()
+	setSliceLookup(parent, sli:pinbag)
+	for (i, 0, 2) do (
+		sli := createContainer()
+		setChildAutosort (sli, autosort:Custom)
+		setParent(sli, parent)
+	)
+
+	for (i, pin:heart, pin:earthAtr) do (
+		addPinToBag(i)
+	)
 end
 
 script, initPin, id, lvl, begin
-	variable(sli)
+	variable(sli, exp)
 	sli := createContainer()
 
 	setExtra(sli, pin:ID, id)
-	setExtra(sli, pin:exp, lvl ^ 2)
-	setExtra(sli, pin:lvl, lvl)
+	
+	exp := expFromLvl(lvl)
+	setExtra(sli, pin:exp, exp)
+	setExtra(sli, pin:lvl, expCurve(exp))
+	setSortOrder(sli, id)
 
 	resizeExtra(sli, 16)
-	return(sli)
+	return (sli)
 end
 
-script, addPinExpCapped, who, slot, amount, begin
+script, addPinExpCapped, who, slot, amount, bag=false, begin
 	variable (sli, lvl)
-	lvl := expCurve(getPinExp(who, slot))
+	lvl := expCurve(getPinExp(who, slot, bag))
 	if (getPinCap(lvl)==false) then (
-		addPinExp(who, slot, amount)
+		addPinExp(who, slot, amount, bag)
 	)
 end
 
 script, getPinCap, lvl, begin
-	if (lvl > game:lvlCap / 2) then (return(true))
+	if (lvl > game:lvlCap) then (return(true))
 end
 
 script, initPinSlots, who, begin
@@ -58,67 +95,107 @@ script, initPinSlots, who, begin
 	)
 end
 
-script, lvlPin, who, slot, begin
+script, lvlPin, who, slot, bag=false, begin
 	variable(exp, lvl, origLvl)
 
 	#get level to check for levelup later
-	origLvl := getpinLvl(who, slot)
-	exp := getPinExp(who, slot)
+	origLvl := getpinLvl(who, slot, bag)
+	exp := getPinExp(who, slot, bag)
 
 	#this is where the level curve is determined
 	lvl := expCurve(exp)
 
 	#if (lvl >= game:lvlCap * 3) then (lvl := game:lvlCap * 3)
 
-	setPinLvl(who, slot, lvl)
+	if (getPinCap(lvl)) then (
+		lvl := game:lvlCap
+		setPinExp(who, slot, expFromLvl(lvl), bag)
+	)
 
+	setPinLvl(who, slot, lvl, bag)
 	#return true if leveled up
 	if (origLvl<>lvl) then (return (true))
 end
 
 script, expCurve, exp, begin
  	variable (lvl)
- 	lvl := sqrt(exp)
+ 	lvl := sqrt(exp)/4
  	return (lvl)
 end
 
-script, addPinExp, who, slot, value, begin
-	variable (sli)
-	setPinExp (who, slot, getPinExp(who, slot) + value)
+script, expFromLvl, lvl, begin
+	variable(exp)
+	exp := (lvl * 4)^2
+	return (exp)
 end
 
-script, setPinExp, who, slot, value, begin
+script, resetTempPinExp, who, begin
+	variable (sli, i)
+	for (i, slot:atk1, slot:stat) do (
+		sli := getPinSlice(who, i)
+		if (sli<>0) then (
+			setExtra(sli, pin:tempExp, 0)
+		)
+	)
+end
+
+script, addTempPinExp, who, slot, value, bag=false, begin
 	variable (sli)
-	sli :=	returnPinSlice(who, slot)
+	sli :=	getPinSlice(who, slot, bag)
+	if (sli) then (return (setExtra(sli, pin:tempExp, getExtra(sli, pin:tempExp) + value)))
+end
+
+script, getTempPinExp, who, slot, value, bag=false, begin
+	variable (sli)
+	sli :=	getPinSlice(who, slot, bag)
+	if (sli) then (return (getExtra(sli, pin:tempExp)))
+end
+
+script, updatePinExp, who, slot, bag=false, begin
+	variable (sli)
+	sli :=	getPinSlice(who, slot, bag)
+	if (sli) then (addPinExpCapped (who, slot, getTempPinExp(who, slot, bag), bag))
+end
+
+script, addPinExp, who, slot, value, bag=false, begin
+	variable (sli)
+	setPinExp (who, slot, getPinExp(who, slot, bag) + value, bag)
+end
+
+script, setPinExp, who, slot, value, bag=false, begin
+	variable (sli)
+	sli :=	getPinSlice(who, slot, bag)
 	if (sli) then (return (setExtra(sli, pin:Exp, value)))
 end
 
-script, getPinExp, who, slot, begin
+script, getPinExp, who, slot, bag=false, begin
 	variable (sli)
-	sli :=	returnPinSlice(who, slot)
+	sli :=	getPinSlice(who, slot, bag)
 	if (sli) then (return (getExtra(sli, pin:exp)))
 end
 
-script, getPinLvl, who, slot, begin
+script, getPinLvl, who, slot, bag=false, begin
 	variable (sli)
-	sli :=	returnPinSlice(who, slot)
+
+	sli :=	getPinSlice(who, slot, bag)
+	
 	if (sli) then (return (getExtra(sli, pin:lvl)))
 end
 
-script, setPinLvl, who, slot, value, begin
+script, setPinLvl, who, slot, value, bag=false, begin
 	variable (sli)
-	sli :=	returnPinSlice(who, slot)
+	sli :=	getPinSlice(who, slot, bag)
 	if (sli) then (return (setExtra(sli, pin:lvl, value)))
 end
 
-script, getPinId, who, slot, begin
+script, getPinId, who, slot, bag=false, begin
 	variable (sli)
-	sli :=	returnPinSlice(who, slot)
+	sli :=	getPinSlice(who, slot, bag)
 	if (sli) then (return (getExtra(sli, pin:ID))) else (return (pin:dummy))
 end
 
-script, getPinName, which, begin
-	switch (which) do (
+script, getPinName, id, begin
+	switch (id) do (
 		case (pin:heart) do ($11="Heart")
 		case (pin:calm) do ($11="Calm")
 		case (pin:read) do ($11="Read")
@@ -126,36 +203,151 @@ script, getPinName, which, begin
 		case (pin:water) do ($11="Water")
 		case (pin:shock) do ($11="Shock")
 		case (pin:earth) do ($11="Earth")
+		case (pin:addFlame) do ($11="+Flame")
+		case (pin:addWater) do ($11="+Water")
+		case (pin:addShock) do ($11="+Shock")
+		case (pin:addEarth) do ($11="+Earth")
 
 		case (pin:life) do ($11="Life+")
 		case (pin:mind) do ($11="Mind+")
 		case (pin:psi) do ($11="Psi+")
 		case (pin:speed) do ($11="Speed+")
-		case (pin:empathy) do ($11="Empathy+")
+		case (pin:empathy) do ($11="Empath+")
 
 		case (pin:flameAtr) do ($11="Flame Atr")
 		case (pin:waterAtr) do ($11="Water Atr")
 		case (pin:shockAtr) do ($11="Shock Atr")
 		case (pin:earthAtr) do ($11="Earth Atr")
 
-		case (pin:addFlame) do ($11="Add Flame")
-		case (pin:addWater) do ($11="Add Water")
-		case (pin:addShock) do ($11="Add Shock")
-		case (pin:addEarth) do ($11="Add Earth")
-		case (pin:dummy) do ($11="Empty")
+		else ($11="Empty")
 	)
 end
 
-script, returnPinSlice, who, slot, begin
+script, getPinDesc, id, begin
+	switch (id) do (
+		case (pin:heart) do (
+			$11="Restore life to an ally."
+		)
+		case (pin:calm) do (
+			$11="Calm an enraged enemy."
+		)
+		case (pin:read) do (
+			$11="Determine personalities."
+		)
+		case (pin:flame) do (
+			$11="Attack with fire."
+		)
+		case (pin:water) do (
+			$11="Attack with water."
+		)
+		case (pin:shock) do (
+			$11="Attack with electricity."
+		)
+		case (pin:earth) do (
+			$11="Attack with rocks."
+		)
+		case (pin:addFlame) do (
+			$11="Give the flame attribute."
+		)
+		case (pin:addWater) do (
+			$11="Give the water attribute."
+		)
+		case (pin:addShock) do (
+			$11="Give the shock attribute."
+		)
+		case (pin:addEarth) do (
+			$11="Give the earth attribute."
+		)
+
+		case (pin:life) do (
+			$11="Increases life stat."
+		)
+		case (pin:mind) do (
+			$11="Increases mind stat."
+		)
+		case (pin:psi) do (
+			$11="Increases psi stat."
+		)
+		case (pin:speed) do (
+			$11="Increases speed stat."
+		)
+		case (pin:empathy) do (
+			$11="Increases empathy stat."
+		)
+
+		case (pin:flameAtr) do (
+			$11="Imbues with fire element."
+		)
+		case (pin:waterAtr) do (
+			$11="Imbues with water element."
+		)
+		case (pin:shockAtr) do (
+			$11="Imbues with shock element."
+		)
+		case (pin:earthAtr) do (
+			$11="Imbues with earth element."
+		)
+
+		#else ($11="ERROR")
+	)
+end
+
+script, getPinSlice, whobag, slot, bag=false, begin
 	variable(sli)
-	sli :=	firstChild(sliceChild(sliceChild(lookupSlice(sli:chars), who), slot))
+	if (bag) then (
+		sli := sliceChild (getBagSlot(whoBag), slot)
+	) else (
+		sli := firstChild (getCharPin(whobag, slot))
+	)
 	return (sli)
+end
+
+script, getCharPin, who, slot, begin
+	variable(sli)
+	sli :=	sliceChild(sliceChild(lookupSlice(sli:chars), who), slot)
+	return (sli)
+end
+
+script, getBagSlot, slot, begin
+	return (sliceChild(lookupSlice(sli:pinBag), getBagFromSlot(slot)))
+end
+
+script, getSlotFromBag, bag, begin
+	variable (slot)
+	switch (bag) do (
+		case (bag:skill) do (slot := slot:atk1)
+		case (bag:stat) do (slot := slot:stat)
+		case (bag:atr) do (slot := slot:atr)
+	)
+	return (slot)
+end
+
+script, getBagFromSlot, slot, begin
+	variable (bag)
+	switch (slot) do (
+		case (slot:atk1, slot:atk2) do (bag := 0)
+		case (slot:stat) do (bag := 1)
+		case (slot:atr) do (bag := 2)
+	)
+	return (bag)
+end
+
+script, getPinSlot, ID, begin
+	if (id >=pin:heart && id <= pin:addEarth) then (
+		return (slot:atk1)
+	)
+	if (id >=pin:life && id <= pin:empathy) then (
+		return (slot:stat)
+	)
+	if (id >=pin:flameAtr && id <= pin:earthAtr) then (
+		return (slot:atr)
+	)
 end
 
 #caculate attack damage using attacker, attack, and target
 # *brian explodes*
 script, usePin, attacker, target, slot, begin
-	variable (atr, psi, mind, sli, effect, pin, lvl, hp, def)
+	variable (atr, psi, mind, sli, effect, pin, lvl, hp, maxHp, def)
 
 	pin := getPinId(attacker, slot)
 	lvl := getPinLvl(attacker, slot) + 4
@@ -180,7 +372,7 @@ script, usePin, attacker, target, slot, begin
 		if (def) then (
 			effect -= effect / 2
 		)
-		
+
 		hp := getStat(target, stat:currentLife) -- effect
 		if (hp <= 0) then (
 			hp := 0
@@ -198,8 +390,9 @@ script, usePin, attacker, target, slot, begin
 		statGain(target, gain:damage)
 	) else if (pin == pin:heart) then (
 		hp := getStat(target, stat:currentlife)
+		maxHP := getStat(target, stat:life)
 		10 $= target + strng:RoseName
-		if (hp == getStat(target, stat:life)) then (
+		if (hp == maxHP) then (
 			$10+" is already healthy!"
 			return (true)
 			$12="+0"
@@ -208,11 +401,10 @@ script, usePin, attacker, target, slot, begin
 			return (true)
 			$12="no effect"
 		) else (
-			effect := getPinEffect (pin, lvl, psi,	hp)
-			hp += effect
-			if (hp > getStat(target, stat:life)) then (
-				effect := getStat(target, stat:life) -- getStat(target, stat:currentlife) 
-				hp := getStat(target, stat:life)
+			effect := getPinEffect (pin, lvl, psi,	maxHp)
+			if (hp + effect >= maxHP) then (
+				effect := maxHP -- hp
+				hp := maxHP
 				$10+"'s life  is"
 				appendAscii(10, 10)
 				$10+"fully restored!"
@@ -220,11 +412,11 @@ script, usePin, attacker, target, slot, begin
 				$12="+"
 				appendNumber(12, abs(effect))
 			) else (
+				hp += effect
 				$12="+"
 				appendNumber(12, abs(effect))
 			)
-			statGain(attacker, gain:attack)
-
+			statGain(attacker, gain:attack, slot)
 			setStat(target, stat:currentlife, hp)
 		)
 	) else if (pin >= pin:addFlame && pin <= pin:addEarth) then (
@@ -233,6 +425,7 @@ script, usePin, attacker, target, slot, begin
 		getPinName(pin--4)
 		10 $= target + strng:RoseName
 		$10=" gained ${S11}."
+		return (true)
 		$12="+${S11}"
 	)
 end
@@ -240,9 +433,9 @@ end
 script, getPinEffect, id, lvl, mod1, mod2=1, begin
 	variable (value)
 	switch (id) do (
-		#mod1 is psi
+		#mod1 is psi, mod2 is hp
 		case (pin:heart) do (
-			value := (lvl / 2 + mod1 + mod2 / 4) / 3
+			value := (sqrt(lvl^2/2 + mod1^2/3) + mod2/2)/5
 		)
 		#mod1 is empathy, mod2 is will
 		case (pin:calm, pin:read) do (
@@ -250,13 +443,14 @@ script, getPinEffect, id, lvl, mod1, mod2=1, begin
 		)
 		#mod1 is psi, mod2 is mind
 		case (pin:flame, pin:water, pin:shock, pin:earth) do (
-			value := (lvl * 3 / 4 + mod1 * 3 / 4) -- mod2 / 4
+			value :=sqrt(lvl^2/2 + mod1^2/4) -- mod2/8
 		)
 		#mod1 is original stat value
 		case (pin:life, pin:mind, pin:psi, pin:speed, pin:empathy) do (
 			value := lvl * mod1 / 10
 			value := value * value / 100
 		)
+		
 	)
 	return (value)
 end

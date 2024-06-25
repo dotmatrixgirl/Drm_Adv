@@ -53,9 +53,8 @@ defineConstant, begin
 	35,	strng:alignment
 	40,	strng:atk1
 	41,	strng:atk2
-	42,	strng:stat1
-	43,	strng:stat2
-	44,	strng:atr
+	42,	strng:stat
+	43,	strng:atr
 
 	#buttons
 	0,	b:u
@@ -120,23 +119,24 @@ defineConstant, begin
 	1,	pin:heart
 	2,	pin:calm
 	3,	pin:read
-	6,	pin:flame
-	7,	pin:water
-	8,	pin:shock
-	9,	pin:earth
-	10,	pin:life
-	11,	pin:psi
-	12,	pin:mind
-	13,	pin:speed
-	14,	pin:empathy
-	15,	pin:flameAtr
-	16,	pin:waterAtr
-	17,	pin:shockAtr
-	18,	pin:earthAtr
-	19,	pin:addFlame
-	20,	pin:addWater
-	21,	pin:addShock
-	22,	pin:addEarth
+	4,	pin:flame
+	5,	pin:water
+	6,	pin:shock
+	7,	pin:earth
+	8,	pin:addFlame
+	9,	pin:addWater
+	10,	pin:addShock
+	11,	pin:addEarth
+	12,	pin:life
+	13,	pin:psi
+	14,	pin:mind
+	15,	pin:speed
+	16,	pin:empathy
+	17,	pin:flameAtr
+	18,	pin:waterAtr
+	19,	pin:shockAtr
+	20,	pin:earthAtr
+
 
 	0,	stat:currentlife
 	1,	stat:life
@@ -168,6 +168,7 @@ defineConstant, begin
 	3,	gain:failTalk
 	4,	gain:talked
 	5,	gain:battled
+	6,	gain:defend
 
 	1,	ani:enemyAttack
 	2,	ani:playerAttack
@@ -183,16 +184,26 @@ defineConstant, begin
 
 	0,	slot:atk1
 	1,	slot:atk2
-	2,	slot:stat1
-	3,	slot:stat2
-	4,	slot:atr
-	5,	slot:none
+	2,	slot:stat
+	3,	slot:atr
+	4,	slot:none
 
-	5,	char:sprite
+	4,	char:sprite
 
 	0,	pin:id
 	1,	pin:exp
 	2,	pin:lvl
+	3,	pin:tempExp
+
+	0,	bag:skill
+	1,	bag:stat
+	2,	bag:atr
+	3,	bag:all
+	
+	
+	0, diff:normal
+	1, diff:easy
+	2, diff:hard
 end
 
 globalVariable, begin
@@ -214,7 +225,7 @@ globalVariable, begin
 
 
 	12,	game:lvlCap
-	13,	game:hard
+	13,	game:diff
 
 	14,	maxLvl:rose
 	15,	maxLvl:Kat
@@ -258,8 +269,7 @@ plotscript, newGame, begin
 		$40="Act Pin"
 		$41="Act Pin"
 		$42="Stat Pin"
-		$43="Stat Pin"
-		$44="Atr Pin"
+		$43="Atr Pin"
 
 		game:lvlCap := 10
 		
@@ -270,7 +280,7 @@ plotscript, newGame, begin
 		sel:PinRose := 1
 		sel:PinKat := 1
 
-		#setMusicVolume(0)
+		setMusicVolume(0)
 	end
 end
 

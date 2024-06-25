@@ -6,16 +6,15 @@ script, initChars, begin
 
 	sli := createContainer ()
 	setSliceLookup(sli, sli:chars)
-	sli := createContainer ()
-	setSliceLookup(sli, sli:pinBag)
+	initPinBag
 
 	parent := createContainer()
 	setParent(parent, lookupslice(sli:chars))
 	setSliceClipping(parent)
 	resizeExtra(parent, 16)
 
-	setStat(char:rose, stat:life, 74)
-	setStat(char:rose, stat:psi, 37)
+	setStat(char:rose, stat:life, 35)
+	setStat(char:rose, stat:psi, 27)
 	setStat(char:rose, stat:mind, 28)
 	setStat(char:rose, stat:speed, 34)
 	setStat(char:rose, stat:empathy, 30)
@@ -25,9 +24,6 @@ script, initChars, begin
 
 	initPinSlots(char:rose)
 
-	equipPin(char:Rose, slot:atk1, pin:earth, 1, false)
-	equipPin(char:Rose, slot:atk2, pin:heart, 1, false)
-	equipPin(char:Rose, slot:atr, pin:earthatr, 0, false)
 
 	setParent(loadBorderSprite(2), parent)
 	$1="Rose"
@@ -38,7 +34,7 @@ script, initChars, begin
 	setSliceClipping(parent)
 	resizeExtra(parent, 16)
 
-	setStat(char:kat, stat:life, 68)
+	setStat(char:kat, stat:life, 32)
 	setStat(char:kat, stat:psi, 24)
 	setStat(char:kat, stat:mind, 38)
 	setStat(char:kat, stat:speed, 29)
@@ -49,15 +45,18 @@ script, initChars, begin
 
 	initPinSlots(char:kat)
 
-	equipPin(char:kat, slot:atk1, pin:Shock, 1, false)
-	equipPin(char:kat, slot:atk2, pin:addShock, 0, false)
-	equipPin(char:kat, slot:atr, pin:Shockatr, 0, false)
-
 	setParent(loadBorderSprite(1), parent)
 	#$2="Kat"
 	copyString(2, 3)
-	
+
+	equipPin(char:rose, slot:atk1, findBagPin(pin:earth))
+	equipPin(char:rose, slot:atk2, findBagPin(pin:heart))
+	equipPin(char:rose, slot:atr, findBagPin(pin:earthAtr))
+
+	equipPin(char:kat, slot:atk1, findBagPin(pin:shock))
+	equipPin(char:kat, slot:atr, findBagPin(pin:shockAtr))
 end
+
 
 script, initEnemy, who, begin
 	variable (sli, i)
@@ -75,42 +74,47 @@ script, initEnemy, who, begin
 	switch (who) do (
 		case (enemy:dummy) do (
 			$3="Orbweb"
-			setStat(char:enemy, stat:life, 60)
-			setStat(char:enemy, stat:psi, 30)
-			setStat(char:enemy, stat:mind, 24)
-			setStat(char:enemy, stat:speed, 40)
-			setStat(char:enemy, stat:will, 10)
+			setStat(char:enemy, stat:life,	3 * getPartyLvl * 5 + 20)
+			setStat(char:enemy, stat:psi,	5 * getPartyLvl * 5 / 2 + 20)
+			setStat(char:enemy, stat:mind,	4  * getPartyLvl * 5 / 2 + 20)
+			setStat(char:enemy, stat:speed,	3 * getPartyLvl * 5 / 2 + 20)
+			setStat(char:enemy, stat:will,	3 * getPartyLvl * 5 / 2 + 20)
 			setStat(char:enemy, stat:personality, type:logic)
 			setStat(char:enemy, stat:mood, 5)
 
 			initPinSlots(char:enemy)
 
-			equipPin(char:enemy, slot:atk1, pin:flame, 1, false)
-			equipPin(char:enemy, slot:atk2, pin:flame, 1, false)
-			equipPin(char:enemy, slot:atr, pin:flameatr)
+			equipEnemyPin(slot:atk1, pin:flame, 2)
+			equipEnemyPin(slot:atk2, pin:flame, 2)
+			equipEnemyPin(slot:atr, pin:flameatr)
 
 			setparent(loadBorderSprite(2), sli)
 		) else (
-			$3="ERROR"
-			setStat(char:enemy, stat:life, 40)
-			setStat(char:enemy, stat:psi, 36)
-			setStat(char:enemy, stat:mind, 20)
-			setStat(char:enemy, stat:speed, 24)
-			setStat(char:enemy, stat:will, 10)
-			setStat(char:enemy, stat:personality, type:anger)
+			$3="Orbweb"
+			setStat(char:enemy, stat:life,	3 * getPartyLvl * 2 + 20)
+			setStat(char:enemy, stat:psi,	5 * getPartyLvl * 3 / 2 + 20)
+			setStat(char:enemy, stat:mind,	4  * getPartyLvl * 3 / 2 + 20)
+			setStat(char:enemy, stat:speed,	3 * getPartyLvl * 3 / 2 + 20)
+			setStat(char:enemy, stat:will,	3 * getPartyLvl * 3 / 2 + 20)
+			setStat(char:enemy, stat:personality, type:logic)
+			setStat(char:enemy, stat:mood, 5)
 
 			initPinSlots(char:enemy)
 
-			equipPin(char:enemy, slot:atk1, pin:flame, 1, false)
-			equipPin(char:enemy, slot:atk2, pin:flame, 1, false)
-			equipPin(char:enemy, slot:atr, pin:flameatr)
+			equipEnemyPin(slot:atk1, pin:flame, 2)
+			equipEnemyPin(slot:atk2, pin:flame, 2)
+			equipEnemyPin(slot:atr, pin:flameatr)
 
 			setparent(loadBorderSprite(2), sli)
 		)
 	)
-	if (game:hard) then (
+	if (game:diff := diff:hard ) then (
 		for (i, stat:life, stat:will) do (
-			setStat (char:enemy, i, getStat(char:enemy, i) * 10 / 8)
+			setStat (char:enemy, i, getStat(char:enemy, i) + getStat(char:enemy, i)/16)
+		)
+	) else if (game:diff := diff:easy) then (
+		for (i, stat:life, stat:will) do (
+			setStat (char:enemy, i, getStat(char:enemy, i) --  getStat(char:enemy, i)/16)
 		)
 	)
 	return (sli)
@@ -140,30 +144,28 @@ script, statGain, who, type, pinSlot=slot:none, modifier=0, begin
 	if (modifier == 0) then (
 		modifier := getLvl(char:enemy)
 		modifier += 1
+		modifier := modifier
 	)
 	if (pinslot<>slot:none) then (pin := getPinId(who, pinslot))
 	
 	switch (type) do (
 		case (gain:damage) do (
-			if (random (0, 20) <= 4) then ( 
-				lvlStat(who, stat:life, modifier * (random (2, 8)) / 4)
+			if (random (0, 20) <= 8) then ( 
+				lvlStat(who, stat:life, modifier * (random (2, 8)) / 2)
 			)
-			if (random (0, 20) <= 4) then (
-				lvlStat(who, stat:mind, modifier * (random (2, 8)) / 8)	
+			if (random (0, 20) <= 7) then (
+				lvlStat(who, stat:mind, modifier * (random (2, 8)) / 4)	
 			)
 		)
 		case (gain:attack) do (
-			if (random (0, 20) <= 6) then (
-				lvlStat(who, stat:psi, modifier * (random (2, 8)) / 4)	
+			if (random (0, 20) <= 10) then (
+				lvlStat(who, stat:psi, modifier * (random (2, 8)) / 2)	
 			)
-			if (random (0, 20) <= 3) then (
-				lvlStat(who, stat:mind, modifier * (random (2, 8)) / 7)	
-			)
-			if (random (0, 20) <= 4) then (
-				lvlStat(who, stat:speed, modifier * (random (2, 8)) / 6)
+			if (random (0, 20) <= 8) then (
+				lvlStat(who, stat:speed, modifier * (random (2, 8)) / 3)
 			)
 			if (pinSlot<>slot:none) then (
-				addPinExpCapped(who, pinSlot, modifier ^ 2 / 24)
+				addTempPinExp(who, pinSlot, modifier * 4 ^ 2)
 			)
 			if (pin >= pin:flame && pin <= pin:earth) then (
 				lvlStat(who, stat:alignment, -1)
@@ -172,44 +174,42 @@ script, statGain, who, type, pinSlot=slot:none, modifier=0, begin
 			)
 			
 		)
+		case (gain:defend) do (
+			if (random (0, 20) <= 7) then (
+				lvlStat(who, stat:mind, modifier * (random (2, 8)) / 3)	
+			)
+		)
 		case (gain:failtalk) do (
-			if (random (0, 20) <=5) then (
-				lvlStat(who, stat:empathy, modifier * (random (2, 8)) / 6)	
+			if (random (0, 20) <=10) then (
+				lvlStat(who, stat:empathy, modifier * (random (2, 8)) / 3)	
 			)
-			if (random (0, 20) <= 4) then (
-				lvlStat(who, stat:mind, modifier * (random (2, 8)) / 6)
+			if (random (0, 20) <= 8) then (
+				lvlStat(who, stat:mind, modifier * (random (2, 8)) / 3)
 			)
-			if (random (0, 20) <= 4) then (
-				lvlStat(who, stat:speed, modifier * (random (2, 8)) / 6)
+			if (random (0, 20) <= 8) then (
+				lvlStat(who, stat:speed, modifier * (random (2, 8)) / 3)
 			)
 		)
 		case (gain:talked) do (
-			if (random (0, 20) <= 14) then (
-				lvlStat(who, stat:empathy, modifier * (random (2, 8)) / 4)	
+			if (random (0, 20) <= 16) then (
+				lvlStat(who, stat:empathy, modifier * (random (2, 8)) / 2)	
 			)
-			if (random (0, 20) <= 7) then (
-				lvlStat(who, stat:mind, modifier * (random (2, 8)) / 5)
+			if (random (0, 20) <= 12) then (
+				lvlStat(who, stat:mind, modifier * (random (2, 8)) / 2)
 			)	
-			if (random (0, 20) <= 4) then (
-				lvlStat(who, stat:speed, modifier * (random (2, 8)) / 6)
+			if (random (0, 20) <= 16) then (
+				lvlStat(who, stat:speed, modifier * (random (2, 8)) / 3)
 			)
-			if (random (0, 20) <= 7) then ( 
-				lvlStat(who, stat:life, modifier * (random (2, 8)) / 4)
+			if (random (0, 20) <= 14) then ( 
+				lvlStat(who, stat:life, modifier * (random (2, 8)) / 2)
 			)
 			lvlStat(who, stat:alignment, 1)
 		)
 		case (gain:battled) do (
-			for (i, slot:stat1, slot:stat2) do (
-				addPinExpCapped(who, i, modifier ^ 2 / 16)
-			)
-			if (random (0, 20) <= 5) then (
-				lvlStat(who, stat:speed, modifier * (random (2, 8)) / 6)
-			)
-			if (random (0, 20) <= 6) then ( 
+			
+			addTempPinExp(who, slot:stat, (modifier * 12)^ 2)
+			if (random (0, 20) <= 8) then ( 
 				lvlStat(who, stat:life, modifier * (random (2, 8)) / 2)
-			)
-			if (random (0, 20) <= 4) then (
-				lvlStat(who, stat:mind, modifier * (random (2, 8)) / 6)	
 			)
 		)
 	)
@@ -222,8 +222,7 @@ script, getStat, who, stat, boosted=true, begin
 	if (boosted == false) then (
 		return (value)
 	) else (
-		value += getPinBoost(slot:stat1)
-		value += getPinBoost(slot:stat2)
+		value += getPinBoost(slot:stat)
 		return (value)
 	)
 	subscript, getPinBoost, slot, begin
@@ -343,12 +342,21 @@ end
 
 script, getLvl, who, begin
 	variable (lvl, i)
-
-	lvl += getStat(who, stat:life/2, false)
-	for (i, stat:psi, stat:empathy) do (
-		lvl += getStat(who, i, false)
+	if (who == char:enemy) then (
+		lvl += (getStat(who, stat:life, false) -- 20) / 2
+	) else (
+		lvl += getStat(who, stat:life, false) -- 20
 	)
-	lvl :=  lvl / stat:empathy / 20
+	for (i, stat:psi, stat:empathy) do (
+		lvl += getStat(who, i, false) -- 20
+	)
+	lvl :=  lvl / stat:empathy / 6
+	return (lvl)
+end
+
+script, getPartyLvl, begin
+	variable (lvl)
+	lvl := (getLvl (char:rose) + getLvl(char:Kat))/2
 	return (lvl)
 end
 
@@ -363,6 +371,6 @@ script, getCharSprite, who, begin
 	variable(sli)
 	sli := lookupslice(sli:chars)
 	sli := sliceChild(sli, who)
-	sli := sliceChild(sli, char:sprite)
+	sli := sliceChild(sli, slot:atr + 1)
 	return (getSpriteSetNumber(sli))
 end

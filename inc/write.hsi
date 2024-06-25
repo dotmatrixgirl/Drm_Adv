@@ -23,6 +23,12 @@ script, getFontHeight, font, begin
 	)
 end
 
+script, waitForWritePress, begin
+	while (newpresskey(b:a) == false && newpresskey(b:b) == false) do (
+		specwait
+	)
+end
+
 script, returnFont, text, begin
 	if (text <= 0 && text >= 199) then (
 		return (1)
@@ -394,7 +400,7 @@ subscript, def letter, char (
 end
 
 
-script, write, text, choices=false, overwridefont=false, begin
+script, write, text, choices=false, string=10, overwridefont=false, begin
 	variable(
 	font,
 	cont,
@@ -409,7 +415,6 @@ script, write, text, choices=false, overwridefont=false, begin
 	stlenmax,
 	lnum,
 	letter,
-	string,
 	column,
 	row,
 	count
@@ -431,7 +436,6 @@ script, write, text, choices=false, overwridefont=false, begin
 
 	skip:=0
 	sfx:=0
-	string:=1
 
 	fontsheet := game:font
 	charX := 14
@@ -441,15 +445,16 @@ script, write, text, choices=false, overwridefont=false, begin
 	wt:=game:textspeed
 
 
-	msg := create container(getScreenWidth--56, 52)
+	msg := create container(getScreenWidth--56, 60)
 	putSlice (msg, 0, -28)
 	realignSlice (msg, edge:center, edge:bottom, edge:center, edge:bottom)
 
 	if (text<>-1) then (
 		getText(text)
 	)
-	for(pos, 1, string length(10)) do(
-		def letter(asciifromstring(10, pos))
+	expandString(string)
+	for(pos, 1, string length(string)) do(
+		def letter(asciifromstring(string, pos))
 		if(stlen > stlenmax)then(stlenmax:=stlen)
 	)
 
@@ -459,7 +464,7 @@ script, write, text, choices=false, overwridefont=false, begin
 	#$2="", append number (2, stlenmax), show string(2)
 	letter:=first container child(msg)
 	#play sound (random(0,2))
-	for(pos, 1, string length(10)) do(
+	for(pos, 1, string length(string)) do(
 	
 		set slice visible(letter, ON)
 	  	letter:=next sibling(letter)
