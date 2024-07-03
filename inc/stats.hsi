@@ -206,8 +206,7 @@ script, statGain, who, type, pinSlot=slot:none, modifier=0, begin
 			lvlStat(who, stat:alignment, 1)
 		)
 		case (gain:battled) do (
-			
-			addTempPinExp(who, slot:stat, (modifier * 12)^ 2)
+			addTempPinExp(who, slot:stat, modifier * 8 ^ 2)
 			if (random (0, 20) <= 8) then ( 
 				lvlStat(who, stat:life, modifier * (random (2, 8)) / 2)
 			)
@@ -219,20 +218,21 @@ script, getStat, who, stat, boosted=true, begin
 	variable (sli, value)
 	sli := getStatSlice(who)
 	value := getExtra(sli, stat)
-	if (boosted == false) then (
-		return (value)
-	) else (
-		value += getPinBoost(slot:stat)
-		return (value)
+	if (boosted == true) then (
+		value += getPinBoost()
 	)
-	subscript, getPinBoost, slot, begin
+	return (value)
+
+	subscript, getPinBoost, begin
 		variable (pin)
-		pin := getPinId(who,slot)
+		pin := getPinId(who, slot:stat)
 
 		#add the first stat boosting pin to stat to get the stat
-		if (pin == stat + pin:life) then (
-			return (getPinEffect(pin, getPinLvl(who, 3), stat))
+		if (pin -- pin:life == stat -- stat:life ) then (
+			return (getPinEffect(pin, getPinLvl(who, slot:stat), value))
 		)
+
+		show value (stat)
 	end
 end
 

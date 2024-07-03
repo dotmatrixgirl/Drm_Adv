@@ -306,7 +306,7 @@ script, encounter, who, begin
 		sliceToFront(sli)
 		for (i, 0, 7) do (
 			setSpriteFrame(sli, i)
-			for (j, 0, 2) do (specwait)
+			for (j, 0, 1) do (specwait)
 		)
 		freeSlice(sli)
 		
@@ -772,7 +772,7 @@ script, afterEncounter, condition, parent, enemy, begin
 			)
 			case (encounter:talked) do (
 				10 $= strng:enemyName
-				$10+" departed, satisfied"
+				$10+" departed, satisfied."
 				write(-1)
 				waitForWritePress()
 
@@ -800,12 +800,11 @@ script, afterEncounter, condition, parent, enemy, begin
 						concatenateStrings (10, i + strng:life -- stat:life)
 						$10+" grew to "
 						appendNumber(10, getStat(j, i))
-						$10+""
+						$10+"."
 						write(-1)
 						waitForWritePress()
 					)
 				)
-
 			) else (
 				resetTempPinExp(j)
 			)
@@ -814,7 +813,7 @@ script, afterEncounter, condition, parent, enemy, begin
 			for (i, slot:atk1, slot:stat) do (
 				updatePinExp(j, i)
 				if (getPinCap(getPinLvl(j, i))) then (
-					10 $=  j+strng:roseName
+					10 $=  j+strng:roseName--char:rose
 					getPinName(getPinId(j, i))
 					$10+"'s ${S11} pin is"
 					appendAscii(10, 10)
@@ -829,6 +828,7 @@ script, afterEncounter, condition, parent, enemy, begin
 						appendAscii(10, 10)
 						$10+"level "
 						appendNumber(10, getPinLvl(j, i))
+						$10+"."
 						write(-1)
 						waitForWritePress()	
 					)
@@ -842,6 +842,7 @@ script, afterEncounter, condition, parent, enemy, begin
 					waitForWritePress()
 				)
 			)
+			resetTempPinExp(j)
 		)
 	end
 end

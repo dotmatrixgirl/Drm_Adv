@@ -14,6 +14,7 @@ script, menuStats, who=0, begin
 				equip := false
 				freeSlice(parent)
 				init
+				exitScript
 			)else if (newpressKey(b:a)) then (
 				if (sel2 == childCount(sli)--1) then (
 					unequipPin(who, sel+slot:atk1)
@@ -23,6 +24,7 @@ script, menuStats, who=0, begin
 				equip := false
 				freeSlice(parent)
 				init
+				exitScript
 			) else if (pressKey(b:u)) then (
 				sli := scroll
 				if (sel2 <= 0) then (
@@ -32,8 +34,12 @@ script, menuStats, who=0, begin
 				)
 				scrollToSlice(scroll, sliceChild(sli, sel2))
 				freeSliceChildren(desc)
-				getPinDesc(getPinId(slot, sel2, true))
-				10 $= 11
+				if (sel2 == childCount(sli)--1) then (
+					$10="Remove equiped pin."
+				) else (
+					getPinDesc(getPinId(slot, sel2, true))
+					10 $= 11
+				)
 				textLine(desc)
 			) else if (pressKey(b:d)) then (
 				sli := scroll
@@ -44,35 +50,58 @@ script, menuStats, who=0, begin
 				)
 				scrollToSlice(scroll, sliceChild(sli, sel2))
 				freeSliceChildren(desc)
-				getPinDesc(getPinId(slot, sel2, true))
-				10 $= 11
+				if (sel2 == childCount(sli)--1) then (
+					$10="Remove equiped pin."
+				) else (
+					getPinDesc(getPinId(slot, sel2, true))
+					10 $= 11
+				)
 				textLine(desc)
 			)
 			setParent(arrow2, sliceChild(scroll, sel2))
 		) else (
 			if (newpresskey(b:x)) then (
 				return (true)
+				exitScript()
 			) else if (newpresskey(b:a)) then (
 				initEquip()
 			) else if (newpresskey (b:r) || newpresskey (b:l)) then (
-				who += 1
-				if (who > char:kat) then (who := char:rose)
+				if (who == char:kat) then (who := char:rose) else (
+					who := char:kat
+				)
 				freeSlice(parent)
 				sel := 0
 				init
 			) else if (pressKey(b:u)) then (
 				if (sel <= 0) then (
-					sel := childCount(stats)
+					sel := childCount(stats--1)
 				) else (
 					sel -= 1
 				)
+				freeSliceChildren(desc)
+				if (getPinId(who, sel + slot:atk1)) then (
+					getPinDesc(getPinId(who, sel + slot:atk1))
+					10 $= 11
+				) else (
+					$10="No equipped pin."
+				)
+				textLine(desc)
 			)
 			else if (pressKey(b:d)) then (
-				if (sel >= childCount(stats)) then (
+				if (sel >= childCount(stats)--1) then (
 					sel := 0
 				) else (
 					sel += 1
 				)
+				freeSliceChildren(desc)
+				if (getPinId(who, sel + slot:atk1)) then (
+					getPinDesc(getPinId(who, sel + slot:atk1))
+					10 $= 11
+					
+				) else (
+					$10="No equipped pin."
+				)
+				textLine(desc)
 			)
 			setParent(arrow, sliceChild(stats, sel))
 		)	
@@ -96,17 +125,12 @@ script, menuStats, who=0, begin
 
 			getPinName(id)
 			10 $= 11
-			
+
+			$10+" "
+			appendNumber (10, getPinLvl(slot, i, true))
 			sli := textLine(scroll, i)
 			setSliceHeight(sli, 16)
 			setSliceX(sli, 4)
-
-			if (bag <> bag:atr) then (
-				$10=""
-				appendNumber (10, getPinLvl(slot, i, true))
-				sli := textLine(sli)
-				setSliceX(sli, 64)
-			)
 		)
 		$10="Unequip"
 		sli := textLine(scroll, i)
@@ -116,8 +140,15 @@ script, menuStats, who=0, begin
 
 		setParent(arrow2, sliceChild(scroll, sel2))
 		scrollToSlice(scroll, sliceChild(scroll, sel2))
-		getPinDesc(getPinId(slot, sel2, true))
-		10 $= 11
+
+		if (sel2 == childCount(sli)--1) then (
+			$10="Remove equiped pin."
+		) else (
+			getPinDesc(getPinId(slot, sel2, true))
+			10 $= 11
+		)
+		
+		
 		freeSliceChildren(desc)
 		textLine(desc)
 	end
@@ -160,24 +191,18 @@ script, menuStats, who=0, begin
 
 		for (i, strng:atk1, strng:atr) do (
 			10 $= i
-			$10+":"
-			sli2 := textLine(stats, i--strng:atk1 + 1)
-			setSliceHeight(sli2, 16)
+			$10+": "
 			slot := (i -- strng:atk1 + slot:atk1)
 			if (getPinId(who, slot)) then (
 				getPinName(getPinId(who, slot))
-				10 $= 11
+				10 $+ 11
 				if (slot <> slot:atr) then (
 					$10+" "
 					appendNumber(10, getPinLvl(who, slot))
 				)
-				textSli := textLine(sli2)
-				if (slot <> slot:stat) then (
-					setSliceX (textSli, 68)
-				) else (
-					setSliceX(textSli, 74)
-				)
 			)
+			sli2 := textLine(stats, i--strng:atk1 + 1)
+			setSliceHeight(sli2, 16)
 		)
 		
 		sli := box2
@@ -194,17 +219,26 @@ script, menuStats, who=0, begin
 		setParent(sli, box2)
 		setSlice Y (sli, 28)
 
-		for (i, strng:life, strng:empathy) do (
-			10 $= i
+		for (i, stat:life, stat:empathy) do (
+			10 $= i -- stat:life + strng:life
 			$10+":"
-			sli2 := textLine(sli, i -- strng:life)
+			sli2 := textLine(sli, i -- stat:life)
 			$10=""
-			appendNumber(10, getStat(who, i -- strng:life + stat:life))
+			appendNumber(10, getStat(who, i))
 			textSli := textLine(sli2)
 			setSliceX(textSli, 60)
 
 		)
 		setParent(arrow, sliceChild(stats, sel))
+		freeSliceChildren(desc)
+		if (getPinId(who, sel + slot:atk1)) then (
+			getPinDesc(getPinId(who, sel + slot:atk1))
+			10 $= 11
+		) else (
+			$10="No equipped pin."
+		)
+		textLine(desc)
+
 	end
 end
 

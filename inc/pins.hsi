@@ -145,7 +145,7 @@ script, addTempPinExp, who, slot, value, bag=false, begin
 	if (sli) then (return (setExtra(sli, pin:tempExp, getExtra(sli, pin:tempExp) + value)))
 end
 
-script, getTempPinExp, who, slot, value, bag=false, begin
+script, getTempPinExp, who, slot, bag=false, begin
 	variable (sli)
 	sli :=	getPinSlice(who, slot, bag)
 	if (sli) then (return (getExtra(sli, pin:tempExp)))
@@ -154,7 +154,7 @@ end
 script, updatePinExp, who, slot, bag=false, begin
 	variable (sli)
 	sli :=	getPinSlice(who, slot, bag)
-	if (sli) then (addPinExpCapped (who, slot, getTempPinExp(who, slot, bag), bag))
+	if (sli) then (addPinExpCapped (who, slot, getTempPinExp(who, slot, bag), bag), setExtra(sli, pin:tempExp, 0))
 end
 
 script, addPinExp, who, slot, value, bag=false, begin
@@ -361,7 +361,7 @@ script, usePin, attacker, target, slot, begin
 
 		#*1.25 if attacking with atribute of pin
 		atr := getStat(attacker, stat:atr)
-		if (atr + 1 -- pin:addFlame == pin) then (effect := effect + effect/4)
+		if (atr -- pin:addFlame == pin -- pin:flame) then (effect += effect/2)
 
 		#if weak, damage*1.25 ; if strong, damage*0.75
 		if (elementCheck(pin, target) == weak) then (
@@ -424,7 +424,9 @@ script, usePin, attacker, target, slot, begin
 		statGain(attacker, gain:attack, slot)
 		getPinName(pin--4)
 		10 $= target + strng:RoseName
-		$10=" gained ${S11}."
+		$10+" gained the"
+		appendAscii(10, 10)
+		$10+"${S11} attribute."
 		return (true)
 		$12="+${S11}"
 	)
@@ -448,7 +450,6 @@ script, getPinEffect, id, lvl, mod1, mod2=1, begin
 		#mod1 is original stat value
 		case (pin:life, pin:mind, pin:psi, pin:speed, pin:empathy) do (
 			value := lvl * mod1 / 10
-			value := value * value / 100
 		)
 		
 	)
