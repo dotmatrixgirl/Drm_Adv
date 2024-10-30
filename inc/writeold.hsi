@@ -1,0 +1,790 @@
+define constant, begin
+	0, font:space
+	0, font:interval
+	16, font:rows
+	14, font:columns
+	12, font:grid x
+	12, font:grid y
+	14, font:spacing
+
+	1, font:typing
+	2, font:offset
+end
+
+script, getFontWidth, font, begin
+	switch (font) do (
+		case (1) do (return (10))
+	)
+end
+
+script, getFontHeight, font, begin
+	switch (font) do (
+		case (1) do (return (10))
+	)
+end
+
+script, waitForWritePress, begin
+	while (newpresskey(b:a) == false && newpresskey(b:b) == false) do (
+		specwait
+	)
+end
+
+script, returnFont, text, begin
+	if (text <= 0 && text >= 199) then (
+		return (1)
+	) else (
+		return (1)
+	)
+end
+script, stringwrite, parent, y=0, type=false, string=10, begin
+	variable(
+	font,
+	cont,
+	pos,
+	int,
+	lx,
+	ly,
+	lw,
+	msg,
+	wt,
+	stlen,
+	stlenmax,
+	lnum,
+	letter,
+	column,
+	row,
+	count
+	charposx
+	charX
+	charY
+	fontsheet
+
+	skip
+	sfx
+	x
+
+	#this is how wide/high a font is
+	w
+	h
+
+	i
+	mode
+	)
+
+	skip:=0
+	sfx:=0
+
+	fontsheet := game:font
+	charX := 14
+	charY := 14
+	int:= 0
+
+	wt:=game:textspeed
+
+	if (type == font:offset) then (x := 8)
+
+	msg := create container()
+	setParent (msg, parent )
+	putSlice (msg, x, y*14)
+	expandString(string)
+
+	for(pos, 1, string length(string)) do(
+		def letter(asciifromstring(string, pos))
+		if(stlen > stlenmax)then(stlenmax:=stlen)
+	)
+	
+	lx:= 0, lw:= 0, ly:= 0
+	#$2="", append number (2, stlenmax), show string(2)
+	letter:=first container child(msg)
+	#play sound (random(0,2))
+	for(pos, 1, string length(string)) do(
+		set slice visible(letter, ON)
+	  	letter:=next sibling(letter)
+	  	if (type == font:typing) then (
+	  		for (i, 0,1) do (
+		  		if (skip==0) then (
+					specwait ()
+					sfx += 1
+					#if (sfx,mod,2==1) then (play sound (random(0,2), false, true))
+				)
+				if (newpresskey(b:a)) then (
+			  		skip:=1
+			  		#play sound (random(0,2))
+		  		) 	
+			)
+	  	)
+	)
+	refresh
+	return(msg)
+	if (type == font:typing) then (
+		specWait(10)
+	)
+	
+
+subscript, def letter, char (
+
+	chary:=0
+	charx:=0
+	charposx:=(char -- 32)
+	row:=0
+	column:=font:columns
+	
+	for(count, 1, font:rows, 1)do(
+		if(column <= charposX ) then (column += font:columns, chary += 1)
+		else(break)	
+	)
+	
+	
+	charX:=abs(column -- font:columns  -- charposX)
+	
+
+	#$23="", append number (23, charX), show string at(23, 200, 50)
+	#$24="", append number (24, charY), show string at(24, 200, 60)
+	
+	charX:=charX * font:grid x
+	charY:=charY * font:grid y
+
+
+
+   switch(char) do(
+     case(32) add letter(0, 0, font:space) #space
+	 case(33) add letter(charX, charY)     # !
+	 case(34) add letter(charX, charY)     # "
+	 case(35) add letter(charX, charY)     # #
+	 case(36) add letter(charX, charY)     # $
+	 case(37) add letter(charX, charY)     # %
+	 case(38) add letter(charX, charY)     # &
+	 case(39) add letter(charX, charY)     # '
+	 case(40) add letter(charX, charY)     # (
+	 case(41) add letter(charX, charY)     # )
+	 case(42) add letter(charX, charY)     # *
+	 case(43) add letter(charX, charY)     # +
+	 case(44) add letter(charX, charY)     # ,
+	 case(45) add letter(charX, charY)     # -
+	 case(46) add letter(charX, charY)     # .
+	 case(47) add letter(charX, charY)     # /
+	 
+	 case(48) add letter(charX, charY)     # 0
+	 case(49) add letter(charX, charY)     # 1
+	 case(50) add letter(charX, charY)     # 2
+	 case(51) add letter(charX, charY)     # 3
+	 case(52) add letter(charX, charY)     # 4
+	 case(53) add letter(charX, charY)     # 5
+	 case(54) add letter(charX, charY)     # 6
+	 case(55) add letter(charX, charY)     # 7
+	 case(56) add letter(charX, charY)     # 8
+	 case(57) add letter(charX, charY)     # 9
+	 
+	 case(58) add letter(charX, charY)     # :
+	 case(59) add letter(charX, charY)     # ;
+	 case(60) add letter(charX, charY)     # <
+	 case(61) add letter(charX, charY)     # =
+	 case(62) add letter(charX, charY)     # >
+	 case(63) add letter(charX, charY)     # ?
+	 case(64) add letter(charX, charY)     # @
+	 
+	 case(65) add letter(charX, charY)     # A
+	 case(66) add letter(charX, charY)     # B
+	 case(67) add letter(charX, charY)     # C
+	 case(68) add letter(charX, charY)     # D
+	 case(69) add letter(charX, charY)     # E
+	 case(70) add letter(charX, charY)     # F
+	 case(71) add letter(charX, charY)     # G
+	 case(72) add letter(charX, charY)     # H
+	 case(73) add letter(charX, charY)     # I
+	 case(74) add letter(charX, charY)     # J
+	 case(75) add letter(charX, charY)     # K
+	 case(76) add letter(charX, charY)     # L
+	 case(77) add letter(charX, charY)     # M
+	 case(78) add letter(charX, charY)     # N
+	 case(79) add letter(charX, charY)     # O
+	 case(80) add letter(charX, charY)     # P
+	 case(81) add letter(charX, charY)     # Q
+	 case(82) add letter(charX, charY)     # R
+	 case(83) add letter(charX, charY)     # S
+	 case(84) add letter(charX, charY)     # T
+	 case(85) add letter(charX, charY)     # U
+	 case(86) add letter(charX, charY)     # V
+	 case(87) add letter(charX, charY)     # W
+	 case(88) add letter(charX, charY)     # X
+	 case(89) add letter(charX, charY)     # Y
+	 case(90) add letter(charX, charY)     # Z
+	 
+	 case(91) add letter(charX, charY)     # [
+	 case(92) add letter(charX, charY)     # \
+	 case(93) add letter(charX, charY)     # ]
+	 case(94) add letter(charX, charY)     # ^
+	 case(95) add letter(charX, charY)     # _
+	 case(96) add letter(charX, charY)     # `
+	 
+     case(97) add letter(charX, charY)     # a
+     case(98) add letter(charX, charY)     # b
+	 case(99) add letter(charX, charY)     # c
+	 case(100)add letter(charX, charY)     # d
+	 case(101)add letter(charX, charY)     # e
+	 case(102)add letter(charX, charY)     # f
+	 case(103)add letter(charX, charY)     # g
+     case(104)add letter(charX, charY)     # h
+	 case(105)add letter(charX, charY)     # i
+	 case(106)add letter(charX, charY)     # j
+	 case(107)add letter(charX, charY)     # k
+	 case(108)add letter(charX, charY)     # l
+	 case(109)add letter(charX, charY)     # m
+     case(110)add letter(charX, charY)     # n
+	 case(111)add letter(charX, charY)     # o
+	 case(112)add letter(charX, charY)     # p
+	 case(113)add letter(charX, charY)     # q
+	 case(114)add letter(charX, charY)     # r
+	 case(115)add letter(charX, charY)     # s
+     case(116)add letter(charX, charY)     # t
+	 case(117)add letter(charX, charY)     # u
+	 case(118)add letter(charX, charY)     # v
+	 case(119)add letter(charX, charY)     # w
+	 case(120)add letter(charX, charY)     # x
+	 case(121)add letter(charX, charY)     # y
+	 case(122)add letter(charX, charY)     # z
+	 
+	 case(123)add letter(charX, charY)     # {
+	 case(124)add letter(charX, charY)     # |
+	 case(125)add letter(charX, charY)     # }
+	 case(126)add letter(charX, charY)     # ~
+	 
+	 case(127)add letter(charX, charY)     # ♪ music note
+	 case(128)add letter(charX, charY)     # € euro
+	 case(129)add letter(charX, charY)     # icon
+	 case(130)add letter(charX, charY)     # icon
+	 case(131)add letter(charX, charY)     # icon
+	 case(132)add letter(charX, charY)     # icon
+	 case(133)add letter(charX, charY)     # icon
+     case(134)add letter(charX, charY)     # icon
+	 case(135)add letter(charX, charY)     # icon
+	 case(136)add letter(charX, charY)     # icon
+	 case(137)add letter(charX, charY)     # icon
+	 case(138)add letter(charX, charY)     # icon
+	 case(139)add letter(charX, charY)     # icon
+     case(140)add letter(charX, charY)     # icon
+	 case(141)add letter(charX, charY)     # icon
+	 case(142)add letter(charX, charY)     # icon
+	 case(143)add letter(charX, charY)     # icon
+	 case(144)add letter(charX, charY)     # icon
+	 case(145)add letter(charX, charY)     # icon
+     case(146)add letter(charX, charY)     # icon
+	 case(147)add letter(charX, charY)     # icon
+	 case(148)add letter(charX, charY)     # icon
+	 case(149)add letter(charX, charY)     # icon
+	 case(150)add letter(charX, charY)     # icon
+	 case(151)add letter(charX, charY)     # icon
+	 case(152)add letter(charX, charY)     # icon
+	 case(153)add letter(charX, charY)     # icon
+	 case(154)add letter(charX, charY)     # icon
+	 case(155)add letter(charX, charY)     # icon
+	 case(156)add letter(charX, charY)     # icon
+	 case(157)add letter(charX, charY)     # icon
+	 case(158)add letter(charX, charY)     # icon
+	 case(159)add letter(charX, charY)     # ♥️ heart
+	 case(160)add letter(charX, charY)     # 🐹 hamster
+	 
+	 case(161)add letter(charX, charY)     # ¡ inverted exclamation
+	 case(162)add letter(charX, charY)     # ¢ cent
+	 case(163)add letter(charX, charY)     # £ pound
+	 case(164)add letter(charX, charY)     # ¤ currency sign
+	 case(165)add letter(charX, charY)     # ¥ yen 
+	 case(166)add letter(charX, charY)     # ¦ broken bar
+	 case(167)add letter(charX, charY)     # § section
+	 case(168)add letter(charX, charY)     # ¨ diaearesis
+	 case(169)add letter(charX, charY)     # © copyright
+	 case(170)add letter(charX, charY)     # ª ordinal feminine
+	 case(171)add letter(charX, charY)     # « left double point
+	 case(172)add letter(charX, charY)     # ¬ not sign
+	 case(173)add letter(charX, charY)     # (-) soft hyphen
+	 case(174)add letter(charX, charY)     # ® registered
+	 case(175)add letter(charX, charY)     # ¯ macron
+	 case(176)add letter(charX, charY)     # ° degree
+	 case(177)add letter(charX, charY)     # ± plus-minus
+	 case(178)add letter(charX, charY)     # ² superscript 2
+	 case(179)add letter(charX, charY)     # ³ superscript 3
+	 case(180)add letter(charX, charY)     # ´ acute accent
+	 case(181)add letter(charX, charY)     # µ micro
+	 case(182)add letter(charX, charY)     # ¶ pilcrow
+	 case(183)add letter(charX, charY)     # · middle dot
+	 case(184)add letter(charX, charY)     # ¸ cedilla
+	 case(185)add letter(charX, charY)     # ¹ superscript 1
+	 case(186)add letter(charX, charY)     # º ordinal masculine
+	 case(187)add letter(charX, charY)     # » right double point
+	 case(188)add letter(charX, charY)     # ¼ one quarter
+	 case(189)add letter(charX, charY)     # ½ one half
+	 case(190)add letter(charX, charY)     # ¾ three quarters
+	 case(191)add letter(charX, charY)     # ¿ inverted question
+	 
+	 case(192)add letter(charX, charY)     # À
+	 case(193)add letter(charX, charY)     # Á
+	 case(194)add letter(charX, charY)     # Â
+	 case(195)add letter(charX, charY)     # Ã
+	 case(196)add letter(charX, charY)     # Ä
+     case(197)add letter(charX, charY)     # Å
+     case(198)add letter(charX, charY)     # Æ
+	 case(199)add letter(charX, charY)     # Ç
+	 case(200)add letter(charX, charY)     # È
+	 case(201)add letter(charX, charY)     # É
+	 case(202)add letter(charX, charY)     # Ê
+	 case(203)add letter(charX, charY)     # Ë
+     case(204)add letter(charX, charY)     # Ì
+	 case(205)add letter(charX, charY)     # Í
+	 case(206)add letter(charX, charY)     # Î
+	 case(207)add letter(charX, charY)     # Ï
+	 case(208)add letter(charX, charY)     # Ð
+	 case(209)add letter(charX, charY)     # Ñ
+     case(210)add letter(charX, charY)     # Ò
+	 case(211)add letter(charX, charY)     # Ó
+	 case(212)add letter(charX, charY)     # Ô
+	 case(213)add letter(charX, charY)     # Õ
+	 case(214)add letter(charX, charY)     # Ö
+	 case(215)add letter(charX, charY)     # ×
+     case(216)add letter(charX, charY)     # Ø
+	 case(217)add letter(charX, charY)     # Ù
+	 case(218)add letter(charX, charY)     # Ú
+	 case(219)add letter(charX, charY)     # Û
+	 case(220)add letter(charX, charY)     # Ü
+	 case(221)add letter(charX, charY)     # Ý
+	 case(222)add letter(charX, charY)     # Þ
+	 case(223)add letter(charX, charY)     # ß
+	 case(224)add letter(charX, charY)     # à
+	 case(225)add letter(charX, charY)     # á
+	 case(226)add letter(charX, charY)     # â
+	 case(227)add letter(charX, charY)     # ã
+	 case(228)add letter(charX, charY)     # ä
+	 case(229)add letter(charX, charY)     # å
+	 case(230)add letter(charX, charY)     # æ
+	 case(231)add letter(charX, charY)     # ç
+	 case(232)add letter(charX, charY)     # è
+	 case(233)add letter(charX, charY)     # é
+     case(234)add letter(charX, charY)     # ê
+	 case(235)add letter(charX, charY)     # ë
+	 case(236)add letter(charX, charY)     # ì
+	 case(237)add letter(charX, charY)     # í
+	 case(238)add letter(charX, charY)     # î
+	 case(239)add letter(charX, charY)     # ï
+     case(240)add letter(charX, charY)     # ð
+	 case(241)add letter(charX, charY)     # ñ
+	 case(242)add letter(charX, charY)     # ò
+	 case(243)add letter(charX, charY)     # ó
+	 case(244)add letter(charX, charY)     # ô
+	 case(245)add letter(charX, charY)     # õ
+	 case(246)add letter(charX, charY)     # ö
+	 case(247)add letter(charX, charY)     # ÷ division
+	 
+	 case(10) add letter(0, 0, 0), ly:= ly+font:spacing, lx:= 0, lnum += 1, stlen:=0, exit script		# enter
+   ) 
+   lx:= lx+int+lw
+)
+
+	subscript, add letter, x, y, duration=1, (
+		variable ()
+		w := 8
+		h := 10
+	  lw := w
+	  font:= loadPortraitSprite (game:font)
+	  cont := create container(w, h)
+	  set slice clipping(cont, true)
+	  set parent(font, cont)
+		put slice(cont, 4 + lx, 4 + ly)
+		put slice (font, 0--x, 0--y)
+		set parent(cont, msg)
+		set slice visible(cont, OFF)
+		set slice extra(cont, 0, duration)
+		stlen:=stlen+w+int
+	)
+
+	subscript, refresh, (
+	)
+end
+
+
+script, write, text, choices=false, string=10, overwridefont=false, begin
+	variable(
+	font,
+	cont,
+	pos,
+	int,
+	lx,
+	ly,
+	lw,
+	msg,
+	wt,
+	stlen,
+	stlenmax,
+	lnum,
+	letter,
+	column,
+	row,
+	count
+	charposx
+	charX
+	charY
+	fontsheet
+
+	skip
+	sfx
+
+	#this is how wide/high a font is
+	w
+	h
+
+	i
+	mode
+	)
+
+	skip:=0
+	sfx:=0
+
+	fontsheet := game:font
+	charX := 14
+	charY := 14
+	int:= 0
+
+	wt:=game:textspeed
+
+
+	msg := create container(getScreenWidth--56, 60)
+	putSlice (msg, 0, -28)
+	realignSlice (msg, edge:center, edge:bottom, edge:center, edge:bottom)
+
+	if (text<>-1) then (
+		getText(text)
+	)
+	expandString(string)
+	for(pos, 1, string length(string)) do(
+		def letter(asciifromstring(string, pos))
+		if(stlen > stlenmax)then(stlenmax:=stlen)
+	)
+
+	drawabox
+	
+	lx:= 0, lw:= 0, ly:= 0
+	#$2="", append number (2, stlenmax), show string(2)
+	letter:=first container child(msg)
+	#play sound (random(0,2))
+	for(pos, 1, string length(string)) do(
+	
+		set slice visible(letter, ON)
+	  	letter:=next sibling(letter)
+	  	
+	  	for (i, 0,1) do (
+	  		if (skip==0) then (
+				specwait ()
+				sfx += 1
+				#if (sfx,mod,2==1) then (play sound (random(0,2), false, true))
+			)
+			if (newpresskey(b:a)) then (
+		  		skip:=1
+		  		#play sound (random(0,2))
+	  		) 	
+		)
+	)
+	refresh
+	if (choices) then (return(msg)) else (freeSlice(msg))
+	
+
+subscript, def letter, char (
+
+	chary:=0
+	charx:=0
+	charposx:=(char -- 32)
+	row:=0
+	column:=font:columns
+	
+	for(count, 1, font:rows, 1)do(
+		if(column <= charposX ) then (column += font:columns, chary += 1)
+		else(break)	
+	)
+	
+	
+	charX:=abs(column -- font:columns  -- charposX)
+	
+
+	#$23="", append number (23, charX), show string at(23, 200, 50)
+	#$24="", append number (24, charY), show string at(24, 200, 60)
+	
+	#specwait for key
+	
+	charX:=charX * font:grid x
+	charY:=charY * font:grid y
+
+
+
+   switch(char) do(
+     case(32) add letter(0, 0, font:space) #space
+	 case(33) add letter(charX, charY)     # !
+	 case(34) add letter(charX, charY)     # "
+	 case(35) add letter(charX, charY)     # #
+	 case(36) add letter(charX, charY)     # $
+	 case(37) add letter(charX, charY)     # %
+	 case(38) add letter(charX, charY)     # &
+	 case(39) add letter(charX, charY)     # '
+	 case(40) add letter(charX, charY)     # (
+	 case(41) add letter(charX, charY)     # )
+	 case(42) add letter(charX, charY)     # *
+	 case(43) add letter(charX, charY)     # +
+	 case(44) add letter(charX, charY)     # ,
+	 case(45) add letter(charX, charY)     # -
+	 case(46) add letter(charX, charY)     # .
+	 case(47) add letter(charX, charY)     # /
+	 
+	 case(48) add letter(charX, charY)     # 0
+	 case(49) add letter(charX, charY)     # 1
+	 case(50) add letter(charX, charY)     # 2
+	 case(51) add letter(charX, charY)     # 3
+	 case(52) add letter(charX, charY)     # 4
+	 case(53) add letter(charX, charY)     # 5
+	 case(54) add letter(charX, charY)     # 6
+	 case(55) add letter(charX, charY)     # 7
+	 case(56) add letter(charX, charY)     # 8
+	 case(57) add letter(charX, charY)     # 9
+	 
+	 case(58) add letter(charX, charY)     # :
+	 case(59) add letter(charX, charY)     # ;
+	 case(60) add letter(charX, charY)     # <
+	 case(61) add letter(charX, charY)     # =
+	 case(62) add letter(charX, charY)     # >
+	 case(63) add letter(charX, charY)     # ?
+	 case(64) add letter(charX, charY)     # @
+	 
+	 case(65) add letter(charX, charY)     # A
+	 case(66) add letter(charX, charY)     # B
+	 case(67) add letter(charX, charY)     # C
+	 case(68) add letter(charX, charY)     # D
+	 case(69) add letter(charX, charY)     # E
+	 case(70) add letter(charX, charY)     # F
+	 case(71) add letter(charX, charY)     # G
+	 case(72) add letter(charX, charY)     # H
+	 case(73) add letter(charX, charY)     # I
+	 case(74) add letter(charX, charY)     # J
+	 case(75) add letter(charX, charY)     # K
+	 case(76) add letter(charX, charY)     # L
+	 case(77) add letter(charX, charY)     # M
+	 case(78) add letter(charX, charY)     # N
+	 case(79) add letter(charX, charY)     # O
+	 case(80) add letter(charX, charY)     # P
+	 case(81) add letter(charX, charY)     # Q
+	 case(82) add letter(charX, charY)     # R
+	 case(83) add letter(charX, charY)     # S
+	 case(84) add letter(charX, charY)     # T
+	 case(85) add letter(charX, charY)     # U
+	 case(86) add letter(charX, charY)     # V
+	 case(87) add letter(charX, charY)     # W
+	 case(88) add letter(charX, charY)     # X
+	 case(89) add letter(charX, charY)     # Y
+	 case(90) add letter(charX, charY)     # Z
+	 
+	 case(91) add letter(charX, charY)     # [
+	 case(92) add letter(charX, charY)     # \
+	 case(93) add letter(charX, charY)     # ]
+	 case(94) add letter(charX, charY)     # ^
+	 case(95) add letter(charX, charY)     # _
+	 case(96) add letter(charX, charY)     # `
+	 
+     case(97) add letter(charX, charY)     # a
+     case(98) add letter(charX, charY)     # b
+	 case(99) add letter(charX, charY)     # c
+	 case(100)add letter(charX, charY)     # d
+	 case(101)add letter(charX, charY)     # e
+	 case(102)add letter(charX, charY)     # f
+	 case(103)add letter(charX, charY)     # g
+     case(104)add letter(charX, charY)     # h
+	 case(105)add letter(charX, charY)     # i
+	 case(106)add letter(charX, charY)     # j
+	 case(107)add letter(charX, charY)     # k
+	 case(108)add letter(charX, charY)     # l
+	 case(109)add letter(charX, charY)     # m
+     case(110)add letter(charX, charY)     # n
+	 case(111)add letter(charX, charY)     # o
+	 case(112)add letter(charX, charY)     # p
+	 case(113)add letter(charX, charY)     # q
+	 case(114)add letter(charX, charY)     # r
+	 case(115)add letter(charX, charY)     # s
+     case(116)add letter(charX, charY)     # t
+	 case(117)add letter(charX, charY)     # u
+	 case(118)add letter(charX, charY)     # v
+	 case(119)add letter(charX, charY)     # w
+	 case(120)add letter(charX, charY)     # x
+	 case(121)add letter(charX, charY)     # y
+	 case(122)add letter(charX, charY)     # z
+	 
+	 case(123)add letter(charX, charY)     # {
+	 case(124)add letter(charX, charY)     # |
+	 case(125)add letter(charX, charY)     # }
+	 case(126)add letter(charX, charY)     # ~
+	 
+	 case(127)add letter(charX, charY)     # ♪ music note
+	 case(128)add letter(charX, charY)     # € euro
+	 case(129)add letter(charX, charY)     # icon
+	 case(130)add letter(charX, charY)     # icon
+	 case(131)add letter(charX, charY)     # icon
+	 case(132)add letter(charX, charY)     # icon
+	 case(133)add letter(charX, charY)     # icon
+     case(134)add letter(charX, charY)     # icon
+	 case(135)add letter(charX, charY)     # icon
+	 case(136)add letter(charX, charY)     # icon
+	 case(137)add letter(charX, charY)     # icon
+	 case(138)add letter(charX, charY)     # icon
+	 case(139)add letter(charX, charY)     # icon
+     case(140)add letter(charX, charY)     # icon
+	 case(141)add letter(charX, charY)     # icon
+	 case(142)add letter(charX, charY)     # icon
+	 case(143)add letter(charX, charY)     # icon
+	 case(144)add letter(charX, charY)     # icon
+	 case(145)add letter(charX, charY)     # icon
+     case(146)add letter(charX, charY)     # icon
+	 case(147)add letter(charX, charY)     # icon
+	 case(148)add letter(charX, charY)     # icon
+	 case(149)add letter(charX, charY)     # icon
+	 case(150)add letter(charX, charY)     # icon
+	 case(151)add letter(charX, charY)     # icon
+	 case(152)add letter(charX, charY)     # icon
+	 case(153)add letter(charX, charY)     # icon
+	 case(154)add letter(charX, charY)     # icon
+	 case(155)add letter(charX, charY)     # icon
+	 case(156)add letter(charX, charY)     # icon
+	 case(157)add letter(charX, charY)     # icon
+	 case(158)add letter(charX, charY)     # icon
+	 case(159)add letter(charX, charY)     # ♥️ heart
+	 case(160)add letter(charX, charY)     # 🐹 hamster
+	 
+	 case(161)add letter(charX, charY)     # ¡ inverted exclamation
+	 case(162)add letter(charX, charY)     # ¢ cent
+	 case(163)add letter(charX, charY)     # £ pound
+	 case(164)add letter(charX, charY)     # ¤ currency sign
+	 case(165)add letter(charX, charY)     # ¥ yen 
+	 case(166)add letter(charX, charY)     # ¦ broken bar
+	 case(167)add letter(charX, charY)     # § section
+	 case(168)add letter(charX, charY)     # ¨ diaearesis
+	 case(169)add letter(charX, charY)     # © copyright
+	 case(170)add letter(charX, charY)     # ª ordinal feminine
+	 case(171)add letter(charX, charY)     # « left double point
+	 case(172)add letter(charX, charY)     # ¬ not sign
+	 case(173)add letter(charX, charY)     # (-) soft hyphen
+	 case(174)add letter(charX, charY)     # ® registered
+	 case(175)add letter(charX, charY)     # ¯ macron
+	 case(176)add letter(charX, charY)     # ° degree
+	 case(177)add letter(charX, charY)     # ± plus-minus
+	 case(178)add letter(charX, charY)     # ² superscript 2
+	 case(179)add letter(charX, charY)     # ³ superscript 3
+	 case(180)add letter(charX, charY)     # ´ acute accent
+	 case(181)add letter(charX, charY)     # µ micro
+	 case(182)add letter(charX, charY)     # ¶ pilcrow
+	 case(183)add letter(charX, charY)     # · middle dot
+	 case(184)add letter(charX, charY)     # ¸ cedilla
+	 case(185)add letter(charX, charY)     # ¹ superscript 1
+	 case(186)add letter(charX, charY)     # º ordinal masculine
+	 case(187)add letter(charX, charY)     # » right double point
+	 case(188)add letter(charX, charY)     # ¼ one quarter
+	 case(189)add letter(charX, charY)     # ½ one half
+	 case(190)add letter(charX, charY)     # ¾ three quarters
+	 case(191)add letter(charX, charY)     # ¿ inverted question
+	 
+	 case(192)add letter(charX, charY)     # À
+	 case(193)add letter(charX, charY)     # Á
+	 case(194)add letter(charX, charY)     # Â
+	 case(195)add letter(charX, charY)     # Ã
+	 case(196)add letter(charX, charY)     # Ä
+     case(197)add letter(charX, charY)     # Å
+     case(198)add letter(charX, charY)     # Æ
+	 case(199)add letter(charX, charY)     # Ç
+	 case(200)add letter(charX, charY)     # È
+	 case(201)add letter(charX, charY)     # É
+	 case(202)add letter(charX, charY)     # Ê
+	 case(203)add letter(charX, charY)     # Ë
+     case(204)add letter(charX, charY)     # Ì
+	 case(205)add letter(charX, charY)     # Í
+	 case(206)add letter(charX, charY)     # Î
+	 case(207)add letter(charX, charY)     # Ï
+	 case(208)add letter(charX, charY)     # Ð
+	 case(209)add letter(charX, charY)     # Ñ
+     case(210)add letter(charX, charY)     # Ò
+	 case(211)add letter(charX, charY)     # Ó
+	 case(212)add letter(charX, charY)     # Ô
+	 case(213)add letter(charX, charY)     # Õ
+	 case(214)add letter(charX, charY)     # Ö
+	 case(215)add letter(charX, charY)     # ×
+     case(216)add letter(charX, charY)     # Ø
+	 case(217)add letter(charX, charY)     # Ù
+	 case(218)add letter(charX, charY)     # Ú
+	 case(219)add letter(charX, charY)     # Û
+	 case(220)add letter(charX, charY)     # Ü
+	 case(221)add letter(charX, charY)     # Ý
+	 case(222)add letter(charX, charY)     # Þ
+	 case(223)add letter(charX, charY)     # ß
+	 case(224)add letter(charX, charY)     # à
+	 case(225)add letter(charX, charY)     # á
+	 case(226)add letter(charX, charY)     # â
+	 case(227)add letter(charX, charY)     # ã
+	 case(228)add letter(charX, charY)     # ä
+	 case(229)add letter(charX, charY)     # å
+	 case(230)add letter(charX, charY)     # æ
+	 case(231)add letter(charX, charY)     # ç
+	 case(232)add letter(charX, charY)     # è
+	 case(233)add letter(charX, charY)     # é
+     case(234)add letter(charX, charY)     # ê
+	 case(235)add letter(charX, charY)     # ë
+	 case(236)add letter(charX, charY)     # ì
+	 case(237)add letter(charX, charY)     # í
+	 case(238)add letter(charX, charY)     # î
+	 case(239)add letter(charX, charY)     # ï
+     case(240)add letter(charX, charY)     # ð
+	 case(241)add letter(charX, charY)     # ñ
+	 case(242)add letter(charX, charY)     # ò
+	 case(243)add letter(charX, charY)     # ó
+	 case(244)add letter(charX, charY)     # ô
+	 case(245)add letter(charX, charY)     # õ
+	 case(246)add letter(charX, charY)     # ö
+	 case(247)add letter(charX, charY)     # ÷ division
+	 
+	 case(10) add letter(0, 0, 0), ly:= ly+font:spacing, lx:= 0, lnum += 1, stlen:=0, exit script		# enter
+   ) 
+   lx:= lx+int+lw
+)
+
+	subscript, add letter, x, y, duration=1, (
+		variable ()
+		w := 8
+		h := 10
+	  lw := w
+	  font:= loadPortraitSprite (game:font)
+	  cont := create container(w, h)
+	  set slice clipping(cont, true)
+	  set parent(font, cont)
+		put slice(cont, 4 + lx, 4 + ly)
+		put slice (font, 0--x, 0--y)
+		set parent(cont, msg)
+		set slice visible(cont, OFF)
+		set slice extra(cont, 0, duration)
+		stlen:=stlen+w+int
+	)
+
+	subscript, drawabox, (
+		variable(tbox)
+		tbox:= create rect()
+		set parent(tbox, msg)
+		fill parent (tbox)
+		slice to back(tbox)
+		setRectOpacity(tbox, 80)
+	)
+
+	subscript, refresh, (
+		specwait (3)
+		while (presskey(b:a)==false) do (
+			specwait ()
+		)
+		skip :=1
+	)
+end
+	
+plotscript, return asci, pos, string, textbox, (
+	textbox text (string,textbox,0,1)
+	$2=""
+	for(pos, 0, string length(string))do(
+		append number (2, asciifromstring(string, pos))
+		wait
+		show string(2)
+	)
+)

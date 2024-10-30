@@ -35,7 +35,7 @@ script, encounter, who, begin
 		) then (
 			exitReturning(true)
 		)
-		if (mood <= getStat(char:enemy, stat:will) * -1 && condition <> encounter:enraged) then (
+		if (mood <= getStat(char:enemy, stat:will) * -1 && condition <> encounter:enraged && getStat(char:enemy, stat:currentlife) > 0) then (
 			condition := encounter:enraged
 			playSound(0)
 			stopSong
@@ -43,7 +43,7 @@ script, encounter, who, begin
 			freeSliceChildren(textSli)
 			10 $= strng:EnemyName
 			$10+" became enraged."
-			textLine(textSli, 0)
+			textLine(textSli)
 			textWait := true
 			exitScript
 		)
@@ -117,7 +117,7 @@ script, encounter, who, begin
 									setSliceVisible(arrow, false)
 									freeSliceChildren (TextSli)
 									$10="They are too angry to talk!"
-									textLine(textSli, 0, font:typing)
+									textLine(textSli)
 									state := encounter:choose
 									textWait:= true
 								)
@@ -126,7 +126,7 @@ script, encounter, who, begin
 								if (getPinId(turn, slot:atk1) == pin:dummy && getPinId(turn, slot:atk2) == pin:dummy) then (
 									freeSliceChildren (TextSli)
 									$10="No equipped pins!"
-									textLine(textSli, 0, font:typing)
+									textLine(textSli)
 									state := encounter:choose
 									textWait:= true
 								) else (
@@ -138,7 +138,7 @@ script, encounter, who, begin
 								freeSliceChildren (TextSli)
 								copyString(10, turn+strng:roseName)
 								$10+" defends!"
-								textLine(textSli, 0, font:typing)
+								textLine(textSli)
 								setStat(turn, stat:defending, true)
 								statGain(turn, gain:defend)
 								textWait:= true
@@ -217,7 +217,7 @@ script, encounter, who, begin
 							)
 							appendAscii(10, 10)
 							$10+"${S3}."
-							textline(textsli, 0, font:typing)
+							textline(textsli)
 							target := char:enemy
 							state := encounter:animate
 						) else (changeState(encounter:target))					
@@ -249,7 +249,7 @@ script, encounter, who, begin
 								case (1) do ($10+"${S1}.", target := char:rose)
 								case (2) do ($10+"${S2}.", target := char:kat)
 							)
-							textLine(textSli, 0, font:typing)
+							textLine(textSli)
 							state := encounter:animate
 							
 						) else if (getTargets()==target:all) then (
@@ -258,7 +258,7 @@ script, encounter, who, begin
 								case (2) do ($10+"${S2}.", target := char:kat)
 								case (3) do ($10+"${S3}.", target := char:enemy)
 							)
-							textLine(textSli, 0, font:typing)
+							textLine(textSli)
 							state := encounter:animate
 						)
 					) else if (newpresskey(b:u)) then (
@@ -273,7 +273,7 @@ script, encounter, who, begin
 				)
 			)
 		)
-		setSliceY(arrow, 83 + sel * 14 )
+		setSliceY(arrow, 79 + sel * 10 )
 	end
 
 	subscript, animations, begin
@@ -327,9 +327,10 @@ script, encounter, who, begin
 		) else (
 		)
 
-		sliAmount := createRect ((string length(12) + 1) * 8 + 4, 16)
+		sliAmount := createRect ((string length(12) + 1) * 8 + 8, 16)
+		setPadding(sliAmount, 4)
 		setParent(sliAmount, lastChild (parent))
-		textLine(sliAmount, 0, false, 12)
+		textLine(sliAmount, 0, 0, 12)
 		switch (target) do (
 			case (char:rose) do (
 				#realignSlice(sliAmount, edge:left, edge:top, edge:left, edge:top)
@@ -357,7 +358,7 @@ script, encounter, who, begin
 		if (textCheck) then (
 			setSliceVisible(textSli, true)
 			freeSliceChildren (TextSli)
-			textLine(textSli, 0, font:typing)
+			textLine(textSli, 0, 0)
 			textWait := true
 		)
 		
@@ -420,14 +421,14 @@ script, encounter, who, begin
 			10 $+ target + strng:roseName
 			$10+"."
 
-			textLine(textSli, 0, font:typing)
+			textLine(textSli)
 			
 			state := encounter:animate
 		) else if (condition == encounter:peaceful) then (
 			freeSliceChildren(textSli)
 			10 $= strng:EnemyName
 			$10+" seems to be waiting."
-			textLine(textSli, 0, font:typing)
+			textLine(textSli)
 			textWait := true
 			state := encounter:between
 		)
@@ -447,26 +448,26 @@ script, encounter, who, begin
 					sel := sel:ActionKat
 				)
 				
-				textLine(textSli, 0, font:typing)
+				textLine(textSli)
 
 				$10="Talk"
-				textLine(textSli, 1, font:offset)
+				textLine(textSli, 1, 8)
 				$10="Pins"
-				textLine(textSli, 2, font:offset)
+				textLine(textSli, 2, 8)
 				$10="Defend"
-				textLine(textSli, 3, font:offset)
+				textLine(textSli, 3, 8)
 				$10="Run"
-				textLine(textSli, 4, font:offset)
-				setSliceVisible(arrow, font:typing)
+				textLine(textSli, 4, 8)
+				setSliceVisible(arrow, true)
 			)
 			case (encounter:run) do (
 				freeSliceChildren(TextSli)
 				$10="Run away?"
-				textLine(textSli, 0, font:typing)
+				textLine(textSli)
 				$10="Yes!"
-				textLine(textSli, 1, font:offset)
+				textLine(textSli, 1, 8)
 				$10="No..."
-				textLine(textSli, 2, font:offset)
+				textLine(textSli, 2, 8)
 				sel := 1
 				setSliceVisible(arrow, true)
 			)
@@ -583,7 +584,7 @@ script, encounter, who, begin
 		$10="What Pin will "
 		10 $+ turn + strng:roseName
 		$10+" use?"
-		textLine(textSli, 0, font:typing)
+		textLine(textSli)
 
 		if (getPinId(turn, slot:atk1)<>false) then (
 			getPinName(getPinId(turn, slot:atk1))
@@ -592,7 +593,7 @@ script, encounter, who, begin
 			) else (
 				appendNumber(10, getPinLvl(turn, slot:atk1))
 			)
-			textLine(textSli, 1, font:offset)
+			textLine(textSli, 1, 8)
 		)
 		if (getPinId(turn, slot:atk2)<>false) then (
 			getPinName(getPinId(turn, slot:atk2))
@@ -603,8 +604,8 @@ script, encounter, who, begin
 			)
 
 			if (getPinId(turn, slot:atk1)==false) then (
-				textLine(textSli, 1, font:offset)
-			) else (textLine(textSli, 2, font:offset))
+				textLine(textSli, 1, 8)
+			) else (textLine(textSli, 2, 8))
 		)
 		sel := 1
 	end
@@ -616,34 +617,28 @@ script, encounter, who, begin
 		
 		switch (getTargets()) do (
 			case (target:party) do (
-				textLine(textSli, 0, font:typing)
+				textLine(textSli)
 				$10="${S1}"
-				expandString(10)
-				textLine(textSli, 1, font:offset)
+				textLine(textSli, 1, 8)
 				$10="${S2}"
-				expandString(10)
-				textLine(textSli, 2, font:offset)
+				textLine(textSli, 2, 8)
 			)
 			case (target:all) do (
-				textLine(textSli, 0, font:typing)
+				textLine(textSli, 0)
 				$10="${S1}"
-				expandString(10)
-				textLine(textSli, 1, font:offset)
+				textLine(textSli, 1, 8)
 				$10="${S2}"
-				expandString(10)
-				textLine(textSli, 2, font:offset)
+				textLine(textSli, 2, 8)
 				$10="${S3}"
-				expandString(10)
-				textLine(textSli, 3, font:offset)	
+				textLine(textSli, 3, 8)	
 			)
 			case (target:enemy) do (
 				$10="Use ${S11} on ${S3}?"
-				expandString(10)
-				textLine(textSli, 0, font:typing)
+				textLine(textSli, 0)
 				$10="Yes"
-				textLine(textSli, 1, font:offset)
+				textLine(textSli, 1, 8)
 				$10="No"
-				textLine(textSli, 2, font:offset)
+				textLine(textSli, 2, 8)
 			)
 		)
 		sel := 1
@@ -666,7 +661,7 @@ script, encounter, who, begin
 			case (none) do (
 				responseNone()
 				freeSliceChildren(textSli)
-				textLine(textSli, 0, font:typing)
+				textLine(textSli)
 				textWait := true
 		 	)
 		 	case (liked) do (
@@ -674,7 +669,7 @@ script, encounter, who, begin
 		 		responseLiked()
 		 		statGain(turn, gain:talked)
 		 		freeSliceChildren(textSli)
-		 		textLine(textSli, 0, font:typing)
+		 		textLine(textSli)
 				textWait := true
 		 	)
 		 	case (disliked) do (
@@ -682,7 +677,7 @@ script, encounter, who, begin
 		 		responseDisliked()
 		 		statGain(turn, gain:failtalk)
 		 		freeSliceChildren(textSli)
-		 		textLine(textSli, 0, font:typing)
+		 		textLine(textSli)
 				textWait := true
 		 	)
 		)
@@ -692,7 +687,7 @@ script, encounter, who, begin
 			$10+" no longer wishes to fight"
 			freeSliceChildren(textSli)
 
-			textLine(textSli, 0, font:typing)
+			textLine(textSli)
 			textWait := true
 		) else if (mood <= getStat(char:enemy, stat:will) * -1) then (
 		)
@@ -745,7 +740,7 @@ script, encounter, who, begin
 end
 
 script, afterEncounter, condition, parent, enemy, begin
-	variable(sli, textWait, check, i, j)
+	variable(sli, sli2, check, i, j, showText)
 	init()
 	update()
 	freeSlice(sli)
@@ -765,17 +760,13 @@ script, afterEncounter, condition, parent, enemy, begin
 		switch (condition) do (
 			case (encounter:won) do (
 				$10="Encounter cleared."
-				write(-1)
-				waitForWritePress()
-
+				write()
 				updateAllStats
 			)
 			case (encounter:talked) do (
 				10 $= strng:enemyName
 				$10+" departed, satisfied."
-				write(-1)
-				waitForWritePress()
-
+				write()
 				updateAllStats
 			)
 			case (encounter:ran) do (
@@ -784,65 +775,68 @@ script, afterEncounter, condition, parent, enemy, begin
 				10 $+ strng:KatName
 				appendAscii(10, 10)
 				$10+"successfully ran."
-				write(-1)
-				waitForWritePress()
+				write()
 			)
 		)
 	end
 
 	subscript, updateAllStats, begin
 		for (j, char:rose, char:kat) do (
+			clearString(10)
 			if (getStat(j, stat:currentLife)>0) then (
 				for (i, stat:life, stat:empathy) do (
 					if (updateStat(j, i, false)) then (
-						10 $=  j+strng:roseName
+						10 $+  j+strng:roseName
 						$10+"'s "
 						concatenateStrings (10, i + strng:life -- stat:life)
 						$10+" grew to "
 						appendNumber(10, getStat(j, i))
-						$10+"."
-						write(-1)
-						waitForWritePress()
+						$10+". "
+						showText := true
 					)
 				)
 			) else (
 				resetTempPinExp(j)
 			)
+			if (showText==true) then (
+				write()
+				showText := false
+			)
 		)
 		for (j, char:rose, char:kat) do (
+			clearString(10)
 			for (i, slot:atk1, slot:stat) do (
 				updatePinExp(j, i)
 				if (getPinCap(getPinLvl(j, i))) then (
-					10 $=  j+strng:roseName--char:rose
+					10 $+  j+strng:roseName--char:rose
 					getPinName(getPinId(j, i))
 					$10+"'s ${S11} pin is"
-					appendAscii(10, 10)
-					$10+" max level."
-					write(-1)
-					waitForWritePress()
+					$10+" max level. "
+					showText := true
 				) else (
 					if (lvlPin(j, i)) then (
-						10 $=  j+strng:roseName
+						10 $+  j+strng:roseName
 						getPinName(getPinId(j, i))
 						$10+"'s ${S11} pin grew to"
-						appendAscii(10, 10)
 						$10+"level "
 						appendNumber(10, getPinLvl(j, i))
-						$10+"."
-						write(-1)
-						waitForWritePress()	
+						$10+". "
+						showText := true
 					)
 				)
-			)
-			for (j, char:rose, char:kat) do (
-				if (getStat(j, stat:currentLife) <= 0) then (
-					10 $=  j+strng:roseName
-					$10+" recovered."
-					write(-1)
-					waitForWritePress()
+				if (showText==true) then (
+					write()
+					showText := false
 				)
 			)
 			resetTempPinExp(j)
+		)
+		for (j, char:rose, char:kat) do (
+			if (getStat(j, stat:currentLife) <= 0) then (
+				10 $=  j+strng:roseName
+				$10+" recovered."
+				write(0)
+			)
 		)
 	end
 end
@@ -853,10 +847,10 @@ script, initDialogue, parent, question,  begin
 	switch (question) do (
 		case (0) do (
 			$10="question here" #put question here. always leave the "" in place
-			textLine(parent, 0, font:typing) #do not change this line
+			textLine(parent) #do not change this line
 
 			$10="answer 1 here" #replace with the first answer
-			sli := textLine(parent, 1, font:offset) #do not change this line
+			sli := textLine(parent, 1, 8) #do not change this line
 			setExtra(sli,type:logic,	none) #change none to liked or
 			setExtra(sli,type:anger,	none) #disliked to fit the
 			setExtra(sli,type:slut,		none) #personality
@@ -866,7 +860,7 @@ script, initDialogue, parent, question,  begin
 			setExtra(sli,type:sad,		none)
 
 			$10="answer 2 here" 
-			sli := textLine(parent, 2, font:offset)
+			sli := textLine(parent, 2, 8)
 			setExtra(sli,type:logic,	none)
 			setExtra(sli,type:anger,	none)
 			setExtra(sli,type:slut,		none)
@@ -876,7 +870,7 @@ script, initDialogue, parent, question,  begin
 			setExtra(sli,type:sad,		none)
 
 			$10="answer 3 here"
-			sli := textLine(parent, 3, font:offset)
+			sli := textLine(parent, 3, 8)
 			setExtra(sli,type:logic,	none)
 			setExtra(sli,type:anger,	none)
 			setExtra(sli,type:slut,		none)
@@ -886,7 +880,7 @@ script, initDialogue, parent, question,  begin
 			setExtra(sli,type:sad,		none)
 
 			$10="answer 4 here"
-			sli := textLine(parent, 4, font:offset)
+			sli := textLine(parent, 4, 8)
 			setExtra(sli,type:logic,	none)
 			setExtra(sli,type:anger,	none)
 			setExtra(sli,type:slut,		none)
@@ -897,10 +891,10 @@ script, initDialogue, parent, question,  begin
 		)
 		case (1) do (
 			$10="What do you want from life?"
-			textLine(parent, 0, font:typing)
+			textLine(parent)
 
 			$10="I need nothing"
-			sli := textLine(parent, 1, font:offset)
+			sli := textLine(parent, 1, 8)
 			setExtra(sli,type:logic,	liked)
 			setExtra(sli,type:anger,	none)
 			setExtra(sli,type:slut,		none)
@@ -910,7 +904,7 @@ script, initDialogue, parent, question,  begin
 			setExtra(sli,type:sad,		liked)
 
 			$10="I want to be loved"
-			sli := textLine(parent, 2, font:offset)
+			sli := textLine(parent, 2, 8)
 			setExtra(sli,type:logic,	none)
 			setExtra(sli,type:anger,	disliked)
 			setExtra(sli,type:slut,		none)
@@ -920,7 +914,7 @@ script, initDialogue, parent, question,  begin
 			setExtra(sli,type:sad,		none)
 
 			$10="I want you to be happy"
-			sli := textLine(parent, 3, font:offset)
+			sli := textLine(parent, 3, 8)
 			setExtra(sli,type:logic,	none)
 			setExtra(sli,type:anger,	disliked)
 			setExtra(sli,type:slut,		liked)
@@ -931,10 +925,10 @@ script, initDialogue, parent, question,  begin
 		)
 		case (2) do (
 			$10="Do you hate me?"
-			textLine(parent, 0, font:typing)
+			textLine(parent, 0)
 
 			$10="No"
-			sli := textLine(parent, 1, font:offset)
+			sli := textLine(parent, 1, 8)
 			setExtra(sli,type:logic,	none)
 			setExtra(sli,type:anger,	disliked)
 			setExtra(sli,type:slut,		liked)
@@ -944,7 +938,7 @@ script, initDialogue, parent, question,  begin
 			setExtra(sli,type:sad,		liked)
 
 			$10="Yes"
-			sli := textLine(parent, 2, font:offset)
+			sli := textLine(parent, 2, 8)
 			setExtra(sli,type:logic,	none)
 			setExtra(sli,type:anger,	liked)
 			setExtra(sli,type:slut,		none)
@@ -955,10 +949,10 @@ script, initDialogue, parent, question,  begin
 		)
 		case (3) do (
 			$10="What is love to you?" #put question here. always leave the "" in place
-			textLine(parent, 0, font:typing) #do not change this line
+			textLine(parent) #do not change this line
 
 			$10="Love is deep acceptance" #replace with the first answer
-			sli := textLine(parent, 1, font:offset) #do not change this line
+			sli := textLine(parent, 1, 8) #do not change this line
 			setExtra(sli,type:logic,	disliked) #change none to liked or
 			setExtra(sli,type:anger,	disliked) #disliked to fit the
 			setExtra(sli,type:slut,		liked) #personality
@@ -968,7 +962,7 @@ script, initDialogue, parent, question,  begin
 			setExtra(sli,type:sad,		liked)
 
 			$10="There is no such thing as love" 
-			sli := textLine(parent, 2, font:offset) #do not change this line
+			sli := textLine(parent, 2, 8) #do not change this line
 			setExtra(sli,type:logic,	none)
 			setExtra(sli,type:anger,	liked)
 			setExtra(sli,type:slut,		disliked)
@@ -978,7 +972,7 @@ script, initDialogue, parent, question,  begin
 			setExtra(sli,type:sad,		liked)
 
 			$10="Fuck you"
-			sli := textLine(parent, 3, font:offset) #do not change this line
+			sli := textLine(parent, 3, 8) #do not change this line
 			setExtra(sli,type:logic,	disliked)
 			setExtra(sli,type:anger,	liked)
 			setExtra(sli,type:slut,		disliked)
@@ -988,7 +982,7 @@ script, initDialogue, parent, question,  begin
 			setExtra(sli,type:sad,		none)
 
 			$10="Love is attraction to another"
-			sli := textLine(parent, 4, font:offset) #do not change this line
+			sli := textLine(parent, 4, 8) #do not change this line
 			setExtra(sli,type:logic,	liked)
 			setExtra(sli,type:anger,	none)
 			setExtra(sli,type:slut,		none)
@@ -999,10 +993,10 @@ script, initDialogue, parent, question,  begin
 		)
 		case (4) do (
 			$10="Where does life comes from?" #put question here. always leave the "" in place
-			textLine(parent, 0, font:typing) #do not change this line
+			textLine(parent) #do not change this line
 
 			$10="My cooter" #replace with the first answer
-			sli := textLine(parent, 1, font:offset) #do not change this line
+			sli := textLine(parent, 1, 8) #do not change this line
 			setExtra(sli,type:logic,	liked) #change none to liked or
 			setExtra(sli,type:anger,	none) #disliked to fit the
 			setExtra(sli,type:slut,		liked) #personality
@@ -1012,7 +1006,7 @@ script, initDialogue, parent, question,  begin
 			setExtra(sli,type:sad,		none)
 
 			$10="It comes from the ocean" 
-			sli := textLine(parent, 2, font:offset) #do not change this line
+			sli := textLine(parent, 2, 8) #do not change this line
 			setExtra(sli,type:logic,	liked)
 			setExtra(sli,type:anger,	none)
 			setExtra(sli,type:slut,		none)
@@ -1022,7 +1016,7 @@ script, initDialogue, parent, question,  begin
 			setExtra(sli,type:sad,		liked)
 
 			$10="They came from outer space"
-			sli := textLine(parent, 3, font:offset) #do not change this line
+			sli := textLine(parent, 3, 8) #do not change this line
 			setExtra(sli,type:logic,	liked)
 			setExtra(sli,type:anger,	none)
 			setExtra(sli,type:slut,		none)
@@ -1032,7 +1026,7 @@ script, initDialogue, parent, question,  begin
 			setExtra(sli,type:sad,		none)
 
 			$10="Random explosion in space"
-			sli := textLine(parent, 4, font:offset) #do not change this line
+			sli := textLine(parent, 4, 8) #do not change this line
 			setExtra(sli,type:logic,	liked)
 			setExtra(sli,type:anger,	liked)
 			setExtra(sli,type:slut,		none)
@@ -1042,10 +1036,10 @@ script, initDialogue, parent, question,  begin
 			setExtra(sli,type:sad,		none)
 		) case (5) do (
 			$10="Does life end after death?" #put question here. always leave the "" in place
-			textLine(parent, 0, font:typing) #do not change this line
+			textLine(parent, 0) #do not change this line
 
 			$10="No one knows what's next" #replace with the first answer
-			sli := textLine(parent, 1, font:offset) #do not change this line
+			sli := textLine(parent, 1, 8) #do not change this line
 			setExtra(sli,type:logic,	liked) #change none to liked or
 			setExtra(sli,type:anger,	none) #disliked to fit the
 			setExtra(sli,type:slut,		none) #personality
@@ -1055,7 +1049,7 @@ script, initDialogue, parent, question,  begin
 			setExtra(sli,type:sad,		disliked)
 
 			$10="I hope so..." 
-			sli := textLine(parent, 2, font:offset) #do not change this line
+			sli := textLine(parent, 2, 8) #do not change this line
 			setExtra(sli,type:logic,	none)
 			setExtra(sli,type:anger,	none)
 			setExtra(sli,type:slut,		liked)
@@ -1065,7 +1059,7 @@ script, initDialogue, parent, question,  begin
 			setExtra(sli,type:sad,		liked)
 
 			$10="We become the universe"
-			sli := textLine(parent, 3, font:offset) #do not change this line
+			sli := textLine(parent, 3, 8) #do not change this line
 			setExtra(sli,type:logic,	liked)
 			setExtra(sli,type:anger,	none)
 			setExtra(sli,type:slut,		none)
@@ -1075,7 +1069,7 @@ script, initDialogue, parent, question,  begin
 			setExtra(sli,type:sad,		liked)
 
 			$10="Heaven or hell"
-			sli := textLine(parent, 4, font:offset) #do not change this line
+			sli := textLine(parent, 4, 8) #do not change this line
 			setExtra(sli,type:logic,	disliked)
 			setExtra(sli,type:anger,	none)
 			setExtra(sli,type:slut,		liked)

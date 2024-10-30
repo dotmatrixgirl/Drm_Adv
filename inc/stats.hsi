@@ -45,7 +45,7 @@ script, initChars, begin
 
 	initPinSlots(char:kat)
 
-	setParent(loadBorderSprite(1), parent)
+	setParent(loadBorderSprite(3), parent)
 	#$2="Kat"
 	copyString(2, 3)
 
@@ -74,11 +74,11 @@ script, initEnemy, who, begin
 	switch (who) do (
 		case (enemy:dummy) do (
 			$3="Orbweb"
-			setStat(char:enemy, stat:life,	3 * getPartyLvl * 5 + 20)
-			setStat(char:enemy, stat:psi,	5 * getPartyLvl * 5 / 2 + 20)
-			setStat(char:enemy, stat:mind,	4  * getPartyLvl * 5 / 2 + 20)
-			setStat(char:enemy, stat:speed,	3 * getPartyLvl * 5 / 2 + 20)
-			setStat(char:enemy, stat:will,	3 * getPartyLvl * 5 / 2 + 20)
+			setStat(char:enemy, stat:life,	3)
+			setStat(char:enemy, stat:psi,	5)
+			setStat(char:enemy, stat:mind,	4)
+			setStat(char:enemy, stat:speed,	3)
+			setStat(char:enemy, stat:will,	5)  
 			setStat(char:enemy, stat:personality, type:logic)
 			setStat(char:enemy, stat:mood, 5)
 
@@ -91,11 +91,11 @@ script, initEnemy, who, begin
 			setparent(loadBorderSprite(2), sli)
 		) else (
 			$3="Orbweb"
-			setStat(char:enemy, stat:life,	3 * getPartyLvl * 2 + 20)
-			setStat(char:enemy, stat:psi,	5 * getPartyLvl * 3 / 2 + 20)
-			setStat(char:enemy, stat:mind,	4  * getPartyLvl * 3 / 2 + 20)
-			setStat(char:enemy, stat:speed,	3 * getPartyLvl * 3 / 2 + 20)
-			setStat(char:enemy, stat:will,	3 * getPartyLvl * 3 / 2 + 20)
+			setStat(char:enemy, stat:life,	3)
+			setStat(char:enemy, stat:psi,	5)
+			setStat(char:enemy, stat:mind,	4)
+			setStat(char:enemy, stat:speed,	3)
+			setStat(char:enemy, stat:will,	5)
 			setStat(char:enemy, stat:personality, type:logic)
 			setStat(char:enemy, stat:mood, 5)
 
@@ -110,11 +110,11 @@ script, initEnemy, who, begin
 	)
 	if (game:diff := diff:hard ) then (
 		for (i, stat:life, stat:will) do (
-			setStat (char:enemy, i, getStat(char:enemy, i) + getStat(char:enemy, i)/16)
+			setStat (char:enemy, i, getStat(char:enemy, i) * 24 * (getPartyLvl) / 4)
 		)
 	) else if (game:diff := diff:easy) then (
 		for (i, stat:life, stat:will) do (
-			setStat (char:enemy, i, getStat(char:enemy, i) --  getStat(char:enemy, i)/16)
+			setStat (char:enemy, i, getStat(char:enemy, i) * 24 * (getPartyLvl) / 4)
 		)
 	)
 	return (sli)

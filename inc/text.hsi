@@ -1,33 +1,38 @@
-script, textLine, parent, y=0, type=false, string=10, begin
+script, textLine, parent, y=0, x=0, string=10, begin
 	variable (sli)
-	expandString(10)
-	sli := stringwrite(parent, y, type, string)
+	sli := createText()
+	setParent(sli, parent)
+	putSlice(sli, x, y * 10)
 	resizeExtra(sli, 32)
+
+	expandString(string)
+	capitalize(string)
+	setOutline(sli, true)
+	setSliceText(sli, string)
+
 	return (sli)
 end
 
 
-script, getText, text, begin
+script, getText, text, string=10, begin
 	switch (text) do (
-		case (0) do () #string defined elsewhere.
+		case (0) do (exitScript) #string defined elsewhere.
 		case (1) do (textbox1)
 		else (textboxNONE)
 	)
-	expandString(10)
+	10 $= 21
 	subscript, textboxNONE, begin
 		#====================================|
-		$10="ERROR"
+		$21="ERROR"
 		#====================================|
 	end
 	subscript, textbox1, begin
 		#====================================|
-		$10="sphinx of black quartz judge my"
-		appendAscii(10, 10)
-		$10+"vow SPHINX OF BLACK QUARTZ JUDGE"
-		appendAscii(10, 10)
-		$10+"MY VOW 0123456789.?-$"
-		appendAscii(10, 10)
-		$10+"WOOOOOOOOOOOOOOOOO"
+		$21="sphinx of black quartz judge my "
+		$21+"vow SPHINX OF BLACK QUARTZ JUDGE "
+		$21+"MY VOW 0123456789.?-$ "
+		$21+"WOOOOOOOOOOOOOOOOOOO "
+		$21+"hmmmmmmmmmmmmmmm. what the fuck."
 		#====================================|
 	end
 end

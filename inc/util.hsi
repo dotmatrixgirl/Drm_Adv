@@ -14,6 +14,17 @@ script, getPercent, divider, divided, total, begin
 	return (total * divided / divider)
 end
 
+
+script, specwait, time=1, begin
+	variable (i)
+	for (i, 1, time) do (
+		wait
+		animate()
+		overlayToFront()
+		game:tick += 1
+	)
+end
+
 script, resetKeys, begin
 	k:u := key:up
 	k:d := key:down
@@ -35,15 +46,6 @@ script, returnKeypress, begin
 	)
 end
 
-script, specwait, time=1, begin
-	variable (i)
-	for (i, 1, time) do (
-		wait
-		animate()
-		overlayToFront()
-		game:tick += 1
-	)
-end
 
 script, pressedkey, button, begin
 	switch (button) do (
