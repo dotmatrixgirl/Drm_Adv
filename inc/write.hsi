@@ -26,7 +26,7 @@ script, write, textbox=0, width=32, height=4, type=true, string=10, showbox=true
 				skip := false
 				
 				#freeSlice(icon)
-				move slice by (parent, 0, height*-1 + 10, 2)
+				setSliceVelocityY (parent, -12, 3)
 				specWait(1)
 			)
 			addLine()
@@ -60,9 +60,9 @@ script, write, textbox=0, width=32, height=4, type=true, string=10, showbox=true
 
 	subscript, init, begin
 		width := width * 8
-		height := height * 10
+		height := height * 12
 		if (showBox) then (
-			box := createRect(width+12, height+12, game:boxStyle)
+			box := createRect(width+8, height+8, game:boxStyle)
 			setPadding(box,4)
 			setRectTrans(box, trans:blend)
 			setRectOpacity(box, 80)
@@ -82,7 +82,7 @@ script, write, textbox=0, width=32, height=4, type=true, string=10, showbox=true
 	subscript, addLine, begin
 		sli := createText()
 		setParent(sli, parent)
-		putSlice(sli, 0, offset*10)
+		putSlice(sli, 0, offset*12)
 		setOutline(sli, true)
 		ClearString(20)
 		setSliceText(sli, 20)

@@ -195,6 +195,7 @@ script, getPinId, who, slot, bag=false, begin
 end
 
 script, getPinName, id, begin
+	$11=""
 	switch (id) do (
 		case (pin:heart) do ($11="Heart")
 		case (pin:calm) do ($11="Calm")
@@ -208,16 +209,16 @@ script, getPinName, id, begin
 		case (pin:addShock) do ($11="+Shock")
 		case (pin:addEarth) do ($11="+Earth")
 
-		case (pin:life) do ($11="Life+")
-		case (pin:mind) do ($11="Mind+")
-		case (pin:psi) do ($11="Psi+")
-		case (pin:speed) do ($11="Speed+")
-		case (pin:empathy) do ($11="Empath+")
+		case (pin:life) do ($11="Life")
+		case (pin:mind) do ($11="Mind")
+		case (pin:psi) do ($11="Psi")
+		case (pin:speed) do ($11="Speed")
+		case (pin:empathy) do ($11="Empath")
 
-		case (pin:flameAtr) do ($11="Flame Atr")
-		case (pin:waterAtr) do ($11="Water Atr")
-		case (pin:shockAtr) do ($11="Shock Atr")
-		case (pin:earthAtr) do ($11="Earth Atr")
+		case (pin:flameAtr) do ($11="Flame")
+		case (pin:waterAtr) do ($11="Water")
+		case (pin:shockAtr) do ($11="Shock")
+		case (pin:earthAtr) do ($11="Earth")
 
 		else ($11="Empty")
 	)

@@ -267,10 +267,10 @@ plotscript, newGame, begin
 		$33="Speed"
 		$34="Empath"
 		$35="Align"
-		$40="Act"
-		$41="Act"
-		$42="Stat"
-		$43="Atr"
+		$40="Skill1"
+		$41="Skill2"
+		$42="Stat+ "
+		$43="Typing"
 
 		game:lvlCap := 10
 		
@@ -283,7 +283,7 @@ plotscript, newGame, begin
 		sel:PinRose := 1
 		sel:PinKat := 1
 
-		#setMusicVolume(0)
+		setMusicVolume(0)
 	end
 end
 

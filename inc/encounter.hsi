@@ -15,8 +15,8 @@ script, encounter, who, begin
 		if (sound is playing (0)) then (
 			exitScript
 		) else (
-			if (condition == encounter:enraged && currentSong <> song:the storm) then (
-				playSong(song:the storm)
+			if (condition == encounter:enraged && currentSong <> song:for you i will die) then (
+				playSong(song:for you i will die)
 			)
 			if (condition == encounter:peaceful && currentSong <> song:the calm) then (
 				playSong(song:the calm)
@@ -273,7 +273,8 @@ script, encounter, who, begin
 				)
 			)
 		)
-		setSliceY(arrow, 79 + sel * 10 )
+		
+		setSliceY(arrow, 79 + sel * 12 )
 	end
 
 	subscript, animations, begin

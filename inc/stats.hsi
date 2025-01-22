@@ -232,7 +232,6 @@ script, getStat, who, stat, boosted=true, begin
 			return (getPinEffect(pin, getPinLvl(who, slot:stat), value))
 		)
 
-		show value (stat)
 	end
 end
 

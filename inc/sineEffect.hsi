@@ -21,27 +21,27 @@ script, loadbattleback, parent, which, begin
 		sli := lastChild(parent)
 		resizeExtra(sli, 16)
 		if (j == 0) then (
-			set		:= 18
+			set		:= 20
 			opacity	:= 80
 			blend	:= blend:normal	
-			setExtra(sli, back:rate,		40)
-			setExtra(sli, back:amplitude,	20)
-			setExtra(sli, back:frequency,	6)
-			setExtra(sli, back:compression,	4)
-			setExtra(sli, back:mode,		3)
+			setExtra(sli, back:rate,		100)
+			setExtra(sli, back:amplitude,	2)
+			setExtra(sli, back:frequency,	30)
+			setExtra(sli, back:compression,	1)
+			setExtra(sli, back:mode,		1)
 			setExtra(sli, back:scrollx,		0)
-			setExtra(sli, back:scrolly,		40)
+			setExtra(sli, back:scrolly,		4)
 			setExtra(sli, back:scrollxrate,	1)
 			setExtra(sli, back:scrollyrate,	1)
 		) else (
-			set		:= 19
+			set		:= 21
 			opacity	:= 50
 			blend	:= blend:normal
 			setExtra(sli, back:rate,		80)
 			setExtra(sli, back:amplitude,	3)
 			setExtra(sli, back:frequency,	4)
-			setExtra(sli, back:compression,	8)
-			setExtra(sli, back:mode,		2)
+			setExtra(sli, back:compression,	2)
+			setExtra(sli, back:mode,		1)
 			setExtra(sli, back:scrollx,		0)
 			setExtra(sli, back:scrolly,		-12)
 			setExtra(sli, back:scrollxrate,	1)

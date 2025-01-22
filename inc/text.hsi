@@ -2,7 +2,7 @@ script, textLine, parent, y=0, x=0, string=10, begin
 	variable (sli)
 	sli := createText()
 	setParent(sli, parent)
-	putSlice(sli, x, y * 10)
+	putSlice(sli, x, y * 12)
 	resizeExtra(sli, 32)
 
 	expandString(string)
