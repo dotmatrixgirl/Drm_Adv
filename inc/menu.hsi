@@ -1,5 +1,5 @@
 script, menuStats, who=0, begin
-	variable (parent, sli, sli2, i, textSli, desc, box1, box2, arrow1, arrow2, equip, graphic, scroll)
+	variable (parent, sli, sli2, i, textSli, desc, box1, box2, arrow2, equip, graphic, scroll)
 	variable (slot, bag, id, sel, sel2, scrolltemp, arrow, stats, pins)
 	init()
 	while (true) do (
@@ -34,9 +34,11 @@ script, menuStats, who=0, begin
 				freeSliceChildren(desc)
 				if (sel2 == childCount(sli)--1) then (
 					$10="Remove equiped pin."
+					setSpriteSetNumber(graphic, 0)
 				) else (
 					getPinDesc(getPinId(slot, sel2, true))
 					10 $= 11
+					setSpriteSetNumber(graphic, getPinGfx(getPinId(slot, sel2, true)))
 				)
 				textLine(desc)
 				$10="Press [back] to return."
@@ -52,9 +54,11 @@ script, menuStats, who=0, begin
 				freeSliceChildren(desc)
 				if (sel2 == childCount(sli)--1) then (
 					$10="Remove equiped pin."
+					setSpriteSetNumber(graphic, 0)
 				) else (
 					getPinDesc(getPinId(slot, sel2, true))
 					10 $= 11
+					setSpriteSetNumber(graphic, getPinGfx(getPinId(slot, sel2, true)))
 				)
 				textLine(desc)
 				$10="Press [back] to return."
@@ -72,7 +76,6 @@ script, menuStats, who=0, begin
 					who := char:kat
 				)
 				freeSlice(parent)
-				sel := 0
 				init
 			) else if (pressKey(b:u)) then (
 				if (sel <= 0) then (
@@ -84,8 +87,10 @@ script, menuStats, who=0, begin
 				if (getPinId(who, sel + slot:atk1)) then (
 					getPinDesc(getPinId(who, sel + slot:atk1))
 					10 $= 11
+					setSpriteSetNumber(graphic, getPinGfx(getPinId(who, sel + slot:atk1)))
 				) else (
 					$10="No equipped pin."
+					setSpriteSetNumber(graphic, 0)
 				)
 				
 				textLine(desc)
@@ -102,9 +107,10 @@ script, menuStats, who=0, begin
 				if (getPinId(who, sel + slot:atk1)) then (
 					getPinDesc(getPinId(who, sel + slot:atk1))
 					10 $= 11
-					
+					setSpriteSetNumber(graphic, getPinGfx(getPinId(who, sel + slot:atk1)))
 				) else (
 					$10="No equipped pin."
+					setSpriteSetNumber(graphic, 0)
 				)
 				textLine(desc)
 				$10="Press [use] to change."
@@ -134,7 +140,7 @@ script, menuStats, who=0, begin
 
 			if (slot <> slot:atr) then (
 				$10+" "
-				appendNumber(10, getPinLvl(who, slot))
+				appendNumber(10, getPinLvl(who, slot, true))
 			)
 			sli := textLine(scroll, i, 8)
 		)
@@ -146,9 +152,11 @@ script, menuStats, who=0, begin
 		freeSliceChildren(desc)
 		if (sel2 == childCount(sli)--1) then (
 			$10="Remove equiped pin."
+			setSpriteSetNumber(graphic, 0)
 		) else (
 			getPinDesc(getPinId(slot, sel2, true))
 			10 $= 11
+			setSpriteSetNumber(graphic, getPinGfx(getPinId(slot, sel2, true)))
 		)
 		textLine(desc)
 		$10="Press [back] to return."
@@ -165,7 +173,7 @@ script, menuStats, who=0, begin
 		box1	:= sliceChild(parent, 0)
 		box2	:= sliceChild(parent, 1)
 		desc	:= sliceChild(parent, 2)
-		graphic	:= sliceChild(parent, 3)
+		graphic	:= firstChild(sliceChild(parent, 3))
 		arrow	:= sliceChild(parent, 4)
 		pins	:= lastChild(box1)
 		scrolltemp	:= sliceChild(parent, 5)
@@ -174,15 +182,15 @@ script, menuStats, who=0, begin
 		setSpriteSetNumber(sli, getCharSprite(who))
 
 		10 $= who + strng:RoseName
-		textsli := textLine(box1, 0, 20)
+		textsli := textLine(box1, 0, 24)
 		$10="Align: "
 		getAlign(who)
 		$10+"${S11}"
-		textsli := textLine(box1, 1, 20)
+		textsli := textLine(box1, 1, 24)
 
 		for (i, strng:atk1, strng:atr) do (
 			10 $= i
-			$10+": "
+			$10+" : "
 			slot := (i -- strng:atk1 + slot:atk1)
 	
 			if (getPinId(who, slot)) then (
@@ -213,8 +221,10 @@ script, menuStats, who=0, begin
 		if (getPinId(who, sel + slot:atk1)) then (
 			getPinDesc(getPinId(who, sel + slot:atk1))
 			10 $= 11
+			setSpriteSetNumber(graphic, getPinGfx(getPinId(who, sel + slot:atk1)))
 		) else (
 			$10="No equipped pin."
+			setSpriteSetNumber(graphic, 0)
 		)
 		textLine(desc)
 		$10="Press [use] to change."

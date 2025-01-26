@@ -1,4 +1,4 @@
-script, addPinToBag, id, lvl=1, begin
+script, addPinToBag, id, lvl=0, begin
 	variable (sli)
 	sli := initPin(id, lvl)
 	setParent(sli, getBagSlot(getPinSlot(id)))
@@ -60,11 +60,12 @@ script, initPinBag, begin
 	)
 end
 
-script, initPin, id, lvl, begin
+script, initPin, id, lvl=0, begin
 	variable(sli, exp)
 	sli := createContainer()
 
 	setExtra(sli, pin:ID, id)
+	if (lvl==0) then (lvl:=1)
 	
 	exp := expFromLvl(lvl)
 	setExtra(sli, pin:exp, exp)
@@ -194,6 +195,15 @@ script, getPinId, who, slot, bag=false, begin
 	if (sli) then (return (getExtra(sli, pin:ID))) else (return (pin:dummy))
 end
 
+script, getPinGfx, id, begin
+	switch (id) do (
+		case (pin:shock) do (return (3))
+		case (pin:addShock) do (return(4))
+		case (pin:shockAtr) do (return(5))
+		else (return(0))
+	)
+end
+
 script, getPinName, id, begin
 	$11=""
 	switch (id) do (
@@ -299,7 +309,7 @@ script, getPinSlice, whobag, slot, bag=false, begin
 		sli := sliceChild (getBagSlot(whoBag), slot)
 	) else (
 		sli := firstChild (getCharPin(whobag, slot))
-	)
+	) 
 	return (sli)
 end
 

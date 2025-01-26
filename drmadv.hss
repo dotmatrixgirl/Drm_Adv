@@ -269,7 +269,7 @@ plotscript, newGame, begin
 		$35="Align"
 		$40="Skill1"
 		$41="Skill2"
-		$42="Stat+ "
+		$42="Stat +"
 		$43="Typing"
 
 		game:lvlCap := 10
