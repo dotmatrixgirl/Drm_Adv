@@ -330,7 +330,7 @@ plotscript, autorun, begin
 		case (0) do (loadTrees(2))
 		case (1) do (
 			sli := lookup slice(sl:map layer0)
-			setSliceVelocity (sli, 2, 1)
+			#setSliceVelocity (sli, 2, 1)
 		)
 	)
 	#cases where overlay should not be visible
@@ -338,8 +338,9 @@ plotscript, autorun, begin
 		case (1) do ()
 		else (
 			if (lookupSlice(sli:overlay)==false) then (
-				sli := loadBackdropSprite(17)
+				sli := loadSliceCollection(3)
 				setSliceLookup(sli, sli:overlay)
+				updateOverlay()
 			)
 			sliceToFront(sli)
 		)

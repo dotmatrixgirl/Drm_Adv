@@ -241,6 +241,7 @@ script, mundaneScreen, begin
 		update
 	)
 	subscript, init, begin
+		game:state := state:suspend
 		teleportToMap (1, 0, 0)
 		setSliceVisible(getheroSlice(char:Rose), false)
 		if (heroByRank(1) <> -1) then (

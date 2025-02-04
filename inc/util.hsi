@@ -1,19 +1,49 @@
-
 script, overlayToFront, begin
 	variable (sli)
 	if (lookupSlice(sli:overlay)==false) then (
-		sli := loadBackdropSprite(17)	
+		sli := loadSliceCollection(3)
+		setSliceLookup(sli, sli:overlay)
 	) else (
 		sli := lookupSlice(sli:overlay)
-		setSliceLookup(sli, sli:overlay)
 	)
 	sliceToFront(sli)
+	updateOverlay()
 end
+
+script, updateOverlay, begin
+	variable(sli, sliText, sliRose, sliKat)
+	sli := lookupSlice(sli:overlay)
+	if (sli==false) then (
+		exitScript
+	)
+	sliRose := sliceChild(sli, 1)
+	sliKat := sliceChild(sli, 2)
+	sliText := sliceChild(sli, 3)
+
+	getMapName(10, currentMap)
+	textLine(sliText)
+	updatePinOverlay (char:rose, firstChild(slirose))
+	updatePinOverlay (char:kat, firstChild(slikat))
+
+
+	subscript, updatePinOverlay, who, parent, begin
+		variable (i)
+		for (i, 0, 3) do (
+			if (getPinId(who, i + slot:atk1)) then (
+				setSpriteSetNumber(sliceChild(parent, i), getPinGfx(getPinId(who, i + slot:atk1)))
+			) else (
+				setSpriteSetNumber(sliceChild(parent, i), 0)
+			)
+		)
+	end
+
+
+end
+
 
 script, getPercent, divider, divided, total, begin
 	return (total * divided / divider)
 end
-
 
 script, specwait, time=1, begin
 	variable (i)

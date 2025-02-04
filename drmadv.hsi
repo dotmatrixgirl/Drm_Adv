@@ -51,4 +51,5 @@ define constant, begin
 3,slot:Body
 4,slot:Arms
 5,slot:Legs
+0,map:The Mundane
 end
