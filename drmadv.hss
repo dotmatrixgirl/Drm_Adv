@@ -37,8 +37,6 @@ defineConstant, begin
 	8,	back:scrollx
 	9,	back:scrolly
 
-	
-
 	#dedicatedStrings
 	0,	strng:PlayerName
 	1,	strng:RoseName
@@ -136,7 +134,6 @@ defineConstant, begin
 	18,	pin:waterAtr
 	19,	pin:shockAtr
 	20,	pin:earthAtr
-
 
 	0,	stat:currentlife
 	1,	stat:life
@@ -283,7 +280,7 @@ plotscript, newGame, begin
 		sel:PinRose := 1
 		sel:PinKat := 1
 
-		setMusicVolume(0)
+		#setMusicVolume(0)
 	end
 end
 

@@ -28,6 +28,10 @@ define constant, begin
 23,song:marshlands at night
 24,song:dreams of a future
 0,sfx:scratch
+1,sfx:cursor
+2,sfx:select
+3,sfx:cancel
+4,sfx:confirm
 0,hero:Rose
 1,hero:Kat
 0,element:Fire
