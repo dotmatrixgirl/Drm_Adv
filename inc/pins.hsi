@@ -200,6 +200,10 @@ script, getPinGfx, id, begin
 		case (pin:shock) do (return (3))
 		case (pin:addShock) do (return(4))
 		case (pin:shockAtr) do (return(5))
+		case (pin:earth) do (return (6))
+		case (pin:addEarth) do (return(8))
+		case (pin:earthAtr) do (return(7))
+		case (pin:heart) do (return(9))
 		else (return(0))
 	)
 end
@@ -231,6 +235,14 @@ script, getPinName, id, begin
 		case (pin:earthAtr) do ($11="Earth")
 
 		else ($11="Empty")
+	)
+end
+
+script, playPinSfx, id, begin
+	switch (id) do (
+		case (pin:heart) do (playSound(sfx:heal))
+		case (pin:flame) do (playSound(sfx:flame))
+		else (playSound(sfx:flame))
 	)
 end
 
@@ -445,10 +457,11 @@ end
 
 script, getPinEffect, id, lvl, mod1, mod2=1, begin
 	variable (value)
+	lvl+=4
 	switch (id) do (
 		#mod1 is psi, mod2 is hp
 		case (pin:heart) do (
-			value := (sqrt(lvl^2/2 + mod1^2/3) + mod2/2)/5
+			value := (sqrt(lvl^2/8 + mod1^2/3))
 		)
 		#mod1 is empathy, mod2 is will
 		case (pin:calm, pin:read) do (
@@ -456,7 +469,7 @@ script, getPinEffect, id, lvl, mod1, mod2=1, begin
 		)
 		#mod1 is psi, mod2 is mind
 		case (pin:flame, pin:water, pin:shock, pin:earth) do (
-			value :=sqrt(lvl^2/2 + mod1^2/4) -- mod2/8
+			value :=sqrt(lvl^2/8 + mod1^2/5) -- mod2/12
 		)
 		#mod1 is original stat value
 		case (pin:life, pin:mind, pin:psi, pin:speed, pin:empathy) do (

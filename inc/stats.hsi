@@ -14,7 +14,7 @@ script, initChars, begin
 	resizeExtra(parent, 16)
 
 	setStat(char:rose, stat:life, 35)
-	setStat(char:rose, stat:psi, 27)
+	setStat(char:rose, stat:psi, 32)
 	setStat(char:rose, stat:mind, 28)
 	setStat(char:rose, stat:speed, 34)
 	setStat(char:rose, stat:empathy, 30)
@@ -59,7 +59,7 @@ end
 
 
 script, initEnemy, who, begin
-	variable (sli, i)
+	variable (sli, i, temp)
 
 	sli := getStatSlice(char:enemy)
 	if (sli) then (
@@ -71,14 +71,15 @@ script, initEnemy, who, begin
 	resizeExtra(sli, 16)
 	setSliceClipping(sli, true)
 
+	#20 is very high while 0 is low. around 6-8 should be close to average for evenly spread hero stats? idk.
 	switch (who) do (
 		case (enemy:dummy) do (
 			$3="Orbweb"
-			setStat(char:enemy, stat:life,	3)
-			setStat(char:enemy, stat:psi,	5)
-			setStat(char:enemy, stat:mind,	4)
-			setStat(char:enemy, stat:speed,	3)
-			setStat(char:enemy, stat:will,	5)  
+			setStat(char:enemy, stat:life,	7)
+			setStat(char:enemy, stat:psi,	7)
+			setStat(char:enemy, stat:mind,	7)
+			setStat(char:enemy, stat:speed,	5)
+			setStat(char:enemy, stat:will,	7)
 			setStat(char:enemy, stat:personality, type:logic)
 			setStat(char:enemy, stat:mood, 5)
 
@@ -91,7 +92,7 @@ script, initEnemy, who, begin
 			setparent(loadBorderSprite(2), sli)
 		) else (
 			$3="Orbweb"
-			setStat(char:enemy, stat:life,	3)
+			setStat(char:enemy, stat:life,	5)
 			setStat(char:enemy, stat:psi,	5)
 			setStat(char:enemy, stat:mind,	4)
 			setStat(char:enemy, stat:speed,	3)
@@ -108,16 +109,34 @@ script, initEnemy, who, begin
 			setparent(loadBorderSprite(2), sli)
 		)
 	)
-	if (game:diff := diff:hard ) then (
+	$20=""
+	if (game:diff == diff:hard ) then (
 		for (i, stat:life, stat:will) do (
-			setStat (char:enemy, i, getStat(char:enemy, i) * 24 * (getPartyLvl) / 4)
+			temp := setStat (char:enemy, i, (getStat(char:enemy, i)+1) * ((getPartyLvl + 10) * 4/5)  * 5/3 + 20)
+			appendnumber (20, temp), $20+"  "
 		)
-	) else if (game:diff := diff:easy) then (
+	) else if (game:diff == diff:norm) then (
 		for (i, stat:life, stat:will) do (
-			setStat (char:enemy, i, getStat(char:enemy, i) * 24 * (getPartyLvl) / 4)
+			temp := setStat (char:enemy, i, (getStat(char:enemy, i)+1) * ((getPartyLvl + 7) * 2) * 2/10 + 20)
+			appendnumber (20, temp), $20+"  "
+		)
+	) else if (game:diff == diff:easy) then (
+		for (i, stat:life, stat:will) do (
+			temp := setStat (char:enemy, i, (getStat(char:enemy, i)+1)  * ((getPartyLvl + 4) * 4/5)  * 5/3 + 20)
+			appendnumber (20, temp), $20+"  "
 		)
 	)
+	showString (20)
 	return (sli)
+end
+
+script, getLvl, who, begin
+	variable (lvl, i)
+	for (i, stat:life, stat:empathy) do (
+		lvl += getStat(who, i, false) -- 20
+	)
+	lvl :=  lvl / stat:empathy / 6
+	return (lvl)
 end
 
 script, setLvlCap, amount, begin
@@ -142,27 +161,26 @@ script, statGain, who, type, pinSlot=slot:none, modifier=0, begin
 		exit script
 	)
 	if (modifier == 0) then (
-		modifier := getLvl(char:enemy)
-		modifier += 1
-		modifier := modifier
+		modifier := getLvl(char:enemy)/4
+		if (modifier < 1) then (modifier := 1)
 	)
 	if (pinslot<>slot:none) then (pin := getPinId(who, pinslot))
 	
 	switch (type) do (
 		case (gain:damage) do (
 			if (random (0, 20) <= 8) then ( 
-				lvlStat(who, stat:life, modifier * (random (2, 8)) / 2)
+				lvlStat(who, stat:life, 1)
 			)
 			if (random (0, 20) <= 7) then (
-				lvlStat(who, stat:mind, modifier * (random (2, 8)) / 4)	
+				lvlStat(who, stat:mind, 1)	
 			)
 		)
 		case (gain:attack) do (
 			if (random (0, 20) <= 10) then (
-				lvlStat(who, stat:psi, modifier * (random (2, 8)) / 2)	
+				lvlStat(who, stat:psi, modifier * (random (2, 8)) / 4)	
 			)
 			if (random (0, 20) <= 8) then (
-				lvlStat(who, stat:speed, modifier * (random (2, 8)) / 3)
+				lvlStat(who, stat:speed, modifier * (random (2, 8)) / 6)
 			)
 			if (pinSlot<>slot:none) then (
 				addTempPinExp(who, pinSlot, modifier * 4 ^ 2)
@@ -238,8 +256,8 @@ end
 script, setStat, who, stat, value, begin
 	variable (sli)
 	sli := getStatSlice(who)
-
-	return(setExtra(sli, stat, value))
+	setExtra(sli, stat, value)
+	return(value)
 end
 
 script, lvlStat, who, stat, amount, capped=true, begin
@@ -337,20 +355,6 @@ script, getAlign, who, begin
 	) else (
 		$11="Angelic"
 	)
-end
-
-script, getLvl, who, begin
-	variable (lvl, i)
-	if (who == char:enemy) then (
-		lvl += (getStat(who, stat:life, false) -- 20) / 2
-	) else (
-		lvl += getStat(who, stat:life, false) -- 20
-	)
-	for (i, stat:psi, stat:empathy) do (
-		lvl += getStat(who, i, false) -- 20
-	)
-	lvl :=  lvl / stat:empathy / 6
-	return (lvl)
 end
 
 script, getPartyLvl, begin

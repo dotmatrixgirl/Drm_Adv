@@ -12,11 +12,11 @@ script, encounter, who, begin
 	subscript, updateEncounter, begin
 		updateHP()
 
-		if (sound is playing (0)) then (
+		if (soundIsPlaying (0)) then (
 			exitScript
 		) else (
-			if (condition == encounter:enraged && currentSong <> song:for you i will die) then (
-				playSong(song:for you i will die)
+			if (condition == encounter:enraged && currentSong <> song:the storm) then (
+				playSong(song:the storm)
 			)
 			if (condition == encounter:peaceful && currentSong <> song:the calm) then (
 				playSong(song:the calm)
@@ -93,15 +93,21 @@ script, encounter, who, begin
 			switch (state) do (
 				case (encounter:choose) do (
 					if (newpresskey(b:u)) then (
+						stopSound(sfx:cursor)
+						playSound(sfx:cursor)
 						if (sel<=1) then (
 							sel := childCount(textSli) -- 1
 						) else (sel -= 1)
 					)
 					if (newpresskey(b:d)) then (
+						stopSound(sfx:cursor)
+						playSound(sfx:cursor)
 						if (sel>= childCount(textSli) -- 1) then (
 							sel := 1
 						) else (sel += 1)
 					) else if (newpresskey(b:a)) then (
+						stopSound(sfx:select)
+						playSound(sfx:select)
 						if (sel<>childCount(textSli) -- 1) then (
 							if (turn==char:rose) then (
 								sel:ActionRose := sel
@@ -152,39 +158,58 @@ script, encounter, who, begin
 				)
 				case (encounter:talk) do (
 					if (newpresskey(b:b)) then (
+						stopSound(sfx:cancel)
+						playSound(sfx:cancel)
 						changeState(encounter:choose)
 					) else if (newpresskey(b:u)) then (
+						stopSound(sfx:cursor)
+						playSound(sfx:cursor)
 						if (sel<=1) then (
 							sel := childCount(textSli) -- 1
 						) else (sel -= 1)
 					) else if (newpresskey(b:d)) then (
+						stopSound(sfx:cursor)
+						playSound(sfx:cursor)
 						if (sel>=childCount(textSli) -- 1) then (
 							sel := 1
 						) else (sel += 1)
 					) else if (newpresskey(b:a)) then (
+						stopSound(sfx:select)
+						playSound(sfx:select)
 						setSliceVisible(arrow, false)
 						answer(sel)
 					)
 				)
 				case (encounter:run) do (
 					if (newpresskey(b:b)) then (
+						stopSound(sfx:cancel)
+						playSound(sfx:cancel)
 						changeState(encounter:choose)
 					) else if (newpresskey(b:u)) then (
+						stopSound(sfx:cursor)
+						playSound(sfx:cursor)
 						if (sel<=1) then (
 							sel := childCount(textSli) -- 1
 						) else (sel -= 1)
 					) else if (newpresskey(b:d)) then (
+						stopSound(sfx:cursor)
+						playSound(sfx:cursor)
 						if (sel>=childCount(textSli) -- 1) then (
 							sel := 1
 						) else (sel += 1)
 					) else if (newpresskey(b:a)) then (
+						
 						switch(sel) do (
 							case (1) do (
+								stopSound(sfx:select)
+								playSound(sfx:select)
 								setSliceVisible(arrow, false)
 								setSliceVisible(textSli)
 								condition := encounter:ran
 							)
 							case (2) do (
+								stopSound(sfx:cancel)
+								playSound(sfx:cancel)
 								changeState(encounter:choose)
 							)
 						)
@@ -192,8 +217,12 @@ script, encounter, who, begin
 				)
 				case (encounter:skill) do (
 					if (newpresskey(b:b)) then (
+						stopSound(sfx:cancel)
+						playSound(sfx:cancel)
 						changeState(encounter:choose)
 					) else if (newpresskey(b:a)) then (
+						stopSound(sfx:select)
+						playSound(sfx:select)
 						freeSliceChildren(textSli)
 						if (getPinId(turn, slot:atk1) <> pin:dummy) then (
 							if (sel == 1) then (
@@ -222,10 +251,14 @@ script, encounter, who, begin
 							state := encounter:animate
 						) else (changeState(encounter:target))					
 					) else if (newpresskey(b:u)) then (
+						stopSound(sfx:cursor)
+						playSound(sfx:cursor)
 						if (sel<=1) then (
 							sel := childCount(textSli) -- 1
 						) else (sel -= 1)
 					) else if (newpresskey(b:d)) then (
+						stopSound(sfx:cursor)
+						playSound(sfx:cursor)
 						if (sel>=childCount(textSli) -- 1) then (
 							sel := 1
 						) else (sel += 1)
@@ -233,8 +266,12 @@ script, encounter, who, begin
 				)
 				case (encounter:target) do (
 					if (newpresskey(b:b)) then (
+						stopSound(sfx:cancel)
+						playSound(sfx:cancel)
 						changeState(encounter:skill)
 					) else if (newpresskey(b:a)) then (
+						stopSound(sfx:select)
+						playSound(sfx:select)
 						setSliceVisible(arrow, false)
 						freeSliceChildren (TextSli)
 						getPinName(getPinId(turn, slot))
@@ -262,10 +299,14 @@ script, encounter, who, begin
 							state := encounter:animate
 						)
 					) else if (newpresskey(b:u)) then (
+						stopSound(sfx:cursor)
+						playSound(sfx:cursor)
 						if (sel<=1) then (
 							sel := childCount(textSli) -- 1
 						) else (sel -= 1)
 					) else if (newpresskey(b:d)) then (
+						stopSound(sfx:cursor)
+						playSound(sfx:cursor)
 						if (sel>=childCount(textSli) -- 1) then (
 							sel := 1
 						) else (sel += 1)
@@ -303,6 +344,7 @@ script, encounter, who, begin
 			)
 			else (setParent(loadheroSprite(0), sli))
 		)
+		playPinSfx(getPinId(turn, slot))
 		sli := lastChild(sli)
 		sliceToFront(sli)
 		for (i, 0, 7) do (
@@ -787,8 +829,10 @@ script, afterEncounter, condition, parent, enemy, begin
 			if (getStat(j, stat:currentLife)>0) then (
 				for (i, stat:life, stat:empathy) do (
 					if (updateStat(j, i, false)) then (
-						10 $+  j+strng:roseName
-						$10+"'s "
+						if (stringLength(10)==0) then (
+							10 $+  j+strng:roseName
+							$10+" grew stronger! "
+						)
 						concatenateStrings (10, i + strng:life -- stat:life)
 						$10+" grew to "
 						appendNumber(10, getStat(j, i))
@@ -800,6 +844,7 @@ script, afterEncounter, condition, parent, enemy, begin
 				resetTempPinExp(j)
 			)
 			if (showText==true) then (
+				wait
 				write()
 				showText := false
 			)
@@ -818,14 +863,14 @@ script, afterEncounter, condition, parent, enemy, begin
 					if (lvlPin(j, i)) then (
 						10 $+  j+strng:roseName
 						getPinName(getPinId(j, i))
-						$10+"'s ${S11} pin grew to"
-						$10+"level "
+						$10+"'s ${S11} pin grew to level "
 						appendNumber(10, getPinLvl(j, i))
 						$10+". "
 						showText := true
 					)
 				)
 				if (showText==true) then (
+					wait
 					write()
 					showText := false
 				)
@@ -836,7 +881,7 @@ script, afterEncounter, condition, parent, enemy, begin
 			if (getStat(j, stat:currentLife) <= 0) then (
 				10 $=  j+strng:roseName
 				$10+" recovered."
-				write(0)
+				write()
 			)
 		)
 	end

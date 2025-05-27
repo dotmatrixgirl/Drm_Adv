@@ -17,8 +17,8 @@ script, menuStats, who=0, begin
 				init
 				exitScript
 			)else if (newpressKey(b:a)) then (
-				stopSound(sfx:confirm)
-				playSound(sfx:confirm)
+				stopSound(sfx:select)
+				playSound(sfx:select)
 				if (sel2 == childCount(sli)--1) then (
 					unequipPin(who, sel+slot:atk1)
 				) else (
@@ -84,8 +84,6 @@ script, menuStats, who=0, begin
 				playSound(sfx:select)
 				initEquip()
 			) else if (newpresskey (b:r) || newpresskey (b:l)) then (
-				stopSound(sfx:cursor)
-				playSound(sfx:cursor)
 				if (who == char:kat) then (who := char:rose) else (
 					who := char:kat
 				)

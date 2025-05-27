@@ -43,6 +43,7 @@ defineConstant, begin
 	2,	strng:KatName
 	3,	strng:EnemyName
 	4,	strng:deadname
+	11,	strng:overlay
 	30,	strng:life
 	31,	strng:psi
 	32,	strng:mind
@@ -198,7 +199,7 @@ defineConstant, begin
 	3,	bag:all
 	
 	
-	0, diff:normal
+	0, diff:norm
 	1, diff:easy
 	2, diff:hard
 end

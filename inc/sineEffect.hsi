@@ -21,7 +21,7 @@ script, loadbattleback, parent, which, begin
 		sli := lastChild(parent)
 		resizeExtra(sli, 16)
 		if (j == 0) then (
-			set		:= 20
+			set		:= 18
 			opacity	:= 80
 			blend	:= blend:normal	
 			setExtra(sli, back:rate,		100)
@@ -34,7 +34,7 @@ script, loadbattleback, parent, which, begin
 			setExtra(sli, back:scrollxrate,	1)
 			setExtra(sli, back:scrollyrate,	1)
 		) else (
-			set		:= 21
+			set		:= 19
 			opacity	:= 50
 			blend	:= blend:normal
 			setExtra(sli, back:rate,		80)

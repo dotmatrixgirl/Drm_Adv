@@ -31,7 +31,9 @@ define constant, begin
 1,sfx:cursor
 2,sfx:select
 3,sfx:cancel
-4,sfx:confirm
+4,sfx:cancel 2
+5,sfx:heal
+6,sfx:flame
 0,hero:Rose
 1,hero:Kat
 0,element:Fire

@@ -1,0 +1,8 @@
+SFX
+
+lightning attack
+fire attack
+earth attack
+-heal skill
+
+FIX LEVELING BS - 
